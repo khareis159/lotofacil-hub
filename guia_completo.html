@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>📚 Guia Completo - COCKPIT V54 | LotoFácil Bridge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0f1a 0%, #0f1725 100%);
+            color: #e8f0f8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container principal */
+        .guide-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .guide-header {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+            border-radius: 24px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(188, 140, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .guide-header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .badge-v54 {
+            background: linear-gradient(135deg, #bc8cff, #8b5cf6);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .badge-bridge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1a2c3e;
+        }
+
+        .sub {
+            color: #7a8fa6;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        /* Navegação rápida */
+        .quick-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+            background: rgba(22, 28, 36, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 12px 20px;
+            border-radius: 60px;
+            justify-content: center;
+        }
+
+        .quick-nav a {
+            color: #bc8cff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 30px;
+            transition: all 0.2s;
+            background: rgba(188, 140, 255, 0.1);
+        }
+
+        .quick-nav a:hover {
+            background: rgba(188, 140, 255, 0.25);
+            color: #fbbf24;
+        }
+
+        /* Cards de fluxo */
+        .flow-card {
+            background: #0f1419;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            border: 1px solid #2a3441;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .flow-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            border-color: rgba(188, 140, 255, 0.3);
+        }
+
+        .flow-header {
+            background: linear-gradient(135deg, #1e262f, #161c24);
+            padding: 18px 24px;
+            border-bottom: 2px solid #bc8cff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .flow-icon {
+            font-size: 2rem;
+        }
+
+        .flow-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Segoe UI', monospace;
+            letter-spacing: 1px;
+        }
+
+        .flow-badge {
+            background: #2a3441;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #fbbf24;
+            margin-left: auto;
+        }
+
+        .flow-body {
+            padding: 20px 24px;
+        }
+
+        /* Tabela de passos */
+        .step-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .step-table th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #1e262f;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .step-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #2a3441;
+            vertical-align: top;
+        }
+
+        .step-number {
+            width: 50px;
+            font-weight: 800;
+            color: #bc8cff;
+            font-size: 1.1rem;
+        }
+
+        .step-action {
+            width: 30%;
+            font-weight: 600;
+            color: #e8f0f8;
+        }
+
+        .step-feedback {
+            width: 35%;
+            color: #7a8fa6;
+        }
+
+        .step-what {
+            width: 30%;
+            color: #9aaebf;
+            font-size: 0.8rem;
+        }
+
+        /* Grid de feedbacks */
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .feedback-item {
+            background: #161c24;
+            border-radius: 12px;
+            padding: 12px 16px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feedback-success { border-left-color: #3fb950; }
+        .feedback-warning { border-left-color: #fbbf24; }
+        .feedback-error { border-left-color: #f85149; }
+        .feedback-info { border-left-color: #58a6ff; }
+
+        .feedback-icon { font-size: 1.4rem; }
+        .feedback-text { font-size: 0.8rem; line-height: 1.4; }
+
+        /* Bridge visualization */
+        .bridge-visual {
+            background: linear-gradient(135deg, #1a1f2e, #0f1420);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .bridge-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .bridge-node {
+            background: #1e262f;
+            border-radius: 16px;
+            padding: 16px 24px;
+            min-width: 180px;
+            text-align: center;
+            border: 1px solid #bc8cff;
+        }
+
+        .bridge-arrow {
+            font-size: 1.8rem;
+            color: #fbbf24;
+        }
+
+        /* Cards de dicas */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tip-card {
+            background: linear-gradient(135deg, #1a1f2a, #0f141c);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #2a3441;
+        }
+
+        .tip-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-content {
+            font-size: 0.85rem;
+            color: #9aaebf;
+            line-height: 1.6;
+        }
+
+        /* Botões de ação */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin: 32px 0 24px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #bc8cff, #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(188, 140, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #1e262f;
+            color: #e8f0f8;
+            border: 1px solid #2a3441;
+        }
+
+        .btn-secondary:hover {
+            background: #2a3441;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid #2a3441;
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: #5f7f9a;
+        }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .step-table th, .step-table td {
+                display: block;
+                width: 100%;
+            }
+            .step-table tr {
+                display: block;
+                margin-bottom: 16px;
+                border-bottom: 1px solid #2a3441;
+                padding-bottom: 12px;
+            }
+            .step-number, .step-action, .step-feedback, .step-what {
+                width: 100%;
+                padding: 4px 0;
+            }
+            .bridge-flow {
+                flex-direction: column;
+            }
+            .bridge-arrow {
+                transform: rotate(90deg);
+            }
+            .guide-header h1 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+            }
+            .flow-card {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+            }
+            .action-buttons {
+                display: none;
+            }
+            .quick-nav {
+                display: none;
+            }
+            .guide-header {
+                background: #f0f0f0;
+                color: black;
+            }
+        }
+
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+<div class="guide-container">
+    <!-- Header -->
+    <div class="guide-header">
+        <h1>
+            <span>📚 Guia Completo · LotoFácil COCKPIT V54</span>
+            <span style="display: flex; gap: 8px;">
+                <span class="badge-v54">🔱 V54 BRIDGE</span>
+                <span class="badge-bridge">🌉 Integração Total</span>
+            </span>
+        </h1>
+        <div class="sub">
+            Sistema integrado com Detector de Tendências · Bridge automática via localStorage · Geração otimizada de volantes MAX
+        </div>
+    </div>
+
+    <!-- Navegação Rápida -->
+    <div class="quick-nav">
+        <a href="#fluxo-cockpit">🎯 Fluxo COCKPIT</a>
+        <a href="#fluxo-trend">📈 Fluxo Trend Analyzer</a>
+        <a href="#fluxo-bridge">🌉 Fluxo Bridge</a>
+        <a href="#fluxo-caixa">💰 Fluxo Caixa</a>
+        <a href="#dicas-estrategicas">💡 Dicas Estratégicas</a>
+        <a href="#feedback-matrix">📢 Feedback Matrix</a>
+    </div>
+
+    <!-- FLUXO 1: COCKPIT -->
+    <div class="flow-card" id="fluxo-cockpit">
+        <div class="flow-header">
+            <span class="flow-icon">🎯</span>
+            <span class="flow-title">FLUXO 1 · COCKPIT (Jogo)</span>
+            <span class="flow-badge">Passo a Passo</span>
+        </div>
+        <div class="flow-body">
+            <table class="step-table">
+                <thead>
+                    <tr><th>#</th><th>Ação</th><th>Feedback</th><th>O que acontece</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="step-number">1</td><td class="step-action">📥 Colar concursos</td><td class="step-feedback">"3 linhas detectadas"</td><td class="step-what">Remove parênteses, vírgulas → extrai 15 números</td></tr>
+                    <tr><td class="step-number">2</td><td class="step-action">🔍 Analisar Âncoras</td><td class="step-feedback">"Melhor posição: 3ª (média 8.5)"</td><td class="step-what">Calcula média de acertos por posição (1ª a 7ª)</td></tr>
+                    <tr><td class="step-number">3</td><td class="step-action">⚙️ Configurar Geração</td><td class="step-feedback">"9 fixas: 01 04 07 09 10 13 16 20 23"</td><td class="step-what">Fixas da posição selecionada</td></tr>
+                    <tr><td class="step-number">4</td><td class="step-action">🔱 Gerar Volantes MAX</td><td class="step-feedback">"10 volantes gerados! Score médio 78/100"</td><td class="step-what">Pool 300+ combinações, filtros, ordenação por Score</td></tr>
+                    <tr><td class="step-number">5</td><td class="step-action">🔮 Peneira de Mágicas</td><td class="step-feedback">"7 aprovados · 3 eliminados (94% confiança)"</td><td class="step-what">Filtra por quantidade e posição da 1ª mágica</td></tr>
+                    <tr><td class="step-number">6</td><td class="step-action">✅ Conferir Resultado</td><td class="step-feedback">"12 pontos! Fixas 8/9 · R$ 14,00"</td><td class="step-what">Compara volantes, calcula prêmios, registra caixa</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FLUXO 2: TREND ANALYZER -->
+    <div class="flow-card" id="fluxo-trend">
+        <div class="flow-header">
+            <span class="flow-icon">📈</span>
+            <span class="flow-title">FLUXO 2 · Trend Analyzer (Detector de Tendência)</span>
+            <span class="flow-badge">Heurística de repetições</span>
+        </div>
+        <div class="flow-body">
+            <table class="step-table">
+                <thead><tr><th>#</th><th>Ação</th><th>Feedback</th><th>O que acontece</th></tr></thead>
+                <tbody>
+                    <tr><td class="step-number">1</td><td class="step-action">📊 Carregar concursos</td><td class="step-feedback">"CC 3600 e 3599 carregados"</td><td class="step-what">Valida 15 dezenas, cores verde/vermelho</td></tr>
+                    <tr><td class="step-number">2</td><td class="step-action">🔍 Analisar Tendência</td><td class="step-feedback">"11 repetições! 🔥 ALERTA ALTA CONFIABILIDADE"</td><td class="step-what">Calcula score por dezena, seleciona 9 fixas balanceadas</td></tr>
+                    <tr><td class="step-number">3</td><td class="step-action">🌉 Exportar para Bridge</td><td class="step-feedback">"Fixas exportadas! Momento: ALTA (11 repetições)"</td><td class="step-what">Salva no localStorage para o COCKPIT</td></tr>
+                </tbody>
+            </table>
+            <div class="bridge-visual" style="margin-top: 16px; background: #0f1420;">
+                <div style="font-size: 0.8rem; color: #fbbf24;">⚡ Critério de Confiabilidade ⚡</div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 12px;">
+                    <div><span style="color: #fbbf24;">≥ 11 repetições</span> → 🔥🔥🔥 EXTREMO</div>
+                    <div><span style="color: #f59e0b;">9-10 repetições</span> → 🔥 ALTA</div>
+                    <div><span style="color: #3fb950;">8 repetições</span> → ⚡ BOA</div>
+                    <div><span style="color: #7a8fa6;">6-7 repetições</span> → 📊 MÉDIA</div>
+                    <div><span style="color: #f85149;">≤ 5 repetições</span> → ⏸️ BAIXA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUXO 3: BRIDGE (Comunicação) -->
+    <div class="flow-card" id="fluxo-bridge">
+        <div class="flow-header">
+            <span class="flow-icon">🌉</span>
+            <span class="flow-title">FLUXO 3 · BRIDGE (Integração Total)</span>
+            <span class="flow-badge">localStorage compartilhado</span>
+        </div>
+        <div class="flow-body">
+            <div class="bridge-visual">
+                <div class="bridge-flow">
+                    <div class="bridge-node">📦 COCKPIT<br>Histórico + Fixas</div>
+                    <div class="bridge-arrow">⬅️ ➡️</div>
+                    <div class="bridge-node">🌉 BRIDGE<br>cockpit_trend_bridge_v54</div>
+                    <div class="bridge-arrow">⬅️ ➡️</div>
+                    <div class="bridge-node">📈 Trend Analyzer<br>Projeção + Fixas</div>
+                </div>
+                <div style="font-size: 0.75rem; color: #7a8fa6; margin-top: 8px;">Comunicação via localStorage · Expiração em 24h · Banner automático no COCKPIT</div>
+            </div>
+            <table class="step-table">
+                <thead><tr><th>Direção</th><th>Ação</th><th>Feedback</th></tr></thead>
+                <tbody>
+                    <tr><td class="step-number">①</td><td class="step-action">COCKPIT → Trend</td><td class="step-feedback">"Exportar Histórico" → "15 concursos exportados!"</td></tr>
+                    <tr><td class="step-number">②</td><td class="step-action">Trend → COCKPIT</td><td class="step-feedback">"Importar Histórico" → "15 concursos importados!"</td></tr>
+                    <tr><td class="step-number">③</td><td class="step-action">Trend → Bridge</td><td class="step-feedback">"Exportar Fixas" → "Fixas salvas! Momento: ALTA"</td></tr>
+                    <tr><td class="step-number">④</td><td class="step-action">Bridge → COCKPIT</td><td class="step-feedback">"Banner automático: 🔥 Zona de entrada!"</td></tr>
+                    <tr><td class="step-number">⑤</td><td class="step-action">Aplicar Fixas</td><td class="step-feedback">"✅ Fixas aplicadas! Gere volantes MAX"</td></tr>
+                </tbody>
+            </table>
+            <div class="tips-grid" style="margin-top: 16px;">
+                <div class="tip-card">
+                    <div class="tip-title">📌 Bridge Automática</div>
+                    <div class="tip-content">Ao abrir a aba Jogo, o COCKPIT verifica se há recomendação ativa (24h). Se sim, exibe banner com as 9 fixas e botão "APLICAR".</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title">🔧 Bridge Manual</div>
+                    <div class="tip-content">Painel Expert → Seção "BRIDGE": Exportar Histórico, Importar Fixas, Verificar Recomendação.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUXO 4: CAIXA FINANCEIRA -->
+    <div class="flow-card" id="fluxo-caixa">
+        <div class="flow-header">
+            <span class="flow-icon">💰</span>
+            <span class="flow-title">FLUXO 4 · Caixa Financeiro</span>
+            <span class="flow-badge">Gestão de resultados</span>
+        </div>
+        <div class="flow-body">
+            <div class="feedback-grid">
+                <div class="feedback-item feedback-success"><span class="feedback-icon">✅</span><span class="feedback-text">Sessão registrada automaticamente após conferência</span></div>
+                <div class="feedback-item feedback-info"><span class="feedback-icon">📊</span><span class="feedback-text">Gasto total, Ganho total, Saldo líquido</span></div>
+                <div class="feedback-item feedback-warning"><span class="feedback-icon">📈</span><span class="feedback-text">Percentual de recuperação do investimento</span></div>
+                <div class="feedback-item feedback-success"><span class="feedback-icon">🏆</span><span class="feedback-text">Histórico de sessões com melhor pontuação e prêmios</span></div>
+            </div>
+            <div class="tips-grid" style="margin-top: 8px;">
+                <div class="tip-card">
+                    <div class="tip-title">💵 Prêmios por acertos</div>
+                    <div class="tip-content">11 pts = R$ 7,00 · 12 pts = R$ 14,00 · 13 pts = R$ 35,00 · 14 pts = R$ 1.500 · 15 pts = R$ 500.000</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title">🗑️ Exclusão de sessões</div>
+                    <div class="tip-content">Botão "🗑 Excluir" ao lado de cada sessão no histórico do Caixa.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATRIZ DE FEEDBACKS -->
+    <div class="flow-card" id="feedback-matrix">
+        <div class="flow-header">
+            <span class="flow-icon">📢</span>
+            <span class="flow-title">MATRIZ DE FEEDBACKS DO SISTEMA</span>
+            <span class="flow-badge">Cores e mensagens</span>
+        </div>
+        <div class="flow-body">
+            <div class="feedback-grid">
+                <div class="feedback-item feedback-success"><span class="feedback-icon">✅</span><span class="feedback-text">Sucesso · "3 concursos processados!"</span></div>
+                <div class="feedback-item feedback-success"><span class="feedback-icon">🎯</span><span class="feedback-text">Sucesso · "9 fixas por tendência geradas!"</span></div>
+                <div class="feedback-item feedback-success"><span class="feedback-icon">🔱</span><span class="feedback-text">Sucesso · "10 volantes gerados!"</span></div>
+                <div class="feedback-item feedback-success"><span class="feedback-icon">🏆</span><span class="feedback-text">Sucesso · "12 pontos! Fixas: 8/9"</span></div>
+                <div class="feedback-item feedback-warning"><span class="feedback-icon">⚠️</span><span class="feedback-text">Aviso · "Necessários 15 números!"</span></div>
+                <div class="feedback-item feedback-warning"><span class="feedback-icon">🔥</span><span class="feedback-text">Alerta · "CONFIABILIDADE EXTREMA (11 repetições)"</span></div>
+                <div class="feedback-item feedback-error"><span class="feedback-icon">❌</span><span class="feedback-text">Erro · "Nenhum concurso válido encontrado"</span></div>
+                <div class="feedback-item feedback-info"><span class="feedback-icon">ℹ️</span><span class="feedback-text">Info · "Viabilidade calculada. Melhor posição: 3ª"</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DICAS ESTRATÉGICAS -->
+    <div class="flow-card" id="dicas-estrategicas">
+        <div class="flow-header">
+            <span class="flow-icon">💡</span>
+            <span class="flow-title">DICAS ESTRATÉGICAS</span>
+            <span class="flow-badge">Baseado em dados reais</span>
+        </div>
+        <div class="flow-body">
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-title">🎯 Quando jogar?</div>
+                    <div class="tip-content"><strong>≥ 11 repetições</strong> → 🔥🔥🔥 Jogue com confiança máxima<br><strong>9-10 repetições</strong> → 🔥 Jogue, use as fixas da Bridge<br><strong>8 repetições</strong> → ⚡ Considere jogar com cautela<br><strong>≤ 7 repetições</strong> → ⏸️ Aguarde próximo concurso</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title">⭐ Score dos Volantes</div>
+                    <div class="tip-content"><strong>90-100</strong> → 🏆 Excelente (priorize)<br><strong>70-89</strong> → ✅ Bom (mantenha)<br><strong>50-69</strong> → ⚠️ Regular (use se necessário)<br><strong>&lt;50</strong> → ❌ Descartar</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title">🔮 Peneira de Mágicas</div>
+                    <div class="tip-content"><strong>Qtd mágicas:</strong> 4-7 (94% confiança)<br><strong>Casa 1ª mágica:</strong> 3ª ou 4ª (79% confiança)<br>Aplicação aumenta chance de premiação</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title">🌉 Bridge na prática</div>
+                    <div class="tip-content">1. Trend identifica ALTA confiabilidade<br>2. Exporta fixas → COCKPIT mostra banner<br>3. Aplica fixas em 1 clique<br>4. Gera volantes MAX otimizados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="window.print()">
+            🖨️ Imprimir Guia
+        </button>
+        <button class="btn btn-secondary" onclick="fecharGuia()">
+            ✕ Fechar e Voltar ao COCKPIT
+        </button>
+    </div>
+
+    <div class="footer">
+        © 2026 LotoFácil COCKPIT V54 · Sistema com Bridge Integrada · Dados reais de 3600 a 3614<br>
+        Suporte: 61 99948-7649 · Versão 54 · Comunicação via localStorage · Expiração Bridge: 24h
+    </div>
+</div>
+
+<script>
+    // Função para fechar e retornar (se aberto em modal ou iframe)
+    function fecharGuia() {
+        // Se estiver em um iframe, tenta comunicar com o pai
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage('fecharGuia', '*');
+        }
+        // Se for janela normal, tenta fechar
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.close();
+        }
+    }
+
+    // Mensagem de boas-vindas no console
+    console.log('📚 Guia do COCKPIT V54 Bridge carregado! Use os botões para imprimir ou voltar.');
+</script>
+</body>
+</html>
