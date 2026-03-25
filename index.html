@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔱 LotoFácil COCKPIT 2 · V54 · Bridge Trend</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══ TOKENS ══ */
+:root{
+  --bg:#080c12;--surface:#0f1419;--surface2:#161c24;--surface3:#1e262f;--surface4:#252f3a;
+  --border:#2a3441;--text:#e8f0f8;--text2:#7a8fa6;--text3:#4a5f72;
+  --accent:#f0c040;--green:#3fb950;--red:#f85149;
+  --blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657;--teal:#39d5c8;
+  --tend-gold:#fbbf24;--tend-purple:#8b5cf6;--tend-purple-d:#7c3aed;
+  --r:12px;--r-sm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ══ TOP NAV ══ */
+.topnav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(8,12,18,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:54px;gap:12px;
+}
+.topnav-brand{
+  font-family:'Oswald',sans-serif;font-size:1.2rem;letter-spacing:2px;
+  color:var(--purple);text-transform:uppercase;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.topnav-brand span{color:var(--accent);font-size:.7rem;letter-spacing:1px;
+  background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);
+  border-radius:10px;padding:2px 8px;font-family:'Nunito',sans-serif;font-weight:800;}
+.topnav-tabs{display:flex;gap:2px;flex:1;justify-content:center;}
+.tab-btn{
+  padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:700;
+  background:transparent;color:var(--text2);border:none;cursor:pointer;
+  transition:all .2s;font-family:'Nunito',sans-serif;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);background:var(--surface3);}
+.tab-btn.active{background:rgba(188,140,255,.15);color:var(--purple);
+  border:1px solid rgba(188,140,255,.3);}
+.tab-btn.tend-tab.active{
+  background:rgba(251,191,36,.12);color:var(--tend-gold);
+  border:1px solid rgba(251,191,36,.3);
+}
+.tab-btn.tend-tab{color:var(--text2);}
+.tab-btn.tend-tab:hover{color:var(--tend-gold);background:rgba(251,191,36,.07);}
+.topnav-right{display:flex;gap:8px;align-items:center;}
+.expert-toggle{
+  display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text2);
+  cursor:pointer;user-select:none;padding:5px 10px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface2);transition:all .2s;
+}
+.expert-toggle:hover{border-color:var(--accent);color:var(--accent);}
+.expert-toggle.on{border-color:rgba(240,192,64,.4);color:var(--accent);
+  background:rgba(240,192,64,.07);}
+.toggle-dot{width:28px;height:16px;border-radius:8px;background:var(--surface4);
+  position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-dot::after{content:'';position:absolute;width:12px;height:12px;
+  border-radius:50%;background:var(--text3);top:2px;left:2px;transition:all .2s;}
+.expert-toggle.on .toggle-dot{background:rgba(240,192,64,.25);}
+.expert-toggle.on .toggle-dot::after{left:14px;background:var(--accent);}
+
+/* ══ LAYOUT ══ */
+.wrap{max-width:1400px;margin:0 auto;padding:20px 16px 60px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ══ WIZARD STEPS (resumido para brevidade - mantido da v53) ══ */
+.step{
+  border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:12px;overflow:hidden;transition:border-color .3s;
+}
+.step.current{border-color:rgba(188,140,255,.4);box-shadow:0 0 0 1px rgba(188,140,255,.1),var(--shadow);}
+.step.done{border-color:rgba(63,185,80,.25);}
+.step.locked{opacity:.5;pointer-events:none;}
+.step-header{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--surface);cursor:pointer;user-select:none;}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;background:var(--surface3);color:var(--text2);flex-shrink:0;border:2px solid var(--border);transition:all .3s;}
+.step.current .step-num{background:rgba(188,140,255,.2);color:var(--purple);border-color:var(--purple);}
+.step.done .step-num{background:rgba(63,185,80,.15);color:var(--green);border-color:var(--green);}
+.step-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:.5px;}
+.step.current .step-title{color:var(--purple);}
+.step.done .step-title{color:var(--green);}
+.step-subtitle{font-size:.78rem;color:var(--text2);margin-left:auto;}
+.step-body{background:var(--surface2);padding:18px;}
+
+/* ══ NOVO: BANNER DO TREND ANALYZER BRIDGE ══ */
+.trend-bridge-banner {
+  background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(139,92,246,.08));
+  border:2px solid rgba(251,191,36,.3);
+  border-radius:var(--r);
+  padding:14px 18px;
+  margin-bottom:16px;
+  display:none;
+  animation:slideDown .3s ease;
+}
+@keyframes slideDown {
+  from{transform:translateY(-10px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+.trend-bridge-banner.alta { border-color: var(--green); background:rgba(63,185,80,.1); }
+.trend-bridge-banner.media { border-color: var(--orange); background:rgba(255,166,87,.08); }
+.trend-bridge-banner.baixa { border-color: var(--red); background:rgba(248,81,73,.05); }
+.trend-bridge-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:12px;
+}
+.trend-bridge-title {
+  font-family:'Oswald',sans-serif;
+  font-size:.9rem;
+  color:var(--tend-gold);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.trend-bridge-badge {
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:.7rem;
+  font-weight:800;
+}
+.trend-bridge-badge.alta { background:var(--green); color:var(--bg); }
+.trend-bridge-badge.media { background:var(--orange); color:var(--bg); }
+.trend-bridge-badge.baixa { background:var(--red); color:#fff; }
+.trend-bridge-fixas {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:12px 0;
+}
+.trend-bridge-fixa {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),#7c3aed);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-family:'Fira Code',monospace;
+  font-size:1rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.trend-bridge-buttons {
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.btn-bridge {
+  background:linear-gradient(135deg,var(--purple),#7c3aed);
+  font-size:.8rem;
+  padding:8px 16px;
+}
+.btn-bridge-outline {
+  background:transparent;
+  border:1px solid var(--purple);
+  color:var(--purple);
+}
+.btn-bridge-outline:hover {
+  background:rgba(188,140,255,.1);
+  filter:brightness(1);
+}
+
+/* ══ CARD, INPUTS, BUTTONS (mantidos) ══ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
+.card-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:1px;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.input-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.input-group label{font-size:.75rem;color:var(--text2);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+input,textarea,select{background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:10px 14px;font-size:.92rem;font-family:'Fira Code',monospace;width:100%;transition:border-color .2s;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--purple);}
+textarea{resize:vertical;min-height:62px;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+button{font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;padding:9px 18px;border:none;border-radius:var(--r-sm);cursor:pointer;transition:filter .18s,transform .1s;white-space:nowrap;}
+button:hover{filter:brightness(1.15);}
+button:active{transform:scale(.96);}
+.btn-primary{background:var(--accent);color:var(--bg);}
+.btn-success{background:var(--green);color:var(--bg);}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-info{background:var(--blue);color:var(--bg);}
+.btn-purple{background:var(--purple);color:var(--bg);}
+.btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border);}
+.btn-sm{font-size:.76rem!important;padding:5px 11px!important;}
+.btn-max{background:linear-gradient(135deg,#4a1d8a,#9333ea);color:#e9d5ff;font-weight:900;font-size:1rem;padding:12px 28px;box-shadow:0 4px 24px rgba(147,51,234,.35);border:1px solid rgba(188,140,255,.3);border-radius:var(--r);}
+.btn-max:hover{box-shadow:0 6px 32px rgba(147,51,234,.55);}
+
+/* ══ VOLANTES MAX GRID ══ */
+.max-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px;}
+.max-card{background:var(--surface2);border:1.5px solid rgba(188,140,255,.18);border-radius:var(--r);padding:13px;transition:border-color .2s,box-shadow .2s;animation:fadeCard .3s ease;}
+@keyframes fadeCard{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.max-card:hover{border-color:var(--purple);box-shadow:0 4px 20px rgba(188,140,255,.1);}
+.max-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.max-card-num{font-family:'Oswald',sans-serif;font-size:.95rem;color:var(--purple);letter-spacing:1px;}
+.mmx{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:8px 0;}
+.mb{aspect-ratio:1;border-radius:50%;border:1.5px solid var(--border);background:var(--surface3);color:rgba(255,255,255,.15);font-family:'Fira Code',monospace;font-weight:800;font-size:.68rem;display:flex;align-items:center;justify-content:center;}
+.mb.fx{background:var(--purple);color:#fff;border-color:var(--purple);font-size:.72rem;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+.mb.lv{background:var(--green);color:#000;border-color:var(--green);font-size:.72rem;}
+.mb.fx.mg{box-shadow:0 0 0 2px var(--orange),0 0 7px rgba(255,166,87,.4);}
+.mb.lv.mg{box-shadow:0 0 0 2px var(--orange),0 0 7px rgba(255,166,87,.4);}
+.mb.nm-mg{border-color:rgba(255,166,87,.25);}
+.max-dez-str{font-family:'Fira Code',monospace;font-size:.73rem;line-height:1.8;margin:6px 0;letter-spacing:.3px;}
+.max-fl{font-size:.68rem;color:var(--text2);margin-bottom:2px;}
+.max-fl span{font-weight:800;}
+.sc-wrap{margin-top:7px;padding-top:7px;border-top:1px solid var(--border);}
+.sc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:.68rem;}
+.sc-lbl{color:var(--text2);}
+.sc-num{font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;}
+.sc-bar{position:relative;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-bottom:4px;}
+.sc-zones{position:absolute;inset:0;display:flex;opacity:.12;pointer-events:none;}
+.sz-r{flex:0 0 40%;background:var(--red);}
+.sz-o{flex:0 0 30%;background:var(--orange);}
+.sz-g{flex:1;background:var(--green);}
+.sc-fill{height:100%;border-radius:4px;transition:width .5s;}
+.sc-chips{display:flex;flex-wrap:wrap;gap:3px;}
+.sch{font-size:.63rem;padding:1px 6px;border-radius:8px;font-weight:700;background:var(--surface3);border:1px solid var(--border);color:var(--text2);font-family:'Nunito',sans-serif;}
+.sch.ok{border-color:rgba(63,185,80,.5);color:var(--green);}
+.sch.wn{border-color:rgba(255,166,87,.5);color:var(--orange);}
+.sch.bd{border-color:rgba(248,81,73,.4);color:var(--red);}
+.semaforo{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.sem-g{background:var(--green);box-shadow:0 0 6px rgba(63,185,80,.6);}
+.sem-y{background:var(--accent);box-shadow:0 0 6px rgba(240,192,64,.5);}
+.sem-r{background:var(--orange);box-shadow:0 0 6px rgba(255,166,87,.4);}
+
+/* ══ STEP 4 CONFERIR, STATS, PENEIRA (resumido) ══ */
+.conf-input{background:var(--surface3);border:2px solid var(--border);border-radius:var(--r);padding:12px 16px;font-family:'Fira Code',monospace;font-size:1rem;color:var(--text);width:100%;transition:border-color .2s;}
+.conf-input:focus{outline:none;border-color:var(--green);}
+.conf-result{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px;}
+.conf-pts{font-family:'Oswald',sans-serif;font-size:2rem;font-weight:700;line-height:1;}
+.conf-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px;}
+.conf-tag{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;font-family:'Fira Code',monospace;background:var(--surface3);color:var(--text2);border:1.5px solid var(--border);}
+.conf-tag.hit-fx{background:var(--purple);color:#fff;border-color:var(--purple);}
+.conf-tag.hit-lv{background:var(--green);color:#000;border-color:var(--green);}
+.conf-resumo{background:linear-gradient(135deg,rgba(63,185,80,.08),rgba(88,166,255,.04));border:1px solid rgba(63,185,80,.2);border-radius:var(--r);padding:14px;margin-top:12px;}
+.fixas-hit{background:rgba(188,140,255,.06);border:1px solid rgba(188,140,255,.2);border-radius:var(--r-sm);padding:10px 12px;margin-top:10px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:7px;margin-top:10px;}
+.stat-cell{background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 7px;text-align:center;}
+.stat-cell .lbl{font-size:.67rem;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.stat-cell .val{font-family:'Oswald',sans-serif;font-size:1.1rem;color:var(--text);}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;}
+.badge.otimo{background:var(--green);color:var(--bg);}
+.badge.bom{background:var(--orange);color:var(--bg);}
+.badge.ruim{background:var(--red);color:#fff;}
+.badge.normal{background:var(--surface3);color:var(--text2);}
+.summary-bar{background:linear-gradient(135deg,rgba(74,29,138,.15),rgba(147,51,234,.08));border:1px solid rgba(188,140,255,.25);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.82rem;}
+.summary-bar strong{color:var(--purple);}
+.sb-badge{background:rgba(74,29,138,.3);border:1px solid rgba(188,140,255,.2);border-radius:6px;padding:2px 9px;font-size:.74rem;color:#e9d5ff;}
+
+/* ══ EXPERT PANEL, MODAL, FEEDBACK (resumido) ══ */
+.expert-panel{position:fixed;right:0;top:54px;bottom:0;width:320px;background:rgba(10,15,22,.97);backdrop-filter:blur(16px);border-left:1px solid var(--border);z-index:150;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
+.expert-panel.open{transform:translateX(0);}
+.ep-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ep-title{font-family:'Oswald',sans-serif;font-size:.95rem;color:var(--accent);letter-spacing:1px;}
+.ep-close{background:none;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:4px;}
+.ep-close:hover{color:var(--text);}
+.ep-body{flex:1;overflow-y:auto;padding:14px;}
+.ep-section{margin-bottom:18px;}
+.ep-section-title{font-size:.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.ep-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:.83rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:6px;transition:all .18s;text-align:left;}
+.ep-btn:hover{border-color:var(--purple);color:var(--purple);background:rgba(188,140,255,.06);}
+.ep-btn .ep-icon{font-size:1rem;flex-shrink:0;width:22px;text-align:center;}
+.ep-btn.danger{border-color:rgba(248,81,73,.25);}
+.ep-btn.danger:hover{border-color:var(--red);color:var(--red);background:rgba(248,81,73,.06);}
+.ep-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:140;}
+.ep-overlay.open{display:block;}
+.fb-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column-reverse;gap:6px;z-index:300;pointer-events:none;width:min(480px,90vw);}
+.fb-msg{padding:10px 16px;border-radius:var(--r-sm);font-size:.84rem;font-weight:600;animation:fbIn .25s ease;pointer-events:auto;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+@keyframes fbIn{from{transform:translateY(10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.fb-msg.info{background:#0c2b3a;color:#7dd3f7;border-left:3px solid #7dd3f7;}
+.fb-msg.success{background:#0a2e1a;color:#3fb950;border-left:3px solid #3fb950;}
+.fb-msg.warning{background:#2e2100;color:#ffa657;border-left:3px solid #ffa657;}
+.fb-msg.error{background:#2e0a0a;color:#f85149;border-left:3px solid #f85149;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;animation:modalIn .2s ease;}
+@keyframes modalIn{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-title{font-family:'Oswald',sans-serif;font-size:1.1rem;color:var(--accent);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.hi-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:8px;}
+.hi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.hi-num{font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--accent);}
+.hi-date{font-size:.72rem;color:var(--text2);}
+.hi-tags{display:flex;flex-wrap:wrap;gap:3px;}
+.hi-tag{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;font-family:'Fira Code',monospace;background:var(--accent);color:var(--bg);border:1px solid var(--accent);}
+.caixa-saldo{font-family:'Oswald',sans-serif;font-size:2.2rem;font-weight:700;text-align:center;padding:12px 0 4px;letter-spacing:1px;}
+.caixa-saldo.pos{color:var(--green);}
+.caixa-saldo.neg{color:var(--red);}
+.caixa-saldo.neu{color:var(--text2);}
+.sessao-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:7px;font-size:.81rem;}
+.sessao-item.ganhou{border-left-color:var(--green);}
+.sessao-item.perdeu{border-left-color:var(--red);}
+.progress-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:3px;transition:width .4s;}
+.rel-table{width:100%;border-collapse:collapse;font-size:.78rem;font-family:'Fira Code',monospace;}
+.rel-table th{background:var(--surface3);color:var(--text2);font-size:.68rem;text-transform:uppercase;padding:8px 9px;text-align:center;border-bottom:2px solid var(--border);}
+.rel-table td{padding:7px 9px;text-align:center;border-bottom:1px solid var(--border);color:var(--text);}
+.rel-table td:first-child{color:var(--accent);font-family:'Oswald',sans-serif;font-size:.9rem;}
+.rhi{color:var(--green)!important;font-weight:800;}
+.rlo{color:var(--red)!important;font-weight:800;}
+.rmd{color:var(--orange)!important;font-weight:700;}
+.peneira-wrap{margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(255,166,87,.06),rgba(240,192,64,.03));border:1px solid rgba(255,166,87,.25);border-radius:var(--r);}
+.peneira-title{font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--orange);letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.peneira-controles{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px;}
+.peneira-ctrl{display:flex;flex-direction:column;gap:4px;}
+.peneira-ctrl label{font-size:.68rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.peneira-ctrl select{background:var(--surface3);border:1px solid rgba(255,166,87,.3);border-radius:6px;color:var(--orange);padding:6px 10px;font-size:.8rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+.peneira-result{background:var(--surface3);border-radius:6px;padding:8px 12px;font-size:.8rem;color:var(--text2);line-height:1.7;}
+.peneira-result strong{color:var(--orange);}
+.peneira-result .p-ok{color:var(--green);font-weight:700;}
+.peneira-result .p-ko{color:var(--red);font-weight:700;}
+.max-card.eliminado{opacity:.35;filter:grayscale(.7);border-color:rgba(248,81,73,.2)!important;position:relative;}
+.max-card.eliminado::after{content:'ELIMINADO';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:700;color:var(--red);border:2px solid var(--red);padding:4px 12px;border-radius:6px;opacity:.7;pointer-events:none;background:rgba(10,15,22,.85);}
+.mag-pos-badge{font-size:.62rem;padding:1px 6px;border-radius:8px;font-weight:700;font-family:'Nunito',sans-serif;margin-left:3px;}
+.mag-pos-badge.mp-ok{background:rgba(63,185,80,.15);border:1px solid rgba(63,185,80,.4);color:var(--green);}
+.mag-pos-badge.mp-wn{background:rgba(255,166,87,.12);border:1px solid rgba(255,166,87,.35);color:var(--orange);}
+.mag-pos-badge.mp-bd{background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.3);color:var(--red);}
+
+/* ══ MÓDULO TENDÊNCIAS (mantido da v53) ══ */
+.tend-header{background:linear-gradient(135deg,rgba(139,92,246,.12) 0%,rgba(251,191,36,.08) 100%);border:1px solid rgba(251,191,36,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.tend-header-left h2{font-family:'Oswald',sans-serif;font-size:1.4rem;letter-spacing:2px;background:linear-gradient(90deg,var(--tend-gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.tend-header-left p{font-size:.78rem;color:var(--text2);}
+.tend-optional-banner{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:18px;font-size:.8rem;color:var(--text2);display:flex;align-items:center;gap:10px;}
+.tend-optional-banner strong{color:var(--blue);}
+.tend-inputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:640px){.tend-inputs-grid{grid-template-columns:1fr;}}
+.tend-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.tend-card-title{font-family:'Oswald',sans-serif;font-size:.95rem;letter-spacing:.5px;color:var(--tend-gold);display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.tend-num-label{font-size:.72rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.tend-num-row{display:flex;gap:5px;flex-wrap:wrap;}
+.tend-num-input{width:42px;height:42px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface3);color:var(--text);text-align:center;font-size:1rem;font-weight:700;font-family:'Fira Code',monospace;transition:all .25s;padding:0;}
+.tend-num-input:focus{outline:none;border-color:var(--tend-purple);box-shadow:0 0 0 2px rgba(139,92,246,.25);}
+.tend-num-input.valid{border-color:var(--tend-green);background:rgba(16,185,129,.1);}
+.tend-num-input.invalid{border-color:var(--red);background:rgba(248,81,73,.1);}
+.tend-cc-input{width:110px;background:var(--surface3);border:1.5px solid var(--border);border-radius:var(--r-sm);color:var(--tend-gold);padding:8px 12px;font-size:1.1rem;font-family:'Fira Code',monospace;font-weight:700;transition:border-color .2s;}
+.tend-cc-input:focus{outline:none;border-color:var(--tend-gold);}
+.tend-btn-analyze{background:linear-gradient(135deg,var(--tend-purple),var(--tend-purple-d));color:#fff;font-weight:900;font-size:1rem;padding:14px 32px;box-shadow:0 4px 24px rgba(139,92,246,.4);border:1px solid rgba(139,92,246,.4);border-radius:var(--r);width:100%;margin-bottom:10px;transition:all .25s;}
+.tend-btn-analyze:hover{box-shadow:0 6px 32px rgba(139,92,246,.6);transform:translateY(-2px);}
+.tend-btn-example{background:var(--surface3);color:var(--text2);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 20px;font-size:.85rem;width:100%;transition:all .2s;}
+.tend-btn-example:hover{color:var(--text);border-color:var(--text2);}
+.tend-autoload-bar{background:rgba(57,213,200,.06);border:1px solid rgba(57,213,200,.2);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.tend-autoload-bar span{font-size:.8rem;color:var(--teal);}
+.tend-autoload-bar strong{color:var(--tend-gold);}
+.tend-result-section{background:var(--surface);border:1px solid rgba(251,191,36,.2);border-radius:var(--r);padding:20px;margin-top:20px;animation:fadeIn .4s ease;}
+.tend-result-title{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--tend-gold);text-align:center;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.tend-balls-row{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.tend-ball{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;font-family:'Fira Code',monospace;transition:transform .2s;cursor:default;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.tend-ball:hover{transform:scale(1.12);}
+.tend-ball.t-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1e1b4b;box-shadow:0 4px 20px rgba(251,191,36,.4);}
+.tend-ball.t-magic{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 4px 20px rgba(139,92,246,.4);}
+.tend-ball.t-prime{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 20px rgba(16,185,129,.35);}
+.tend-ball.t-even{background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;box-shadow:0 4px 20px rgba(6,182,212,.35);}
+.tend-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-bottom:18px;}
+.tend-legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text2);}
+.tend-legend-dot{width:14px;height:14px;border-radius:50%;}
+.tend-stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:18px;}
+.tend-stat-cell{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;}
+.tend-stat-val{font-family:'Oswald',sans-serif;font-size:1.6rem;font-weight:700;color:var(--tend-gold);}
+.tend-stat-lbl{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.tend-analysis{background:var(--surface3);border-radius:var(--r-sm);padding:14px;margin-bottom:16px;}
+.tend-analysis-title{font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);margin-bottom:12px;letter-spacing:.5px;}
+.tend-analysis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+.tend-analysis-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:6px;}
+.tend-analysis-label{font-size:.78rem;color:var(--text2);}
+.tend-analysis-value{font-size:.82rem;font-weight:800;color:var(--text);}
+.tend-table{width:100%;border-collapse:collapse;font-size:.78rem;}
+.tend-table th{background:var(--surface3);color:var(--text2);font-size:.68rem;text-transform:uppercase;padding:8px;border-bottom:2px solid var(--border);text-align:center;}
+.tend-table td{padding:8px;border-bottom:1px solid var(--border);text-align:center;color:var(--text);}
+.tend-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.65rem;font-weight:800;margin:1px;}
+.tend-badge.magic{background:rgba(139,92,246,.2);color:#a78bfa;border:1px solid rgba(139,92,246,.3);}
+.tend-badge.prime{background:rgba(16,185,129,.2);color:#6ee7b7;border:1px solid rgba(16,185,129,.3);}
+.tend-badge.even{background:rgba(6,182,212,.2);color:#67e8f9;border:1px solid rgba(6,182,212,.3);}
+.tend-badge.odd{background:rgba(236,72,153,.2);color:#f9a8d4;border:1px solid rgba(236,72,153,.3);}
+.tend-synergy-bar{background:linear-gradient(135deg,rgba(188,140,255,.1),rgba(63,185,80,.06));border:1px solid rgba(188,140,255,.3);border-radius:var(--r);padding:14px 18px;margin-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.tend-synergy-bar-left{font-size:.83rem;color:var(--text2);line-height:1.6;}
+.tend-synergy-bar-left strong{color:var(--purple);}
+.tend-synergy-bar-left small{display:block;font-size:.72rem;color:var(--text3);margin-top:2px;}
+.btn-synergy{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;font-weight:900;font-size:.9rem;padding:11px 22px;border:1px solid rgba(188,140,255,.4);border-radius:var(--r-sm);box-shadow:0 4px 16px rgba(188,140,255,.3);white-space:nowrap;transition:all .25s;}
+.btn-synergy:hover{box-shadow:0 6px 24px rgba(188,140,255,.5);transform:translateY(-2px);}
+.tend-loading{display:none;text-align:center;padding:24px;}
+.tend-spinner{width:46px;height:46px;border:4px solid rgba(255,255,255,.08);border-top-color:var(--tend-purple);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ RESPONSIVO ══ */
+@media(max-width:640px){
+  .topnav-tabs{display:none;}
+  .input-row{grid-template-columns:1fr;}
+  .max-grid{grid-template-columns:1fr 1fr;}
+  .expert-panel{width:100%;top:auto;bottom:0;height:75vh;transform:translateY(100%);border-left:none;border-top:1px solid var(--border);}
+  .expert-panel.open{transform:translateY(0);}
+  .viab-grid{grid-template-columns:repeat(3,1fr);}
+  .peneira-controles{flex-direction:column;}
+  .tend-synergy-bar{flex-direction:column;}
+}
+@media(max-width:400px){
+  .max-grid{grid-template-columns:1fr;}
+  .viab-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══ -->
+<nav class="topnav">
+  <div class="topnav-brand">🔱 LotoFácil <span>COCKPIT 2 · V54 BRIDGE</span></div>
+  <div class="topnav-tabs">
+    <button class="tab-btn active" onclick="goTab('wizard')">🎯 Jogo</button>
+    <button class="tab-btn tend-tab" onclick="goTab('tendencias')">📈 Tendências</button>
+    <button class="tab-btn" onclick="goTab('historico')">📜 Histórico</button>
+    <button class="tab-btn" onclick="goTab('caixa')">💰 Caixa</button>
+    <button class="tab-btn" onclick="goTab('relatorio')">📋 Relatório</button>
+    <button class="tab-btn" onclick="abrirGuia()">📖 Guia</button>
+  </div>
+  <div class="topnav-right">
+    <div class="expert-toggle" id="expertToggle" onclick="toggleExpert()">
+      <div class="toggle-dot"></div>
+      <span>Expert</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ EXPERT PANEL (resumido) ══ -->
+<div class="ep-overlay" id="epOverlay" onclick="toggleExpert()"></div>
+<div class="expert-panel" id="expertPanel">
+  <div class="ep-header"><div class="ep-title">⚙️ PAINEL EXPERT</div><button class="ep-close" onclick="toggleExpert()">✕</button></div>
+  <div class="ep-body">
+    <div class="ep-section"><div class="ep-section-title">📥 Importar</div><button class="ep-btn" onclick="importarHistorico();toggleExpert()"><span class="ep-icon">📂</span>Importar Histórico (JSON)</button><button class="ep-btn" onclick="importarVolantesMAX();toggleExpert()"><span class="ep-icon">📄</span>Carregar Volantes MAX (.txt)</button></div>
+    <div class="ep-section"><div class="ep-section-title">📤 Exportar</div><button class="ep-btn" onclick="exportarHistorico();toggleExpert()"><span class="ep-icon">💾</span>Exportar Histórico (JSON)</button><button class="ep-btn" onclick="exportarMAX();toggleExpert()"><span class="ep-icon">📝</span>Exportar Volantes MAX (.txt)</button><button class="ep-btn" onclick="exportarRelatorioCSV();toggleExpert()"><span class="ep-icon">📊</span>Exportar Relatório (CSV)</button><button class="ep-btn" onclick="imprimirRelatorio();toggleExpert()"><span class="ep-icon">🖨️</span>Imprimir Relatório</button></div>
+    <div class="ep-section"><div class="ep-section-title">✏️ Histórico</div><button class="ep-btn" onclick="abrirModalCC(null);toggleExpert()"><span class="ep-icon">➕</span>Inserir Concurso Manual</button><button class="ep-btn danger" onclick="limparHistorico();toggleExpert()"><span class="ep-icon">🗑️</span>Limpar Todo o Histórico</button></div>
+    <div class="ep-section"><div class="ep-section-title">💰 Caixa Financeira</div><button class="ep-btn danger" onclick="zerarCaixa();toggleExpert()"><span class="ep-icon">🗑️</span>Zerar Caixa</button></div>
+    <div class="ep-section"><div class="ep-section-title">⚡ Sistema</div><button class="ep-btn" onclick="resetSessao();toggleExpert()"><span class="ep-icon">🔄</span>Reset de Sessão</button><button class="ep-btn nuke-btn danger" onclick="resetTotal();toggleExpert()"><span class="ep-icon">☢️</span>RESET TOTAL</button></div>
+    <div class="ep-section"><div class="ep-section-title">🌉 BRIDGE (Trend Analyzer)</div><button class="ep-btn" onclick="exportarHistoricoParaTrend();toggleExpert()"><span class="ep-icon">📤</span>Exportar Histórico para Trend</button><button class="ep-btn" onclick="importarFixasDoTrend();toggleExpert()"><span class="ep-icon">📥</span>Importar Fixas do Trend</button><button class="ep-btn" onclick="verificarRecomendacaoTrend();toggleExpert()"><span class="ep-icon">🔍</span>Verificar Recomendação</button></div>
+    <div class="ep-section"><div class="ep-section-title">📢 Log do Sistema</div><div id="epFbLog" style="font-size:.75rem;color:var(--text2);max-height:180px;overflow-y:auto;background:var(--surface3);border-radius:var(--r-sm);padding:8px;line-height:1.7;">Aguardando ações...</div></div>
+  </div>
+</div>
+
+<!-- ══ MAIN WRAP ══ -->
+<div class="wrap">
+
+<!-- ████████████████ TAB: JOGO (WIZARD) ████████████████ -->
+<div class="section active" id="tab-wizard">
+  <!-- NOVO: BANNER DO TREND ANALYZER BRIDGE -->
+  <div id="trendBridgeBanner" class="trend-bridge-banner" style="display:none;"></div>
+  
+  <div class="step current" id="step1">
+    <div class="step-header" onclick="toggleStep(1)">
+      <div class="step-num">1</div>
+      <div><div class="step-title">📜 Histórico de Concursos</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">Cole os concursos ou importe um arquivo</div></div>
+      <div class="step-subtitle" id="step1badge"></div>
+    </div>
+    <div class="step-body" id="step1body">
+      <div class="input-group"><label>Cole concursos — formato: número data d1 d2 ... d15 (uma linha por concurso)</label><textarea class="cc-paste-area" id="ccPasteArea" placeholder="3640 19/03/2026 01 04 06 07 09 10 11 13 14 15 16 18 19 22 24&#10;3639 18/03/2026 01 03 04 05 06 07 09 10 11 12 13 15 18 23 25&#10;..."></textarea><div class="cc-counter" id="ccPasteCounter">0 linhas detectadas</div></div>
+      <div class="btn-row"><button class="btn-purple" onclick="processarColagem()">📥 Processar Colagem</button><button class="btn-ghost" onclick="document.getElementById('ccPasteArea').value='';atualizarContadorPaste()">↺ Limpar</button></div>
+      <div id="ccListWrapper" style="display:none;margin-top:14px"><div style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px">Concursos no histórico</div><div class="cc-list" id="ccList"></div><div class="btn-row" style="margin-top:10px"><button class="btn-success" onclick="avancarStep2()">▶ Analisar Âncoras →</button></div></div>
+    </div>
+  </div>
+  <div class="step locked" id="step2"><div class="step-header" onclick="toggleStep(2)"><div class="step-num">2</div><div><div class="step-title">🔬 Análise de Viabilidade — Escolha a Âncora</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">O sistema identifica as melhores posições automaticamente</div></div><div class="step-subtitle" id="step2badge"></div></div><div class="step-body" id="step2body"><div style="font-size:.82rem;color:var(--text2);margin-bottom:12px;line-height:1.6">Clique em uma posição para ver as dezenas que serão fixadas. Posições <strong style="color:var(--green)">verdes ⭐</strong> são estatisticamente mais favoráveis com base no histórico carregado.</div><div class="input-row" style="margin-bottom:14px"><div class="input-group"><label>Concurso Âncora</label><select id="ancoraSelectWiz" onchange="onAncoraChange()" style="font-size:.85rem"></select></div><div class="input-group"><label>Posições recomendadas baseadas em</label><div style="padding:9px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);font-size:.82rem;color:var(--text2)" id="viabBase">— aguardando análise —</div></div></div><div class="viab-grid" id="viabGrid"></div><div class="ancora-info" id="ancoraInfo" style="display:none"><div class="ai-label" id="ancoraInfoLabel">🔒 Dezenas Fixadas</div><div class="ai-fixas" id="ancoraInfoFixas"></div><div class="ai-chips" id="ancoraInfoChips"></div></div><div class="btn-row" style="margin-top:14px"><button class="btn-success" onclick="avancarStep3()" id="btnStep3">▶ Configurar Geração →</button></div></div></div>
+  <div class="step locked" id="step3"><div class="step-header" onclick="toggleStep(3)"><div class="step-num">3</div><div><div class="step-title">🔱 Gerar Volantes MAX</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">9 fixas garantidas + 6 livres filtradas pelo motor inteligente</div></div><div class="step-subtitle" id="step3badge"></div></div><div class="step-body" id="step3body"><div class="gen-center"><div class="gen-qty-wrap"><span class="gen-qty-label">Quantidade de volantes:</span><input type="number" class="gen-qty-input" id="genQtd" value="10" min="1" max="999"></div><div class="gen-info" id="genInfo">Escolha a quantidade e clique em Gerar.<br>O motor inteligente gera internamente <strong>300×</strong> e entrega os melhores por Score Geral.</div><div style="width:100%"><div class="adv-toggle" id="advToggle" onclick="toggleAdv()"><span>⚙️ Filtros avançados</span><span id="advArrow">▼</span></div><div class="adv-body" id="advBody"><div class="filter-row"><div><label>Qualidade da Soma</label><select id="genSoma"><option value="otimo">⭐ Apenas Ótima (181–220)</option><option value="bom" selected>✅ Boa ou melhor (161–240)</option><option value="any">🎯 Qualquer</option></select></div><div><label>Paridade</label><select id="genParidade"><option value="any">Qualquer</option><option value="78" selected>7 ou 8 pares</option><option value="balanced">6–9 pares</option><option value="67">6P/9I</option><option value="76">7P/8I</option></select></div><div><label>Mínimo de Mágicas</label><select id="genMagicas"><option value="any">Qualquer</option><option value="3" selected>≥ 3</option><option value="4">≥ 4</option><option value="5">≥ 5</option></select></div><div><label>Miolo</label><select id="genMoldura"><option value="any">Qualquer</option><option value="balanced" selected>≤ 4 (balanceado)</option><option value="strict">≤ 3 (estrito)</option></select></div></div></div></div><button class="btn-max" onclick="gerarWizard()">🔱 GERAR VOLANTES MAX</button></div><div id="genSummary" style="display:none" class="summary-bar"></div><div id="genGrid" class="max-grid"></div><div id="genActions" style="display:none" class="btn-row"><button class="btn-success" onclick="avancarStep4()">▶ Conferir Resultado →</button><button class="btn-ghost" onclick="limparGeracao()">↺ Gerar de novo</button></div><div class="peneira-wrap" id="peneiraWrap" style="display:none"><div class="peneira-title">🔮 Peneira de Mágicas<span style="font-size:.7rem;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:400;letter-spacing:0"> — filtra volantes baseado nos dois padrões históricos (94.1% de confiança)</span></div><div class="peneira-controles"><div class="peneira-ctrl"><label>Qtd de Mágicas no jogo</label><select id="peneiraQtd" onchange="aplicarPeneira()"><option value="any">Qualquer quantidade</option><option value="4-7" selected>✅ 4 a 7 mágicas (normal — 94%)</option><option value="5-7">⭐ 5 a 7 mágicas (mais provável)</option><option value="4-6">4 a 6 mágicas</option></select></div><div class="peneira-ctrl"><label>Casa da 1ª mágica</label><select id="peneiraCasa" onchange="aplicarPeneira()"><option value="any">Qualquer casa</option><option value="3-4" selected>✅ 3ª ou 4ª casa (normal — 79%)</option><option value="3">3ª casa somente (41%)</option><option value="2-4">2ª a 4ª casa (91%)</option></select></div><div class="peneira-ctrl" style="justify-content:flex-end;padding-top:18px"><button class="btn-ghost btn-sm" onclick="limparPeneira()" style="border-color:rgba(255,166,87,.3);color:var(--orange)">↺ Remover Filtros</button></div></div><div class="peneira-result" id="peneiraResult">Ajuste os filtros acima para ativar a peneira.</div></div></div></div>
+  <div class="step locked" id="step4"><div class="step-header" onclick="toggleStep(4)"><div class="step-num">4</div><div><div class="step-title">✅ Conferir Resultado</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">Cole as dezenas sorteadas e veja o resultado de todos os volantes</div></div><div class="step-subtitle" id="step4badge"></div></div><div class="step-body" id="step4body"><div class="input-group"><label>15 dezenas do resultado oficial (espaço ou vírgula)</label><input type="text" class="conf-input" id="confResultado" placeholder="Ex: 01 04 06 07 09 10 11 13 14 15 16 18 19 22 24"></div><div class="btn-row" style="margin-bottom:14px"><button class="btn-primary" onclick="conferirWizard()">🔍 Conferir Todos os Volantes</button><button class="btn-ghost" onclick="document.getElementById('confResultado').value='';document.getElementById('confResultados').innerHTML=''">↺ Limpar</button></div><div id="confResultados"></div></div></div>
+</div>
+
+<!-- ████████████████ TAB: TENDÊNCIAS (mantido da v53) ████████████████ -->
+<div class="section" id="tab-tendencias">
+  <div class="tend-header"><div class="tend-header-left"><h2>📈 DETECTOR DE TENDÊNCIA · V54 BRIDGE</h2><p>Heurística de 9 fixas baseada em repetições entre concursos consecutivos</p></div><div style="font-size:.75rem;color:var(--text2);text-align:right;"><div style="color:var(--tend-gold);font-weight:800;font-size:.85rem;">MÓDULO OPCIONAL</div><div>Integrado com COCKPIT via BRIDGE</div></div></div>
+  <div class="tend-optional-banner"><span style="font-size:1.1rem">ℹ️</span><div><strong>Modo independente + BRIDGE</strong> — Analise tendências e <strong>exporte as 9 fixas para o COCKPIT</strong> via botão abaixo. O COCKPIT também pode exportar seu histórico para alimentar esta análise.</div></div>
+  <div class="tend-autoload-bar" id="tendAutoloadBar" style="display:none"><span>⚡ Histórico detectado — <strong id="tendAutoloadInfo">2 concursos</strong> mais recentes pré-carregados automaticamente</span><button class="btn-ghost btn-sm" onclick="tendAutoLoad()" style="border-color:rgba(57,213,200,.3);color:var(--teal)">🔄 Aplicar do Histórico</button></div>
+  <div class="tend-inputs-grid"><div class="tend-card"><div class="tend-card-title">📊 Concurso Atual <span style="font-size:.72rem;color:var(--text2);margin-left:auto;font-family:'Nunito',sans-serif;">(mais recente)</span></div><div class="input-group" style="margin-bottom:14px"><label>Número do Concurso</label><input type="number" id="tendCCAtual" class="tend-cc-input" placeholder="Ex: 3642" value=""></div><div class="tend-num-label">15 Dezenas Sorteadas</div><div class="tend-num-row" id="tendNumAtual"></div><div id="tendErrorAtual" style="font-size:.78rem;color:var(--red);margin-top:8px;display:none"></div></div><div class="tend-card"><div class="tend-card-title">📈 Concurso Anterior <span style="font-size:.72rem;color:var(--text2);margin-left:auto;font-family:'Nunito',sans-serif;">(imediatamente anterior)</span></div><div class="input-group" style="margin-bottom:14px"><label>Número do Concurso</label><input type="number" id="tendCCAnterior" class="tend-cc-input" placeholder="Ex: 3641" value=""></div><div class="tend-num-label">15 Dezenas Sorteadas</div><div class="tend-num-row" id="tendNumAnterior"></div><div id="tendErrorAnterior" style="font-size:.78rem;color:var(--red);margin-top:8px;display:none"></div></div></div>
+  <button class="tend-btn-analyze" onclick="tendAnalyze()">🔍 Analisar Tendência e Gerar 9 Fixas</button>
+  <button class="tend-btn-example" onclick="tendLoadExample()">📋 Carregar Dados de Exemplo</button>
+  <div class="tend-loading" id="tendLoading"><div class="tend-spinner"></div><p style="color:var(--text2);font-size:.85rem">Analisando padrões e calculando probabilidades...</p></div>
+  <div class="tend-result-section" id="tendResult" style="display:none">
+    <div class="tend-result-title">🎯 9 Dezenas Fixas Recomendadas</div>
+    <div class="tend-balls-row" id="tendBalls"></div>
+    <div class="tend-legend"><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"></div><span>Normal</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"></div><span>Mágica</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#10b981,#059669)"></div><span>Prima</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#06b6d4,#0891b2)"></div><span>Par comum</span></div></div>
+    <div class="tend-stats-grid" id="tendStats"></div>
+    <div class="tend-analysis"><div class="tend-analysis-title">📊 Análise Detalhada</div><div class="tend-analysis-grid" id="tendAnalysisGrid"></div></div>
+    <div style="margin-top:12px"><div style="font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);letter-spacing:.5px;margin-bottom:10px;">📜 Top Dezenas por Score</div><div style="overflow-x:auto"><table class="tend-table" id="tendTable"><thead><tr><th>Dezena</th><th>Score</th><th>Freq. Hist.</th><th>Categorias</th><th>Status</th></tr></thead><tbody id="tendTableBody"></tbody></table></div></div>
+    <div class="tend-synergy-bar" id="tendSynergyBar"><div class="tend-synergy-bar-left"><strong>🔗 Usar no Wizard principal</strong><small>Envia as 9 fixas de tendência como âncora alternativa para o Passo 3 — Gerar Volantes MAX</small></div><button class="btn-synergy" onclick="tendSendToWizard()">🔱 Enviar para o Wizard →</button></div>
+    <button class="btn-ghost" style="width:100%;margin-top:10px" onclick="tendCopy()">📋 Copiar 9 Fixas</button>
+    <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);"><button class="btn-info" style="width:100%;" onclick="exportarFixasParaBridge()">🌉 EXPORTAR FIXAS PARA BRIDGE (COCKPIT)</button></div>
+    <div style="margin-top:8px;"><button class="btn-ghost" style="width:100%;" onclick="importarHistoricoDoCockpit()">📥 IMPORTAR HISTÓRICO DO COCKPIT</button></div>
+  </div>
+</div>
+
+<!-- ████████████████ TAB: HISTÓRICO ████████████████ -->
+<div class="section" id="tab-historico"><div class="card"><div class="card-title">📜 Histórico de Concursos</div><div id="histFullList"><p style="color:var(--text2);font-size:.88rem">Nenhum concurso no histórico.</p></div></div></div>
+
+<!-- ████████████████ TAB: CAIXA ████████████████ -->
+<div class="section" id="tab-caixa"><div class="card"><div class="card-title">💰 Caixa Financeira</div><div class="caixa-saldo neu" id="caixaSaldo">R$ 0,00</div><div style="text-align:center;font-size:.76rem;color:var(--text2);margin-bottom:12px">saldo líquido acumulado</div><div class="stats-grid" id="caixaTotais"></div><div style="margin:10px 0 4px;font-size:.73rem;color:var(--text2)">Recuperação do investimento</div><div class="progress-bar"><div class="progress-fill" id="caixaProgress" style="width:0%"></div></div><div style="font-size:.7rem;color:var(--text2);margin-top:3px;text-align:right" id="caixaProgLabel">0%</div><div style="margin:14px 0 8px;font-size:.77rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Histórico de Sessões</div><div id="caixaSessoes" style="max-height:320px;overflow-y:auto"><p style="color:var(--text2);font-size:.85rem">Nenhuma sessão ainda.</p></div></div></div>
+
+<!-- ████████████████ TAB: RELATÓRIO ████████████████ -->
+<div class="section" id="tab-relatorio"><div class="card"><div class="card-title">📋 Relatório Comparativo</div><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px"><div class="input-group" style="flex:1;min-width:140px"><label>Colunas</label><select id="relColunas" onchange="gerarRelatorio()"><option value="resumo">Resumo</option><option value="completo">+ Dezenas</option><option value="financeiro">+ Financeiro</option></select></div><div class="input-group" style="flex:1;min-width:130px"><label>Ordenar</label><select id="relOrdem" onchange="gerarRelatorio()"><option value="desc">Mais recente</option><option value="asc">Mais antigo</option><option value="soma">Maior soma</option><option value="magicas">Mais mágicas</option></select></div><div style="display:flex;gap:6px;padding-top:18px"><button class="btn-info btn-sm" onclick="gerarRelatorio()">🔄</button><button class="btn-success btn-sm" onclick="imprimirRelatorio()">🖨️</button><button class="btn-ghost btn-sm" onclick="exportarRelatorioCSV()">CSV</button></div></div><div style="overflow-x:auto" id="relatorioTabela"><p style="color:var(--text2);font-size:.88rem">Carregue concursos para gerar o relatório.</p></div><div id="relatorioHeuristica" style="display:none"></div></div></div>
+</div>
+
+<!-- ══ MODAL CC ══ -->
+<div class="modal-overlay" id="modalCC"><div class="modal"><div class="modal-title" id="modalCCTitulo">➕ Inserir Concurso</div><div class="input-row"><div class="input-group"><label>Nº do Concurso</label><input type="number" id="mNum" placeholder="3640" min="1"></div><div class="input-group"><label>Data (dd/mm/aaaa)</label><input type="text" id="mData" placeholder="19/03/2026"></div></div><div class="input-group"><label>15 Dezenas</label><textarea id="mDezenas" rows="2" placeholder="01 04 06 07 09 10 11 13 14 15 16 18 19 22 24"></textarea></div><input type="hidden" id="mEditIdx" value="-1"><div class="btn-row"><button class="btn-primary" onclick="salvarModalCC()">💾 Salvar</button><button class="btn-ghost" onclick="fecharModalCC()">✕ Cancelar</button></div></div></div>
+<div class="fb-container" id="fbContainer"></div>
+
+// ── NAVEGAÇÃO PARA O GUIA ──────────────────────────────────────────
+
+
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   V54 - COCKPIT + TREND BRIDGE
+   Integração via localStorage entre os dois sistemas
+═══════════════════════════════════════════════════════════════════════════ */
+
+// ==================== CONSTANTES GLOBAIS ====================
+const PRIMOS = [2,3,5,7,11,13,17,19,23];
+const MOLDURA = [1,2,3,4,5,6,10,11,15,16,20,21,22,23,24,25];
+const MIOLO = [7,8,9,12,13,14,17,18,19];
+const MAGICAS = [5,6,7,12,13,14,19,20,21];
+const PREMIOS = {11:7,12:14,13:35,14:1500,15:500000};
+const NOMES_POS = ['1ª','2ª','3ª','4ª','5ª','6ª','7ª'];
+const DESC_POS = ['dz 1–9','dz 2–10','dz 3–11','dz 4–12','dz 5–13','dz 6–14','dz 7–15'];
+
+// Bridge key para comunicação
+const BRIDGE_KEY = 'cockpit_trend_bridge_v54';
+
+// Estado global
+let estado = {
+  historico: [],
+  volantesMAX: [],
+  ancoraIdx: -1,
+  posicao: 0,
+  fixas: [],
+  viabResultados: []
+};
+let caixa = {sessoes:[], totalGasto:0, totalPremios:0};
+
+// ==================== FUNÇÕES BRIDGE (INTEGRAÇÃO) ====================
+function salvarBridge(momento, fixas, projecao, ultimoConcurso, proximoConcurso, periodo, heuristica) {
+  const bridge = {
+    momento_entrada: momento, // 'ALTA', 'MEDIA', 'BAIXA'
+    fixas_recomendadas: fixas,
+    projecao_repeticao: projecao,
+    ultimo_concurso: ultimoConcurso,
+    proximo_concurso: proximoConcurso,
+    periodo_analisado: periodo,
+    heuristica_usada: heuristica,
+    timestamp: Date.now()
+  };
+  localStorage.setItem(BRIDGE_KEY, JSON.stringify(bridge));
+  console.log('[BRIDGE] Dados salvos:', bridge);
+  return bridge;
+}
+
+function lerBridge() {
+  const data = localStorage.getItem(BRIDGE_KEY);
+  if (!data) return null;
+  try {
+    return JSON.parse(data);
+  } catch(e) {
+    return null;
+  }
+}
+
+function limparBridge() {
+  localStorage.removeItem(BRIDGE_KEY);
+  console.log('[BRIDGE] Dados limpos');
+}
+
+// ==================== FUNÇÕES DO COCKPIT PARA BRIDGE ====================
+function exportarHistoricoParaTrend() {
+  if (!estado.historico.length) {
+    fb('Nenhum histórico para exportar!', 'warning');
+    return;
+  }
+  
+  // Converte o histórico do Cockpit para o formato do Trend Analyzer
+  const draws = estado.historico.map(cc => {
+    return [parseInt(cc.numero), ...cc.dezenas];
+  }).sort((a,b) => a[0] - b[0]);
+  
+  const exportData = {
+    draws: draws,
+    historico_cockpit: estado.historico,
+    exportDate: new Date().toISOString(),
+    source: 'cockpit_v54'
+  };
+  
+  localStorage.setItem('cockpit_export_trend', JSON.stringify(exportData));
+  fb(`✅ ${draws.length} concursos exportados para o Trend Analyzer!`, 'success');
+  fb('Agora abra a aba "Tendências" e clique em "IMPORTAR HISTÓRICO DO COCKPIT"', 'info');
+}
+
+function importarFixasDoTrend() {
+  const bridge = lerBridge();
+  if (!bridge) {
+    fb('Nenhuma recomendação do Trend Analyzer encontrada. Primeiro analise no módulo Tendências e exporte para Bridge.', 'warning');
+    return;
+  }
+  
+  const agora = Date.now();
+  const diffHoras = (agora - bridge.timestamp) / (1000 * 60 * 60);
+  
+  if (diffHoras > 24) {
+    fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h). Gere uma nova análise no módulo Tendências.`, 'warning');
+    return;
+  }
+  
+  if (!bridge.fixas_recomendadas || bridge.fixas_recomendadas.length !== 9) {
+    fb('Fixas inválidas na Bridge. Reanalise no módulo Tendências.', 'error');
+    return;
+  }
+  
+  // Aplica as fixas
+  estado.fixas = [...bridge.fixas_recomendadas];
+  
+  // Configura os steps
+  setStepState(1, 'done');
+  setStepState(2, 'done');
+  setStepState(3, 'current');
+  setStepState(4, 'locked');
+  
+  // Atualiza interface
+  atualizarGenInfo();
+  
+  // Navega para o Wizard
+  goTab('wizard');
+  
+  // Esconde os bodies anteriores
+  document.getElementById('step1body').style.display = 'none';
+  document.getElementById('step2body').style.display = 'none';
+  document.getElementById('step3body').style.display = '';
+  document.getElementById('step4body').style.display = 'none';
+  
+  const fixasStr = estado.fixas.map(n => String(n).padStart(2,'0')).join(' - ');
+  fb(`✅ Fixas importadas da Bridge! Projeção: ${bridge.projecao_repeticao} repetições (${bridge.momento_entrada})`, 'success');
+  fb(`📌 Fixas: ${fixasStr}`, 'info');
+  
+  // Exibe banner com recomendação
+  mostrarBannerRecomendacao(bridge);
+}
+
+function verificarRecomendacaoTrend() {
+  const bridge = lerBridge();
+  if (!bridge) {
+    fb('Nenhuma recomendação ativa. Acesse o módulo Tendências, analise e exporte para Bridge.', 'info');
+    return;
+  }
+  
+  const agora = Date.now();
+  const diffHoras = (agora - bridge.timestamp) / (1000 * 60 * 60);
+  
+  if (diffHoras > 24) {
+    fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h atrás). Gere uma nova análise.`, 'warning');
+    return;
+  }
+  
+  mostrarBannerRecomendacao(bridge);
+  fb(`📊 Bridge ativa: ${bridge.momento_entrada} | Projeção: ${bridge.projecao_repeticao} repetições | Válida por ${Math.round(24 - diffHoras)}h`, 'success');
+}
+
+function mostrarBannerRecomendacao(bridge) {
+  const banner = document.getElementById('trendBridgeBanner');
+  if (!banner) return;
+  
+  const momento = bridge.momento_entrada;
+  const projecao = bridge.projecao_repeticao;
+  const fixas = bridge.fixas_recomendadas;
+  const proximo = bridge.proximo_concurso || '?';
+  
+  let corClasse = '';
+  let icone = '';
+  let mensagem = '';
+  
+  if (momento === 'ALTA' || projecao >= 8) {
+    corClasse = 'alta';
+    icone = '🔥🔥🔥';
+    mensagem = 'MOMENTO FAVORÁVEL! Alta probabilidade de premiação.';
+  } else if (momento === 'MEDIA' || projecao >= 6) {
+    corClasse = 'media';
+    icone = '⚡';
+    mensagem = 'Momento moderado. Considere entrar com cautela.';
+  } else {
+    corClasse = 'baixa';
+    icone = '⏸️';
+    mensagem = 'Momento desfavorável. Aguarde próxima tendência.';
+  }
+  
+  banner.className = `trend-bridge-banner ${corClasse}`;
+  banner.innerHTML = `
+    <div class="trend-bridge-header">
+      <div class="trend-bridge-title">
+        <span>🌉 TREND ANALYZER BRIDGE</span>
+        <span class="trend-bridge-badge ${corClasse}">${momento}</span>
+      </div>
+      <div>${icone}</div>
+    </div>
+    <div style="font-size:.85rem; margin-bottom:8px;">
+      <strong>Próximo concurso: ${proximo}</strong> | Projeção: <strong style="color:var(--tend-gold)">${projecao} repetições</strong>
+      ${projecao >= 8 ? '<span style="color:var(--green)"> ✅ Zona de entrada</span>' : projecao >= 6 ? '<span style="color:var(--orange)"> ⚠️ Atenção</span>' : '<span style="color:var(--red)"> ⏸️ Aguardar</span>'}
+    </div>
+    <div style="font-size:.75rem; color:var(--text2); margin-bottom:12px;">
+      ${mensagem}
+    </div>
+    <div class="trend-bridge-fixas">
+      ${fixas.map(n => `<div class="trend-bridge-fixa">${String(n).padStart(2,'0')}</div>`).join('')}
+    </div>
+    <div class="trend-bridge-buttons">
+      <button class="btn-bridge btn-sm" onclick="aplicarFixasBridge()">✅ APLICAR FIXAS</button>
+      <button class="btn-bridge-outline btn-sm" onclick="fecharBannerBridge()">✕ FECHAR</button>
+    </div>
+  `;
+  banner.style.display = 'block';
+}
+
+function aplicarFixasBridge() {
+  const bridge = lerBridge();
+  if (!bridge || !bridge.fixas_recomendadas) {
+    fb('Nenhuma recomendação ativa.', 'warning');
+    return;
+  }
+  
+  estado.fixas = [...bridge.fixas_recomendadas];
+  setStepState(1, 'done');
+  setStepState(2, 'done');
+  setStepState(3, 'current');
+  setStepState(4, 'locked');
+  atualizarGenInfo();
+  
+  document.getElementById('step1body').style.display = 'none';
+  document.getElementById('step2body').style.display = 'none';
+  document.getElementById('step3body').style.display = '';
+  document.getElementById('step4body').style.display = 'none';
+  
+  const fixasStr = estado.fixas.map(n => String(n).padStart(2,'0')).join(' - ');
+  fb(`✅ Fixas aplicadas: ${fixasStr}`, 'success');
+  
+  // Rola para o step 3
+  setTimeout(() => {
+    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
+function fecharBannerBridge() {
+  const banner = document.getElementById('trendBridgeBanner');
+  if (banner) banner.style.display = 'none';
+}
+
+// ==================== FUNÇÕES DO TREND ANALYZER (SIMPLIFICADAS PARA INTEGRAÇÃO) ====================
+// Nota: O módulo Tendências completo da v53 foi mantido acima.
+// Aqui adicionamos as funções de bridge específicas para o Trend Analyzer
+
+function exportarFixasParaBridge() {
+  if (!tendState.fixas9 || tendState.fixas9.length === 0) {
+    fb('Gere as 9 fixas primeiro!', 'warning');
+    return;
+  }
+  
+  // Calcula a projeção de repetições baseada nas fixas
+  const currentNums = tendState.currentNums;
+  const previousNums = tendState.previousNums;
+  const repeatCt = currentNums.filter(n => previousNums.includes(n)).length;
+  
+  let momento = 'BAIXA';
+  if (repeatCt >= 8) momento = 'ALTA';
+  else if (repeatCt >= 6) momento = 'MEDIA';
+  
+  const ultimoConcurso = document.getElementById('tendCCAtual').value || null;
+  const proximoConcurso = ultimoConcurso ? parseInt(ultimoConcurso) + 1 : null;
+  
+  salvarBridge(momento, tendState.fixas9, repeatCt, ultimoConcurso, proximoConcurso, 3, 'tendencia');
+  
+  fb(`✅ Fixas exportadas para Bridge! Momento: ${momento} (${repeatCt} repetições)`, 'success');
+  fb('Agora vá para o COCKPIT e clique em "Verificar Recomendação" ou "Importar Fixas do Trend"', 'info');
+}
+
+function importarHistoricoDoCockpit() {
+  const data = localStorage.getItem('cockpit_export_trend');
+  if (!data) {
+    fb('Nenhum histórico do Cockpit encontrado. Primeiro exporte do Cockpit (Expert Panel > Exportar Histórico para Trend).', 'warning');
+    return;
+  }
+  
+  try {
+    const parsed = JSON.parse(data);
+    if (!parsed.draws || !Array.isArray(parsed.draws)) {
+      throw new Error('Formato inválido');
+    }
+    
+    // Aqui você implementaria a lógica para carregar os draws no Trend Analyzer
+    // Como o Trend Analyzer V4 tem sua própria engine, esta função é um placeholder
+    // Na versão completa, você chamaria engine.setDraws(parsed.draws)
+    
+    fb(`✅ ${parsed.draws.length} concursos importados do Cockpit!`, 'success');
+    fb('Agora clique em "Analisar Tendência" para gerar as fixas baseadas no histórico do Cockpit.', 'info');
+    
+    // Opcional: salvar os draws no localStorage para o Trend Analyzer
+    localStorage.setItem('lftrend_v4_import', JSON.stringify({ draws: parsed.draws, source: 'cockpit' }));
+    
+  } catch(e) {
+    fb('Erro ao importar dados do Cockpit.', 'error');
+  }
+}
+
+// ==================== FUNÇÕES AUXILIARES (mantidas da v53) ====================
+function formatarDataExib(iso) {
+  if (!iso) return '';
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(iso)) return iso;
+  const partes = iso.split('-');
+  if (partes.length === 3) {
+    const [y, m, d] = partes;
+    return d && m && y ? `${d}/${m}/${y}` : iso;
+  }
+  return iso;
+}
+
+function converterData(str) {
+  if (!str) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  const m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  return str;
+}
+
+function isDateString(str) {
+  return /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(str) || /^\d{4}-\d{2}-\d{2}$/.test(str);
+}
+
+function parseDezenas(input) {
+  const nums = input.replace(/[^0-9]/g, ' ').trim().split(/\s+/).map(Number).filter(n => n >= 1 && n <= 25);
+  return [...new Set(nums)].sort((a, b) => a - b);
+}
+
+// ==================== FUNÇÕES DO WIZARD (mantidas da v53 resumidas) ====================
+function goTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabs = ['wizard','tendencias','historico','caixa','relatorio'];
+  const idx = tabs.indexOf(id);
+  if (idx !== -1) document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
+  if (id === 'relatorio') gerarRelatorio();
+  if (id === 'caixa') atualizarCaixaUI();
+  if (id === 'historico') atualizarHistFullList();
+  if (id === 'tendencias') {
+    tendCheckAutoLoad();
+    verificarRecomendacaoTrend(); // verifica se há recomendação ativa
+  }
+  if (id === 'wizard') {
+    verificarRecomendacaoTrend(); // verifica se há recomendação ativa
+  }
+}
+
+function toggleExpert() {
+  const panel = document.getElementById('expertPanel');
+  const overlay = document.getElementById('epOverlay');
+  const toggle = document.getElementById('expertToggle');
+  const open = panel.classList.toggle('open');
+  overlay.classList.toggle('open', open);
+  toggle.classList.toggle('on', open);
+}
+
+function toggleStep(n) {
+  const body = document.getElementById('step'+n+'body');
+  if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
+}
+
+function setStepState(n, state) {
+  const el = document.getElementById('step'+n);
+  if (!el) return;
+  el.classList.remove('current','done','locked');
+  el.classList.add(state);
+  if (state === 'locked') el.style.pointerEvents = 'none';
+  else el.style.pointerEvents = '';
+}
+
+function avancarStep2() {
+  if (!estado.historico.length) { fb('Carregue concursos primeiro!','error'); return; }
+  setStepState(1,'done');
+  setStepState(2,'current');
+  document.getElementById('step1body').style.display = 'none';
+  document.getElementById('step2body').style.display = '';
+  executarViabilidade();
+}
+
+function avancarStep3() {
+  if (!estado.fixas.length) {
+    if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
+      const cc = estado.historico[estado.ancoraIdx];
+      estado.fixas = cc.dezenas.slice(estado.posicao, estado.posicao+9);
+    } else if (estado.historico.length) {
+      estado.ancoraIdx = 0;
+      estado.posicao = 0;
+      const cc = estado.historico[0];
+      estado.fixas = cc.dezenas.slice(0, 9);
+      document.getElementById('ancoraSelectWiz').value = '0';
+      selecionarPosicaoViab(0);
+    } else {
+      fb('Selecione uma âncora no Passo 2!', 'warning');
+      return;
+    }
+  }
+  if (!estado.fixas.length) { fb('Selecione uma âncora no Passo 2!', 'warning'); return; }
+  setStepState(2,'done');
+  setStepState(3,'current');
+  document.getElementById('step2body').style.display = 'none';
+  document.getElementById('step3body').style.display = '';
+  atualizarGenInfo();
+}
+
+function avancarStep4() {
+  if (!estado.volantesMAX.length) { fb('Gere volantes primeiro!','warning'); return; }
+  setStepState(3,'done');
+  setStepState(4,'current');
+  document.getElementById('step3body').style.display = 'none';
+  document.getElementById('step4body').style.display = '';
+}
+
+function atualizarGenInfo() {
+  const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
+  if (cc) {
+    document.getElementById('genInfo').innerHTML = `Âncora: <strong>CC ${cc.numero}</strong> · ${NOMES_POS[estado.posicao]} posição · Fixas: <strong style="color:var(--purple)">${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+  } else {
+    const bridge = lerBridge();
+    const origem = bridge ? ` (recomendação Trend - ${bridge.projecao_repeticao} repetições)` : '';
+    document.getElementById('genInfo').innerHTML = `Âncora por Tendência${origem} · Fixas: <strong style="color:var(--purple)">${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+  }
+}
+
+// ==================== FUNÇÕES DE HISTÓRICO E UTILITÁRIOS (resumidas) ====================
+function atualizarContadorPaste() {
+  const txt = document.getElementById('ccPasteArea').value.trim();
+  const linhas = txt ? txt.split('\n').filter(l => l.trim()) : [];
+  document.getElementById('ccPasteCounter').innerHTML = `<strong>${linhas.length}</strong> linha${linhas.length!==1?'s':''} detectada${linhas.length!==1?'s':''}`;
+}
+
+function processarColagem() {
+  const txt = document.getElementById('ccPasteArea').value.trim();
+  if (!txt) { fb('Cole os concursos no campo acima!','warning'); return; }
+  const linhas = txt.split('\n').filter(l => l.trim());
+  let ok = 0, err = 0;
+  linhas.forEach(linha => {
+    let linhaLimpa = linha.trim();
+    linhaLimpa = linhaLimpa.replace(/[()]/g, '');
+    linhaLimpa = linhaLimpa.replace(/,/g, ' ');
+    linhaLimpa = linhaLimpa.replace(/\s+/g, ' ');
+    const partes = linhaLimpa.split(/\s+/).filter(Boolean);
+    if (partes.length < 17) { err++; return; }
+    const numero = partes[0];
+    let dataIndex = -1;
+    for (let i = 1; i < Math.min(partes.length, 5); i++) {
+      if (isDateString(partes[i])) { dataIndex = i; break; }
+    }
+    if (dataIndex === -1) { err++; return; }
+    const rawData = partes[dataIndex];
+    const nums = [];
+    for (let i = dataIndex + 1; i < partes.length; i++) {
+      const num = parseInt(partes[i]);
+      if (!isNaN(num) && num >= 1 && num <= 25) nums.push(num);
+    }
+    const dezenas = [...new Set(nums)].sort((a,b)=>a-b).slice(0,15);
+    if (dezenas.length !== 15) { err++; return; }
+    const data = converterData(rawData);
+    salvarNoHistorico(numero, data, dezenas, true);
+    ok++;
+  });
+  persistirHistorico();
+  atualizarCCList();
+  atualizarHistFullList();
+  gerarRelatorio();
+  populaAncoraSelect();
+  if (ok > 0) {
+    fb(`${ok} concurso${ok>1?'s':''} processado${ok>1?'s':''}!${err>0?' ('+err+' com erro)':''}`, ok>0?'success':'warning');
+  } else {
+    fb(`Nenhum concurso válido encontrado. Verifique o formato: número data dezenas (ex: 3601 30/01/2026 02 03 04...)`, 'error');
+  }
+  if (ok > 0) {
+    document.getElementById('ccListWrapper').style.display = 'block';
+    document.getElementById('step1badge').textContent = `${estado.historico.length} concurso${estado.historico.length>1?'s':''}`;
+  }
+}
+
+function atualizarCCList() {
+  const c = document.getElementById('ccList');
+  const wrapper = document.getElementById('ccListWrapper');
+  if (!estado.historico.length) { wrapper.style.display='none'; return; }
+  wrapper.style.display = 'block';
+  document.getElementById('step1badge').textContent = `${estado.historico.length} concurso${estado.historico.length>1?'s':''}`;
+  c.innerHTML = estado.historico.slice(0,8).map((cc,idx) => {
+    const dez = cc.dezenas.map(n => {
+      const isMag = MAGICAS.includes(n);
+      return `<div class="cc-dez${isMag?' mag':''}">${String(n).padStart(2,'0')}</div>`;
+    }).join('');
+    return `<div class="cc-item"><span class="cc-num">CC ${cc.numero}</span><span class="cc-date">${formatarDataExib(cc.data)}</span><div class="cc-dezenas">${dez}</div><div class="cc-actions"><button class="btn-ghost btn-sm" onclick="abrirModalCC(${idx})">✏️</button><button class="btn-ghost btn-sm" style="color:var(--red)" onclick="excluirCC(${idx})">🗑</button></div></div>`;
+  }).join('');
+  if (estado.historico.length > 8) {
+    c.innerHTML += `<div style="text-align:center;font-size:.78rem;color:var(--text2);padding:6px">+${estado.historico.length-8} concurso${estado.historico.length-8>1?'s':''} (ver aba Histórico)</div>`;
+  }
+}
+
+function populaAncoraSelect() {
+  const sel = document.getElementById('ancoraSelectWiz');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">— Selecione —</option>';
+  estado.historico.forEach((cc,idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `CC ${cc.numero} · ${formatarDataExib(cc.data)}`;
+    sel.appendChild(opt);
+  });
+  if (val !== '' && !isNaN(parseInt(val))) sel.value = val;
+}
+
+function onAncoraChange() {
+  const idx = parseInt(document.getElementById('ancoraSelectWiz').value);
+  if (isNaN(idx) || idx < 0 || idx >= estado.historico.length) return;
+  estado.ancoraIdx = idx;
+  renderViabGrid();
+  selecionarPosicaoViab(estado.posicao);
+}
+
+function executarViabilidade() {
+  const hist = estado.historico;
+  if (hist.length < 2) {
+    document.getElementById('viabGrid').innerHTML = '<p style="color:var(--text2);font-size:.82rem">Carregue ao menos 2 concursos consecutivos.</p>';
+    return;
+  }
+  const ordenado = [...hist].sort((a,b) => parseInt(a.numero)-parseInt(b.numero));
+  const pares = [];
+  for (let i=0; i<ordenado.length-1; i++) {
+    if (parseInt(ordenado[i+1].numero) - parseInt(ordenado[i].numero) === 1)
+      pares.push({atual:ordenado[i], proximo:ordenado[i+1]});
+  }
+  estado.viabResultados = NOMES_POS.map((nome,pos) => {
+    let total=0, count=0;
+    pares.forEach(({atual,proximo}) => {
+      const fixas = atual.dezenas.slice(pos, pos+9);
+      if (fixas.length < 9) return;
+      total += fixas.filter(n => proximo.dezenas.includes(n)).length;
+      count++;
+    });
+    const media = count > 0 ? total/count : 0;
+    return {pos, nome, media, count};
+  });
+  const mediaGlobal = estado.viabResultados.reduce((s,r)=>s+r.media,0)/7;
+  const threshold = mediaGlobal + 0.3;
+  estado.viabResultados.forEach(r => { r.rec = r.media >= threshold; });
+  document.getElementById('viabBase').textContent = `${pares.length} par${pares.length!==1?'es':''} consecutivos · Limiar: ${threshold.toFixed(2)}`;
+  if (estado.ancoraIdx < 0 && hist.length > 0) {
+    const mais = hist.reduce((best,cc,i) => parseInt(cc.numero)>parseInt(hist[best].numero)?i:best, 0);
+    estado.ancoraIdx = mais;
+    document.getElementById('ancoraSelectWiz').value = mais;
+  }
+  const melhor = [...estado.viabResultados].sort((a,b)=>b.media-a.media)[0];
+  estado.posicao = melhor.pos;
+  renderViabGrid();
+  selecionarPosicaoViab(estado.posicao);
+  const recNomes = estado.viabResultados.filter(r=>r.rec).map(r=>r.nome).join(', ');
+  document.getElementById('step2badge').textContent = recNomes ? `⭐ ${recNomes}` : '';
+  fb(`Viabilidade calculada. Melhor posição: ${melhor.nome} (média ${melhor.media.toFixed(2)})`, 'success');
+}
+
+function renderViabGrid() {
+  const grid = document.getElementById('viabGrid');
+  const melhor = Math.max(...estado.viabResultados.map(r=>r.media));
+  grid.innerHTML = estado.viabResultados.map(r => {
+    const pct = melhor > 0 ? (r.media/melhor*100) : 0;
+    const cor = r.rec ? '#3fb950' : r.media >= (estado.viabResultados.reduce((s,x)=>s+x.media,0)/7) ? '#f0c040' : '#58a6ff';
+    const isSel = r.pos === estado.posicao;
+    return `<div class="viab-card${r.rec?' rec':''}${isSel?' selected':''}" onclick="selecionarPosicaoViab(${r.pos})"><div class="viab-pos">${r.nome} ${r.rec?'⭐':''}</div><div class="viab-score" style="color:${cor}">${r.media.toFixed(1)}</div><div class="viab-bar"><div class="viab-bar-fill" style="width:${pct.toFixed(0)}%;background:${cor}"></div></div><div class="viab-detail">${DESC_POS[r.pos]} · ${r.count} pares</div></div>`;
+  }).join('');
+}
+
+function selecionarPosicaoViab(pos) {
+  estado.posicao = pos;
+  renderViabGrid();
+  const idx = estado.ancoraIdx;
+  if (idx < 0 || idx >= estado.historico.length) return;
+  const cc = estado.historico[idx];
+  estado.fixas = cc.dezenas.slice(pos, pos+9);
+  const infoEl = document.getElementById('ancoraInfo');
+  infoEl.style.display = 'block';
+  document.getElementById('ancoraInfoLabel').textContent = `🔒 ${NOMES_POS[pos]} Posição — 9 Dezenas Fixadas (CC ${cc.numero})`;
+  document.getElementById('ancoraInfoFixas').innerHTML = cc.dezenas.map((n,i) => {
+    const isF = i>=pos && i<pos+9;
+    const isMag = MAGICAS.includes(n);
+    return `<div class="ai-dez${isF?' fixa':'  livre'}${isMag&&isF?' mag':''}">${String(n).padStart(2,'0')}</div>`;
+  }).join('');
+  const fs = calcularStats(estado.fixas);
+  document.getElementById('ancoraInfoChips').innerHTML = `<span class="ai-chip"><strong>${fs.pares}</strong> pares</span><span class="ai-chip"><strong>${fs.impares}</strong> ímpares</span><span class="ai-chip"><strong>${fs.primos}</strong> primos</span><span class="ai-chip"><strong>${fs.magicas}</strong> mágicas</span><span class="ai-chip">∑<strong>${fs.soma}</strong></span>`;
+}
+
+function toggleAdv() {
+  const body = document.getElementById('advBody');
+  const arrow = document.getElementById('advArrow');
+  const open = body.classList.toggle('open');
+  arrow.textContent = open ? '▲' : '▼';
+}
+
+function lerFiltrosWiz() {
+  const minMagicasVal = document.getElementById('genMagicas').value;
+  return { somaFiltro: document.getElementById('genSoma').value, paridade: document.getElementById('genParidade').value, minMagicas: minMagicasVal === 'any' ? 'any' : parseInt(minMagicasVal), minPrimos: 0, moldura: document.getElementById('genMoldura').value };
+}
+
+function gerarWizard() {
+  if (!estado.fixas.length) { 
+    if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
+      estado.fixas = estado.historico[estado.ancoraIdx].dezenas.slice(estado.posicao, estado.posicao+9);
+    } else {
+      fb('Volte ao Passo 2 e selecione uma âncora!','error'); 
+      return;
+    }
+  }
+  const qtd = parseInt(document.getElementById('genQtd').value) || 10;
+  const filtros = lerFiltrosWiz();
+  const disponiveis = [];
+  for (let i = 1; i <= 25; i++) if (!estado.fixas.includes(i)) disponiveis.push(i);
+  const pool = [];
+  let tentativas = 0;
+  const POOL_BASE = Math.max(qtd * 20, 300);
+  while (pool.length < qtd && tentativas < 50) {
+    const novos = [];
+    for (let t = 0; t < POOL_BASE; t++) {
+      const sh = [...disponiveis].sort(() => Math.random() - 0.5);
+      const livres = sh.slice(0, 6);
+      const jogo = [...estado.fixas, ...livres].sort((a,b) => a - b);
+      if (passaFiltros(jogo, filtros)) {
+        const s = calcularStats(jogo);
+        novos.push({ jogo, livres: livres.sort((a,b) => a - b), score: calcularScore(s), stats: s });
+      }
+    }
+    pool.push(...novos);
+    tentativas++;
+  }
+  const uniq = [];
+  const seen = new Set();
+  pool.sort((a,b) => b.score - a.score).forEach(v => {
+    const key = v.jogo.join('-');
+    if (!seen.has(key)) { seen.add(key); uniq.push(v); }
+  });
+  const final = uniq.slice(0, qtd);
+  if (!final.length) { fb('Filtros muito restritivos. Relaxe os filtros avançados.','error'); return; }
+  estado.volantesMAX = final;
+  renderizarMaxGrid(final);
+  const gerados = final.length;
+  const medS = Math.round(final.reduce((a,v) => a + v.stats.soma, 0) / gerados);
+  const medM = (final.reduce((a,v) => a + v.stats.magicas, 0) / gerados).toFixed(1);
+  const medSc = Math.round(final.reduce((a,v) => a + v.score, 0) / gerados);
+  const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
+  const sum = document.getElementById('genSummary');
+  sum.style.display = 'flex';
+  if (cc) {
+    sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 CC ${cc.numero} · ${NOMES_POS[estado.posicao]}</span> <span class="sb-badge">💰 R$ ${(gerados*3.5).toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
+  } else {
+    sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 Âncora por Tendência</span> <span class="sb-badge">💰 R$ ${(gerados*3.5).toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
+  }
+  document.getElementById('genActions').style.display = 'flex';
+  document.getElementById('step3badge').textContent = `${gerados} volantes`;
+  document.getElementById('peneiraWrap').style.display = 'block';
+  document.getElementById('peneiraQtd').value = '4-7';
+  document.getElementById('peneiraCasa').value = '3-4';
+  aplicarPeneira();
+  fb(`🔱 ${gerados} volante${gerados>1?'s':''} gerado${gerados>1?'s':''}!`, 'success');
+}
+
+function limparGeracao() {
+  estado.volantesMAX = [];
+  document.getElementById('genGrid').innerHTML = '';
+  document.getElementById('genSummary').style.display = 'none';
+  document.getElementById('genActions').style.display = 'none';
+  document.getElementById('step3badge').textContent = '';
+  document.getElementById('peneiraWrap').style.display = 'none';
+  document.getElementById('peneiraResult').innerHTML = 'Ajuste os filtros acima para ativar a peneira.';
+}
+
+function renderizarMaxGrid(volantes) {
+  const grid = document.getElementById('genGrid');
+  grid.innerHTML = '';
+  const fixasSet = new Set(estado.fixas);
+  volantes.forEach((v, idx) => {
+    const s = v.stats || calcularStats(v.jogo);
+    const sc = v.score || calcularScore(s);
+    const scoreCor = sc >= 80 ? 'var(--green)' : sc >= 55 ? 'var(--accent)' : 'var(--orange)';
+    const fillCor = sc >= 80 ? '#3fb950' : sc >= 55 ? '#f0c040' : '#ffa657';
+    const semCls = sc >= 80 ? 'sem-g' : sc >= 55 ? 'sem-y' : 'sem-r';
+    let mat = '';
+    for (let i = 1; i <= 25; i++) {
+      const isF = fixasSet.has(i), isL = v.jogo.includes(i) && !isF, isMg = MAGICAS.includes(i);
+      let cls = '';
+      if (isF) cls = 'fx' + (isMg ? ' mg' : '');
+      if (isL) cls = 'lv' + (isMg ? ' mg' : '');
+      if (!isF && !isL && isMg) cls = 'nm-mg';
+      mat += `<div class="mb${cls ? ' ' + cls : ''}">${String(i).padStart(2, '0')}</div>`;
+    }
+    const dezStr = v.jogo.map(n => {
+      const isF = fixasSet.has(n), isMg = MAGICAS.includes(n);
+      let c = isF ? 'var(--purple)' : 'var(--green)';
+      if (isMg) c = 'var(--accent)';
+      return `<span style="color:${c};font-weight:${isF ? 900 : 700}">${String(n).padStart(2, '0')}</span>`;
+    }).join(' ');
+    const cS = `<span class="sch ${s.soma_cls === 'otimo' ? 'ok' : s.soma_cls === 'bom' ? 'wn' : 'bd'}">∑${s.soma}</span>`;
+    const cP = `<span class="sch ${(s.pares === 7 || s.pares === 8) ? 'ok' : 'wn'}">${s.pares}P/${s.impares}I</span>`;
+    const cM = `<span class="sch ${s.magicas >= 4 ? 'ok' : s.magicas >= 3 ? 'wn' : 'bd'}">✨${s.magicas}</span>`;
+    const cPr = `<span class="sch ${s.primos >= 4 ? 'ok' : s.primos >= 3 ? 'wn' : 'bd'}">🔵${s.primos}</span>`;
+    const cMi = `<span class="sch ${s.miolo <= 4 ? 'ok' : 'wn'}">⬜${s.miolo}</span>`;
+    const card = document.createElement('div');
+    card.className = 'max-card';
+    card.innerHTML = `<div class="max-card-header"><div style="display:flex;align-items:center;gap:6px"><div class="semaforo ${semCls}"></div><span class="max-card-num">MAX ${idx + 1}</span></div><div style="display:flex;gap:3px"><span class="badge ${s.soma_cls}">${s.soma}</span><span class="badge normal">${s.pares}P/${s.impares}I</span></div></div><div class="mmx">${mat}</div><div class="max-dez-str">${dezStr}</div><div class="max-fl"><span style="color:var(--purple)">◆</span> ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}</div><div class="max-fl"><span style="color:var(--green)">◈</span> ${v.livres.map(n => String(n).padStart(2, '00')).join(' ')}</div><div class="sc-wrap"><div class="sc-head"><span class="sc-lbl">Score Geral</span><span class="sc-num" style="color:${scoreCor}">${sc}<span style="font-size:.58rem;color:var(--text2)">/100</span></span></div><div class="sc-bar"><div class="sc-zones"><div class="sz-r"></div><div class="sz-o"></div><div class="sz-g"></div></div><div class="sc-fill" style="width:${sc}%;background:${fillCor}"></div></div><div class="sc-chips">${cS}${cP}${cM}${cPr}${cMi}</div></div>`;
+    grid.appendChild(card);
+  });
+}
+
+function conferirWizard() {
+  if (!estado.volantesMAX.length) { fb('Gere os volantes primeiro (Passo 3)!','error'); return; }
+  const raw = document.getElementById('confResultado').value;
+  const resultado = parseDezenas(raw);
+  if (resultado.length !== 15) { fb(`Necessários 15 números! (você digitou ${resultado.length})`,'error'); return; }
+  const fixasSet = new Set(estado.fixas);
+  const aprovFixas = estado.fixas.filter(n=>resultado.includes(n)).length;
+  let melhor=0, totalPremio=0, totalCusto=0;
+  const resSessao=[];
+  let html='';
+  estado.volantesMAX.forEach((v,idx) => {
+    const acertos = v.jogo.filter(n=>resultado.includes(n)).length;
+    const acF = estado.fixas.filter(n=>resultado.includes(n)).length;
+    const acL = v.livres.filter(n=>resultado.includes(n)).length;
+    const premio = acertos>=11?(PREMIOS[acertos]||0):0;
+    melhor=Math.max(melhor,acertos);
+    totalPremio+=premio; totalCusto+=3.5;
+    resSessao.push({jogoIdx:idx+1,acertos,premio,custo:3.5});
+    const cor=acertos>=13?'var(--accent)':acertos>=11?'var(--green)':'var(--text2)';
+    const tags=v.jogo.map(n=>{
+      const hit=resultado.includes(n), isF=fixasSet.has(n);
+      let cls='';
+      if(hit&&isF) cls='hit-fx';
+      if(hit&&!isF) cls='hit-lv';
+      return`<div class="conf-tag ${cls}">${String(n).padStart(2,'00')}</div>`;
+    }).join('');
+    html+=`<div class="conf-result"><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="conf-pts" style="color:${cor}">${acertos}</div><div><div style="font-size:.74rem;color:var(--text2)">acertos · 🔒${acF}/9 · ◈${acL}/6</div>${premio>0?`<div style="color:var(--green);font-weight:700;font-size:.85rem">R$ ${premio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`:''}</div><div style="margin-left:auto;font-size:.72rem;color:var(--text2)">MAX ${idx+1}</div></div><div class="conf-tags">${tags}</div></div>`;
+  });
+  const ben=totalPremio-totalCusto;
+  const cc=estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
+  html=`<div class="conf-resumo"><div class="stats-grid" style="margin-bottom:10px"><div class="stat-cell"><div class="lbl">Volantes</div><div class="val">${estado.volantesMAX.length}</div></div><div class="stat-cell"><div class="lbl">Melhor</div><div class="val" style="color:var(--accent)">${melhor} pts</div></div><div class="stat-cell"><div class="lbl">Prêmio</div><div class="val" style="color:var(--green)">R$ ${totalPremio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div><div class="stat-cell"><div class="lbl">Custo</div><div class="val">R$ ${totalCusto.toFixed(2)}</div></div><div class="stat-cell"><div class="lbl">Resultado</div><div class="val"><span class="badge ${ben>=0?'otimo':'ruim'}">R$ ${ben.toFixed(2)}</span></div></div></div><div class="fixas-hit"><div style="font-size:.72rem;color:var(--purple);font-weight:700;margin-bottom:6px">📌 Desempenho das 9 Fixas</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">${estado.fixas.map(n=>`<div class="conf-tag${resultado.includes(n)?' hit-fx':''}">${String(n).padStart(2,'0')}</div>`).join('')}</div><div style="font-size:.8rem;color:var(--text2)"><strong style="color:var(--purple)">${aprovFixas}</strong>/9 fixas acertadas.${aprovFixas>=7?'<span style="color:var(--green)">✅ Âncora excelente!</span>':aprovFixas>=5?'<span style="color:var(--orange)">⚡ Aproveitamento médio.</span>':'<span style="color:var(--red)">⚠️ Considere trocar a âncora.</span>'}</div></div></div>`+html;
+  document.getElementById('confResultados').innerHTML=html;
+  document.getElementById('step4badge').textContent=`Melhor: ${melhor} pts`;
+  registrarSessaoCaixa(cc?.numero||'Tendência', cc?.data||'', resSessao, `🔱 COCKPIT MAX (${cc ? 'CC ' + cc.numero : 'Tendência'})`);
+  if(melhor>=11) fb(`🏆 ${melhor} pontos! Fixas: ${aprovFixas}/9`,'success');
+  else fb(`Conferido — ${aprovFixas}/9 fixas acertadas. Melhor: ${melhor} pts.`,'info');
+}
+
+function calcularStats(nums) {
+  const pares=nums.filter(n=>n%2===0).length, impares=nums.length-pares;
+  const primos=nums.filter(n=>PRIMOS.includes(n)).length;
+  const moldura=nums.filter(n=>MOLDURA.includes(n)).length;
+  const miolo=nums.filter(n=>MIOLO.includes(n)).length;
+  const soma=nums.reduce((a,b)=>a+b,0);
+  const magicas=nums.filter(n=>MAGICAS.includes(n)).length;
+  let soma_cls='ruim';
+  if(soma>=181&&soma<=220) soma_cls='otimo';
+  else if(soma>=161&&soma<=240) soma_cls='bom';
+  return{pares,impares,primos,moldura,miolo,soma,soma_cls,magicas};
+}
+
+function calcularScore(s) {
+  let sc=0;
+  if(s.soma_cls==='otimo') sc+=40; else if(s.soma_cls==='bom') sc+=20;
+  if(s.magicas>=4) sc+=25; else if(s.magicas>=3) sc+=15;
+  if(s.pares===7||s.pares===8) sc+=20; else if(s.pares===6||s.pares===9) sc+=10;
+  if(s.primos>=4) sc+=15; else if(s.primos>=3) sc+=8;
+  return sc;
+}
+
+function passaFiltros(nums, f) {
+  const s = calcularStats(nums);
+  if (f.somaFiltro === 'otimo' && s.soma_cls !== 'otimo') return false;
+  if (f.somaFiltro === 'bom' && s.soma_cls === 'ruim') return false;
+  if (f.paridade === '67' && s.pares !== 6) return false;
+  if (f.paridade === '76' && s.pares !== 7) return false;
+  if (f.paridade === '78' && !(s.pares === 7 || s.pares === 8)) return false;
+  if (f.paridade === 'balanced' && !(s.pares >= 6 && s.pares <= 9)) return false;
+  if (f.minMagicas !== 'any' && s.magicas < f.minMagicas) return false;
+  if (f.moldura === 'balanced' && s.miolo > 4) return false;
+  if (f.moldura === 'strict' && s.miolo > 3) return false;
+  return true;
+}
+
+function salvarNoHistorico(numero, data, dezenas, silent) {
+  const numInt = parseInt(numero);
+  const entry = { numero: String(numero), data, dezenas, stats: calcularStats(dezenas), timestamp: Date.now() };
+  const idx = estado.historico.findIndex(h => parseInt(h.numero) === numInt);
+  if (idx !== -1) {
+    estado.historico[idx] = entry;
+    if (!silent) fb(`CC ${numero} atualizado.`, 'info');
+  } else {
+    const pos = estado.historico.findIndex(h => parseInt(h.numero) > numInt);
+    if (pos === -1) estado.historico.push(entry);
+    else estado.historico.splice(pos, 0, entry);
+    if (estado.historico.length > 50) estado.historico.pop();
+    if (!silent) fb(`CC ${numero} inserido!`, 'success');
+  }
+}
+
+function carregarHistorico() {
+  try { const s = localStorage.getItem('lf_cockpit_hist'); if (s) estado.historico = JSON.parse(s); } catch { estado.historico = []; }
+}
+
+function persistirHistorico() { localStorage.setItem('lf_cockpit_hist', JSON.stringify(estado.historico)); }
+
+function atualizarHistFullList() {
+  const c = document.getElementById('histFullList');
+  if (!estado.historico.length) { c.innerHTML = '<p style="color:var(--text2);font-size:.88rem">Nenhum concurso.</p>'; return; }
+  c.innerHTML = estado.historico.map((cc, idx) => `<div class="hi-item"><div class="hi-head"><span class="hi-num">CC ${cc.numero}</span><span class="hi-date">${formatarDataExib(cc.data)}</span></div><div class="hi-tags">${cc.dezenas.map(n => `<div class="hi-tag" style="${MAGICAS.includes(n) ? 'border-color:var(--orange)' : ''}">${String(n).padStart(2, '0')}</div>`).join('')}</div><div class="btn-row" style="margin-top:7px"><button class="btn-ghost btn-sm" onclick="abrirModalCC(${idx})">✏️</button><button class="btn-ghost btn-sm" style="color:var(--red)" onclick="excluirCC(${idx})">🗑</button></div></div>`).join('');
+}
+
+function excluirCC(idx) {
+  const cc = estado.historico[idx];
+  if (!confirm(`Excluir CC ${cc.numero}?`)) return;
+  estado.historico.splice(idx, 1);
+  persistirHistorico();
+  atualizarCCList();
+  atualizarHistFullList();
+  gerarRelatorio();
+  populaAncoraSelect();
+  fb(`CC ${cc.numero} excluído.`, 'warning');
+}
+
+function limparHistorico() {
+  if (!confirm('Limpar todo o histórico?')) return;
+  estado.historico = [];
+  persistirHistorico();
+  atualizarCCList();
+  atualizarHistFullList();
+  gerarRelatorio();
+  populaAncoraSelect();
+  fb('Histórico limpo.', 'warning');
+}
+
+function exportarHistorico() {
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(estado.historico, null, 2));
+  a.download = `lotofacil_historico_${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  fb('Histórico exportado!', 'success');
+}
+
+function importarHistorico() {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json';
+  inp.onchange = e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if (!Array.isArray(d)) throw 0;
+        estado.historico = d;
+        persistirHistorico();
+        atualizarCCList();
+        atualizarHistFullList();
+        gerarRelatorio();
+        populaAncoraSelect();
+        fb(`${d.length} concurso(s) importado(s)!`, 'success');
+      } catch { fb('Arquivo inválido!', 'error'); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+function abrirModalCC(idx) {
+  const m = document.getElementById('modalCC');
+  document.getElementById('mEditIdx').value = idx !== null && idx >= 0 ? idx : -1;
+  if (idx !== null && idx >= 0) {
+    const cc = estado.historico[idx];
+    document.getElementById('mNum').value = cc.numero;
+    document.getElementById('mData').value = formatarDataExib(cc.data);
+    document.getElementById('mDezenas').value = cc.dezenas.map(n => String(n).padStart(2, '0')).join(' ');
+    document.getElementById('modalCCTitulo').textContent = `✏️ Editar CC ${cc.numero}`;
+  } else {
+    document.getElementById('mNum').value = '';
+    document.getElementById('mData').value = '';
+    document.getElementById('mDezenas').value = '';
+    document.getElementById('modalCCTitulo').textContent = '➕ Inserir Concurso';
+  }
+  m.classList.add('open');
+}
+
+function fecharModalCC() { document.getElementById('modalCC').classList.remove('open'); }
+document.getElementById('modalCC').addEventListener('click', function(e) { if (e.target === this) fecharModalCC(); });
+
+function salvarModalCC() {
+  const numero = document.getElementById('mNum').value.trim();
+  const dataRaw = document.getElementById('mData').value.trim();
+  const dezenas = parseDezenas(document.getElementById('mDezenas').value);
+  if (!numero) { fb('Informe o nº do concurso!', 'error'); return; }
+  if (dezenas.length !== 15) { fb(`15 dezenas necessárias! (${dezenas.length})`, 'error'); return; }
+  const data = converterData(dataRaw);
+  const editIdx = parseInt(document.getElementById('mEditIdx').value);
+  const entry = { numero, data, dezenas, stats: calcularStats(dezenas), timestamp: Date.now() };
+  if (editIdx >= 0) {
+    estado.historico[editIdx] = entry;
+    fb(`CC ${numero} atualizado.`, 'info');
+  } else {
+    salvarNoHistorico(numero, data, dezenas);
+  }
+  persistirHistorico();
+  atualizarCCList();
+  atualizarHistFullList();
+  gerarRelatorio();
+  populaAncoraSelect();
+  fecharModalCC();
+}
+
+function exportarMAX() {
+  if (!estado.volantesMAX.length) { fb('Gere volantes primeiro!', 'warning'); return; }
+  const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
+  let txt = `LOTOFÁCIL COCKPIT – VOLANTES MAX\n`;
+  if (cc) { txt += `Âncora: CC ${cc.numero} · ${formatarDataExib(cc.data)}\nPosição: ${NOMES_POS[estado.posicao]} (${DESC_POS[estado.posicao]})\n`; }
+  else { txt += `Âncora: Tendência (módulo independente)\n`; }
+  txt += `Fixas: ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}\nTotal: ${estado.volantesMAX.length} · Custo: R$ ${(estado.volantesMAX.length * 3.5).toFixed(2)}\n${'─'.repeat(50)}\n\n`;
+  estado.volantesMAX.forEach((v, i) => {
+    const s = v.stats || calcularStats(v.jogo);
+    txt += `MAX ${String(i + 1).padStart(2, '0')}: ${v.jogo.map(n => String(n).padStart(2, '0')).join(' ')}\n  Fixas: ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}\n  Livres: ${v.livres.map(n => String(n).padStart(2, '0')).join(' ')}\n  Score: ${v.score || calcularScore(s)} | Soma: ${s.soma}(${s.soma_cls}) | P/I: ${s.pares}/${s.impares} | ✨${s.magicas} | 🔵${s.primos}\n\n`;
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
+  a.download = `lotofacil_cockpit_MAX_${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  fb('Volantes exportados!', 'success');
+}
+
+function importarVolantesMAX() {
+  if (!estado.fixas.length && estado.ancoraIdx === -1) { fb('Defina uma âncora no Passo 2 ou gere fixas por Tendência antes!', 'warning'); return; }
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.txt';
+  inp.onchange = e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      const fixasSet = new Set(estado.fixas);
+      const jogos = [];
+      ev.target.result.split('\n').forEach(linha => {
+        const m = linha.match(/(?:Volante|MAX)\s+\d+:\s+([\d\s]+)/i);
+        if (m) {
+          const nums = m[1].trim().split(/\s+/).map(Number).filter(n => n >= 1 && n <= 25);
+          if (new Set(nums).size === 15) {
+            const jogo = nums.sort((a, b) => a - b);
+            const s = calcularStats(jogo);
+            jogos.push({ jogo, livres: jogo.filter(n => !fixasSet.has(n)).sort((a, b) => a - b), stats: s, score: calcularScore(s) });
+          }
+        }
+      });
+      if (!jogos.length) { fb('Arquivo inválido ou sem volantes!', 'error'); return; }
+      estado.volantesMAX = jogos;
+      renderizarMaxGrid(jogos);
+      document.getElementById('genActions').style.display = 'flex';
+      const sum = document.getElementById('genSummary');
+      sum.style.display = 'flex';
+      sum.innerHTML = `<strong>${jogos.length}</strong> volantes carregados do arquivo <span class="sb-badge">📂 .txt</span>`;
+      fb(`${jogos.length} volante(s) carregados!`, 'success');
+      goTab('wizard');
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+function carregarCaixa() {
+  try { const s = localStorage.getItem('lf_cockpit_caixa'); if (s) caixa = JSON.parse(s); } catch { caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 }; }
+}
+
+function persistirCaixa() { localStorage.setItem('lf_cockpit_caixa', JSON.stringify(caixa)); }
+
+function registrarSessaoCaixa(ccNum, ccData, res, origem) {
+  const tC = res.reduce((a, r) => a + r.custo, 0), tP = res.reduce((a, r) => a + r.premio, 0);
+  const melhor = Math.max(...res.map(r => r.acertos));
+  caixa.sessoes.unshift({ concursoNum: ccNum, concursoData: ccData, timestamp: Date.now(), origem: origem || '🔱 COCKPIT', jogos: res, totalCusto: tC, totalPremio: tP, saldo: tP - tC, melhorPontuacao: melhor });
+  caixa.totalGasto += tC;
+  caixa.totalPremios += tP;
+  persistirCaixa();
+  atualizarCaixaUI();
+}
+
+function atualizarCaixaUI() {
+  const saldo = caixa.totalPremios - caixa.totalGasto;
+  const el = document.getElementById('caixaSaldo');
+  if (saldo > 0) { el.textContent = '+R$ ' + saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 }); el.className = 'caixa-saldo pos'; }
+  else if (saldo < 0) { el.textContent = '-R$ ' + Math.abs(saldo).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); el.className = 'caixa-saldo neg'; }
+  else { el.textContent = 'R$ 0,00'; el.className = 'caixa-saldo neu'; }
+  const totalJ = caixa.sessoes.reduce((a, s) => a + s.jogos.length, 0);
+  const sLucro = caixa.sessoes.filter(s => s.saldo > 0).length;
+  const melhor = caixa.sessoes.length ? Math.max(...caixa.sessoes.map(s => s.melhorPontuacao)) : 0;
+  const recup = caixa.totalGasto > 0 ? Math.min(Math.round(caixa.totalPremios / caixa.totalGasto * 100), 999) : 0;
+  document.getElementById('caixaTotais').innerHTML = `<div class="stat-cell"><div class="lbl">Gasto</div><div class="val" style="color:var(--red)">R$ ${caixa.totalGasto.toFixed(2)}</div></div><div class="stat-cell"><div class="lbl">Ganho</div><div class="val" style="color:var(--green)">R$ ${caixa.totalPremios.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div></div><div class="stat-cell"><div class="lbl">Sessões</div><div class="val">${caixa.sessoes.length}</div></div><div class="stat-cell"><div class="lbl">Jogos</div><div class="val">${totalJ}</div></div><div class="stat-cell"><div class="lbl">c/ Prêmio</div><div class="val" style="color:var(--green)">${sLucro}</div></div><div class="stat-cell"><div class="lbl">Melhor</div><div class="val" style="color:var(--accent)">${melhor > 0 ? melhor + ' pts' : '—'}</div></div>`;
+  document.getElementById('caixaProgress').style.width = Math.min(recup, 100) + '%';
+  document.getElementById('caixaProgLabel').textContent = `${recup}% recuperado`;
+  const se = document.getElementById('caixaSessoes');
+  if (!caixa.sessoes.length) { se.innerHTML = '<p style="color:var(--text2);font-size:.85rem">Nenhuma sessão ainda.</p>'; return; }
+  se.innerHTML = caixa.sessoes.map((s, idx) => {
+    const cls = s.saldo > 0 ? 'ganhou' : s.saldo < 0 ? 'perdeu' : '';
+    const sStr = (s.saldo >= 0 ? '+' : '-') + 'R$ ' + Math.abs(s.saldo).toFixed(2);
+    return `<div class="sessao-item ${cls}"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'Oswald',sans-serif;font-size:.88rem;color:var(--accent)">${s.concursoNum !== 'Tendência' ? 'CC ' + s.concursoNum : s.concursoNum}</span><span style="font-weight:800;font-size:.85rem;color:${s.saldo >= 0 ? 'var(--green)' : 'var(--red)'}">${sStr}</span></div><div style="font-size:.73rem;color:var(--text2)">${s.origem} · ${s.jogos.length} jogos · Melhor: ${s.melhorPontuacao} pts</div><div class="btn-row" style="margin-top:5px"><button class="btn-ghost btn-sm" style="color:var(--red)" onclick="excluirSessao(${idx})">🗑 Excluir</button></div></div>`;
+  }).join('');
+}
+
+function excluirSessao(idx) {
+  if (!confirm('Excluir sessão?')) return;
+  const s = caixa.sessoes[idx];
+  caixa.totalGasto -= s.totalCusto;
+  caixa.totalPremios -= s.totalPremio;
+  caixa.sessoes.splice(idx, 1);
+  persistirCaixa();
+  atualizarCaixaUI();
+  fb('Sessão excluída.', 'warning');
+}
+
+function zerarCaixa() {
+  if (!confirm('Zerar toda a caixa?')) return;
+  caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 };
+  persistirCaixa();
+  atualizarCaixaUI();
+  fb('Caixa zerada.', 'warning');
+}
+
+function gerarRelatorio() {
+  const hist = estado.historico, tabEl = document.getElementById('relatorioTabela'), heuEl = document.getElementById('relatorioHeuristica');
+  if (!hist.length) { tabEl.innerHTML = '<p style="color:var(--text2);font-size:.88rem">Carregue concursos para gerar o relatório.</p>'; heuEl.style.display = 'none'; return; }
+  const modo = document.getElementById('relColunas')?.value || 'resumo';
+  const ordem = document.getElementById('relOrdem')?.value || 'desc';
+  let dados = [...hist];
+  if (ordem === 'asc') dados.sort((a, b) => parseInt(a.numero) - parseInt(b.numero));
+  else if (ordem === 'desc') dados.sort((a, b) => parseInt(b.numero) - parseInt(a.numero));
+  else if (ordem === 'soma') dados.sort((a, b) => b.stats.soma - a.stats.soma);
+  else if (ordem === 'magicas') dados.sort((a, b) => b.stats.magicas - a.stats.magicas);
+  const magMax = Math.max(...dados.map(d => d.stats.magicas));
+  let thE = '';
+  if (modo === 'completo') thE = '<th>Dezenas</th>';
+  if (modo === 'financeiro') thE = '<th>Sessões</th><th>Gasto</th><th>Ganho</th><th>Saldo</th>';
+  const thead = `<thead> <th>CC</th><th>Data</th><th>P</th><th>I</th><th>Pr</th><th>Mold</th><th>Miol</th><th>Soma</th><th>Cls</th><th>Mág</th>${thE} </thead>`;
+  const linhas = dados.map(d => {
+    const s = d.stats;
+    const sC = s.soma_cls === 'otimo' ? 'rhi' : s.soma_cls === 'bom' ? 'rmd' : 'rlo';
+    const mC = s.magicas === magMax ? 'rhi' : s.magicas >= 3 ? 'rmd' : '';
+    let tdE = '';
+    if (modo === 'completo') { const dez = d.dezenas.map(n => `<span style="color:${MAGICAS.includes(n) ? 'var(--orange)' : 'var(--text2)'};">${String(n).padStart(2, '0')}</span>`).join(' '); tdE = `<td style="font-size:.68rem;font-family:'Fira Code'">${dez}  `; }
+    if (modo === 'financeiro') { const sess = caixa.sessoes.filter(ss => String(ss.concursoNum) === String(d.numero)); const g = sess.reduce((a, ss) => a + ss.totalCusto, 0), ga = sess.reduce((a, ss) => a + ss.totalPremio, 0), sa = ga - g; tdE = `<td>${sess.length || '—'}</td><td>${sess.length ? 'R$ ' + g.toFixed(2) : '—'}</td><td>${sess.length ? 'R$ ' + ga.toFixed(2) : '—'}</td><td class="${sa > 0 ? 'rhi' : sa < 0 ? 'rlo' : ''}">${sess.length ? (sa >= 0 ? '+' : '') + 'R$ ' + sa.toFixed(2) : '—'}</td>`; }
+    return `<tr><td>${d.numero}</td><td style="white-space:nowrap">${formatarDataExib(d.data)}</td><td>${s.pares}</td><td>${s.impares}</td><td>${s.primos}</td><td>${s.moldura}</td><td>${s.miolo}</td><td class="${sC}">${s.soma}</td><td><span class="badge ${s.soma_cls}" style="font-size:.65rem">${s.soma_cls}</span></td><td class="${mC}">${s.magicas}</td>${tdE}</tr>`;
+  }).join('');
+  const n = dados.length, avg = f => (dados.reduce((a, d) => a + d.stats[f], 0) / n).toFixed(1);
+  const tfoot = `<tfoot><tr style="font-style:italic"><td colspan="2" style="color:var(--text2)">Média(${n})</td><td>${avg('pares')}</td><td>${avg('impares')}</td><td>${avg('primos')}</td><td>${avg('moldura')}</td><td>${avg('miolo')}</td><td>${avg('soma')}</td><td>—</td><td>${avg('magicas')}</td></tr></tfoot>`;
+  tabEl.innerHTML = `<table class="rel-table">${thead}<tbody>${linhas}</tbody>${tfoot}</table>`;
+  if (dados.length >= 2) {
+    const freq = {}; for (let i = 1; i <= 25; i++) freq[i] = 0;
+    dados.forEach(d => d.dezenas.forEach(n => freq[n]++));
+    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+    const top5 = sorted.slice(0, 5).map(([n]) => n.padStart(2, '0')).join(' ');
+    const bot5 = sorted.slice(-5).map(([n]) => n.padStart(2, '0')).join(' ');
+    const mediaS = dados.reduce((a, d) => a + d.stats.soma, 0) / n;
+    const mediaPar = dados.reduce((a, d) => a + d.stats.pares, 0) / n;
+    heuEl.style.display = 'block';
+    heuEl.innerHTML = `<div style="margin-top:14px;padding:12px;background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2);border-radius:var(--r);font-size:.82rem;line-height:1.8"><strong style="color:var(--green)">💡 Heurística de Eliminação (${n} concursos)</strong><br>Soma recomendada: <strong style="color:var(--accent)">${Math.round(mediaS - 18)}–${Math.round(mediaS + 18)}</strong> · Paridade: <strong style="color:var(--accent)">${Math.max(5, Math.round(mediaPar - 1))}–${Math.min(10, Math.round(mediaPar + 1))} pares</strong><br>🔥 Mais frequentes: <strong style="color:var(--green)">${top5}</strong> · ❄️ Menos frequentes: <strong style="color:var(--red)">${bot5}</strong></div>`;
+  } else heuEl.style.display = 'none';
+}
+
+function imprimirRelatorio() { if (!estado.historico.length) { fb('Sem dados para imprimir!', 'warning'); return; } gerarRelatorio(); setTimeout(() => window.print(), 200); }
+function exportarRelatorioCSV() {
+  if (!estado.historico.length) { fb('Sem dados!', 'warning'); return; }
+  const linhas = [['CC', 'Data', 'Pares', 'Ímpares', 'Primos', 'Moldura', 'Miolo', 'Soma', 'Cls', 'Mágicas']];
+  estado.historico.forEach(d => { const s = d.stats; linhas.push([d.numero, formatarDataExib(d.data), s.pares, s.impares, s.primos, s.moldura, s.miolo, s.soma, s.soma_cls, s.magicas]); });
+  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(linhas.map(r => r.join(',')).join('\n')); a.download = `lotofacil_relatorio_${new Date().toISOString().slice(0, 10)}.csv`; a.click(); fb('CSV exportado!', 'success');
+}
+
+function resetSessao() {
+  if (!confirm('Resetar sessão?')) return;
+  estado.volantesMAX = [];
+  document.getElementById('genGrid').innerHTML = '';
+  document.getElementById('genSummary').style.display = 'none';
+  document.getElementById('genActions').style.display = 'none';
+  document.getElementById('confResultados').innerHTML = '';
+  ['step1', 'step2', 'step3', 'step4'].forEach((s, i) => setStepState(i + 1, i === 0 ? 'current' : 'locked'));
+  document.getElementById('step1body').style.display = '';
+  fb('Sessão resetada. Histórico e Caixa preservados.', 'info');
+}
+
+function resetTotal() {
+  if (!confirm('☢️ RESET TOTAL — apaga TUDO incluindo histórico e caixa. Irreversível?')) return;
+  if (!confirm('Confirmação final. Certeza?')) return;
+  localStorage.removeItem('lf_cockpit_hist');
+  localStorage.removeItem('lf_cockpit_caixa');
+  localStorage.removeItem(BRIDGE_KEY);
+  estado = { historico: [], volantesMAX: [], ancoraIdx: -1, posicao: 0, fixas: [], viabResultados: [] };
+  caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 };
+  atualizarCCList();
+  atualizarHistFullList();
+  atualizarCaixaUI();
+  gerarRelatorio();
+  populaAncoraSelect();
+  resetSessao();
+  tendState = { fixas9: [], currentNums: [], previousNums: [] };
+  document.getElementById('tendResult').style.display = 'none';
+  document.getElementById('trendBridgeBanner').style.display = 'none';
+  fb('☢️ Sistema completamente resetado (Bridge incluída).', 'warning');
+}
+
+// ==================== PENEIRA MÁGICA ====================
+function posicaoPrimeiraMagica(jogo) { for (let i = 0; i < jogo.length; i++) if (MAGICAS.includes(jogo[i])) return i + 1; return null; }
+function passaPeneira(jogo, filtroQtd, filtroCasa) {
+  const qtdMag = jogo.filter(n => MAGICAS.includes(n)).length;
+  const posMag = posicaoPrimeiraMagica(jogo);
+  if (filtroQtd !== 'any') { const [mn, mx] = filtroQtd.split('-').map(Number); if (qtdMag < mn || qtdMag > mx) return false; }
+  if (filtroCasa !== 'any') { if (!posMag) return false; const partes = filtroCasa.split('-').map(Number); const casaMin = partes[0], casaMax = partes.length > 1 ? partes[1] : partes[0]; if (posMag < casaMin || posMag > casaMax) return false; }
+  return true;
+}
+function aplicarPeneira() {
+  if (!estado.volantesMAX.length) return;
+  const filtroQtd = document.getElementById('peneiraQtd').value;
+  const filtroCasa = document.getElementById('peneiraCasa').value;
+  const grid = document.getElementById('genGrid');
+  const cards = grid.querySelectorAll('.max-card');
+  let aprovados = 0, eliminados = 0;
+  estado.volantesMAX.forEach((v, idx) => {
+    const card = cards[idx];
+    if (!card) return;
+    const passa = passaPeneira(v.jogo, filtroQtd, filtroCasa);
+    if (passa) { card.classList.remove('eliminado'); aprovados++; }
+    else { card.classList.add('eliminado'); eliminados++; }
+  });
+  const total = aprovados + eliminados;
+  const pctAprv = total > 0 ? Math.round(aprovados / total * 100) : 0;
+  estado.volantesMAX.forEach((v, idx) => {
+    const card = cards[idx];
+    if (!card) return;
+    const pos = posicaoPrimeiraMagica(v.jogo);
+    const qtd = v.jogo.filter(n => MAGICAS.includes(n)).length;
+    card.querySelectorAll('.mag-pos-badge').forEach(b => b.remove());
+    const header = card.querySelector('.max-card-num');
+    if (header) {
+      const posOk = pos && pos >= 3 && pos <= 4, posWn = pos && pos === 2, qtdOk = qtd >= 4 && qtd <= 7;
+      const badgePosClass = posOk ? 'mp-ok' : posWn ? 'mp-wn' : 'mp-bd';
+      const badgeQtdClass = qtdOk ? 'mp-ok' : qtd === 3 || qtd === 8 ? 'mp-wn' : 'mp-bd';
+      header.insertAdjacentHTML('afterend', `<span class="mag-pos-badge ${badgePosClass}">🔮${pos}ª</span><span class="mag-pos-badge ${badgeQtdClass}">✨${qtd}</span>`);
+    }
+  });
+  document.getElementById('peneiraResult').innerHTML = `<span class="p-ok">✅ ${aprovados} aprovado${aprovados !== 1 ? 's' : ''}</span> · <span class="p-ko">❌ ${eliminados} eliminado${eliminados !== 1 ? 's' : ''}</span> · <strong>${pctAprv}%</strong> do lote passa nos dois critérios históricos.<br><span style="font-size:.74rem;color:var(--text2)">Critério qtd: <strong>${filtroQtd === 'any' ? 'desativado' : filtroQtd + ' mágicas'}</strong> · Critério casa: <strong>${filtroCasa === 'any' ? 'desativado' : filtroCasa + 'ª casa'}</strong></span>`;
+  fb(`Peneira aplicada: ${aprovados} aprovados · ${eliminados} eliminados`, aprovados > 0 ? 'success' : 'warning');
+}
+function limparPeneira() {
+  document.getElementById('peneiraQtd').value = 'any';
+  document.getElementById('peneiraCasa').value = 'any';
+  document.querySelectorAll('.max-card.eliminado').forEach(c => c.classList.remove('eliminado'));
+  document.querySelectorAll('.mag-pos-badge').forEach(b => b.remove());
+  document.getElementById('peneiraResult').innerHTML = 'Filtros removidos. Todos os volantes visíveis.';
+  fb('Peneira removida.', 'info');
+}
+
+// ==================== MÓDULO TENDÊNCIAS (versão simplificada para bridge) ====================
+// Nota: O módulo completo da v53 foi mantido na estrutura HTML.
+// Aqui mantemos as funções de bridge e as essenciais
+let tendState = { fixas9: [], currentNums: [], previousNums: [] };
+
+function tendInitInputs() {
+  const containers = ['tendNumAtual', 'tendNumAnterior'];
+  const types = ['atual', 'anterior'];
+  containers.forEach((id, ti) => {
+    const c = document.getElementById(id);
+    if (!c) return;
+    c.innerHTML = '';
+    for (let i = 0; i < 15; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.min = 1;
+      inp.max = 25;
+      inp.placeholder = String(i + 1);
+      inp.className = 'tend-num-input';
+      inp.dataset.type = types[ti];
+      inp.dataset.idx = i;
+      inp.addEventListener('change', function () { tendValidateInput(this); });
+      inp.addEventListener('input', function () { tendValidateInput(this); });
+      c.appendChild(inp);
+    }
+  });
+}
+
+function tendValidateInput(inp) {
+  const v = parseInt(inp.value);
+  inp.classList.remove('valid', 'invalid');
+  if (v >= 1 && v <= 25) inp.classList.add('valid');
+  else if (inp.value) inp.classList.add('invalid');
+}
+
+function tendCheckAutoLoad() {
+  const bar = document.getElementById('tendAutoloadBar');
+  const hist = estado.historico;
+  if (hist.length >= 2) {
+    const sorted = [...hist].sort((a, b) => parseInt(b.numero) - parseInt(a.numero));
+    const atual = sorted[0], anterior = sorted[1];
+    const infoEl = document.getElementById('tendAutoloadInfo');
+    if (infoEl) infoEl.innerHTML = `CC <strong>${atual.numero}</strong> e CC <strong>${anterior.numero}</strong>`;
+    if (bar) bar.style.display = 'flex';
+  } else {
+    if (bar) bar.style.display = 'none';
+  }
+}
+
+function tendAutoLoad() {
+  const hist = estado.historico;
+  if (hist.length < 2) { fb('Carregue ao menos 2 concursos no histórico!', 'warning'); return; }
+  const sorted = [...hist].sort((a, b) => parseInt(b.numero) - parseInt(a.numero));
+  const atual = sorted[0], anterior = sorted[1];
+  document.getElementById('tendCCAtual').value = atual.numero;
+  document.getElementById('tendCCAnterior').value = anterior.numero;
+  tendFillInputs('atual', atual.dezenas);
+  tendFillInputs('anterior', anterior.dezenas);
+  fb(`✅ CC ${atual.numero} e CC ${anterior.numero} carregados do histórico!`, 'success');
+}
+
+function tendFillInputs(type, nums) {
+  const inputs = document.querySelectorAll(`.tend-num-input[data-type="${type}"]`);
+  inputs.forEach((inp, i) => {
+    inp.value = nums[i] !== undefined ? nums[i] : '';
+    tendValidateInput(inp);
+  });
+}
+
+function tendGetNumbers(type) {
+  const inputs = document.querySelectorAll(`.tend-num-input[data-type="${type}"]`);
+  const nums = [];
+  inputs.forEach(inp => {
+    const v = parseInt(inp.value);
+    if (v >= 1 && v <= 25) nums.push(v);
+  });
+  return [...new Set(nums)].sort((a, b) => a - b);
+}
+
+function tendValidateSet(nums, errorId) {
+  const errEl = document.getElementById(errorId);
+  if (nums.length !== 15) {
+    if (errEl) { errEl.textContent = `⚠️ Necessárias exatamente 15 dezenas (atual: ${nums.length})`; errEl.style.display = 'block'; }
+    return false;
+  }
+  if ([...new Set(nums)].length !== 15) {
+    if (errEl) { errEl.textContent = '⚠️ Não pode haver dezenas repetidas'; errEl.style.display = 'block'; }
+    return false;
+  }
+  if (errEl) errEl.style.display = 'none';
+  return true;
+}
+
+function tendGetCategories(n) {
+  const cats = [];
+  if (n % 2 === 0) cats.push('even'); else cats.push('odd');
+  if (PRIMOS.includes(n)) cats.push('prime');
+  if (MAGICAS.includes(n)) cats.push('magic');
+  return cats;
+}
+
+function tendCalcScore(n, currentNums, previousNums, freqTable) {
+  const freq = freqTable ? (freqTable[n] || 0) : 0.42;
+  let sc = 0;
+  sc += freq * 30;
+  if (currentNums.includes(n)) sc += 40;
+  if (previousNums.includes(n)) sc += 25;
+  if (currentNums.includes(n) && previousNums.includes(n)) sc += 20;
+  if (MAGICAS.includes(n)) sc += 15;
+  if (PRIMOS.includes(n)) sc += 12;
+  return sc;
+}
+
+function tendSelectBalanced(allScores, currentNums) {
+  const TARGET_EVEN = 4, TARGET_ODD = 5;
+  let evenCount = 0, oddCount = 0;
+  const selected = [];
+  const curPriority = allScores.filter(s => s.inCurrent).sort((a, b) => b.score - a.score);
+  const othPriority = allScores.filter(s => !s.inCurrent).sort((a, b) => b.score - a.score);
+  for (const item of curPriority) {
+    if (selected.length >= 9) break;
+    const isEven = item.cats.includes('even');
+    if (isEven && evenCount >= TARGET_EVEN) continue;
+    if (!isEven && oddCount >= TARGET_ODD) continue;
+    selected.push(item);
+    if (isEven) evenCount++; else oddCount++;
+  }
+  for (const item of othPriority) {
+    if (selected.length >= 9) break;
+    if (selected.find(s => s.n === item.n)) continue;
+    const isEven = item.cats.includes('even');
+    if (isEven && evenCount >= TARGET_EVEN && selected.length < 8) continue;
+    if (!isEven && oddCount >= TARGET_ODD && selected.length < 8) continue;
+    selected.push(item);
+    if (isEven) evenCount++; else oddCount++;
+  }
+  if (selected.length < 9) {
+    const selectedNums = new Set(selected.map(s => s.n));
+    const fallback = allScores.filter(s => !selectedNums.has(s.n)).sort((a, b) => b.score - a.score);
+    for (const item of fallback) {
+      if (selected.length >= 9) break;
+      selected.push(item);
+    }
+  }
+  return selected.sort((a, b) => a.n - b.n);
+}
+
+function tendAnalyze() {
+  const currentNums = tendGetNumbers('atual');
+  const previousNums = tendGetNumbers('anterior');
+  if (!tendValidateSet(currentNums, 'tendErrorAtual') || !tendValidateSet(previousNums, 'tendErrorAnterior')) return;
+  
+  const loading = document.getElementById('tendLoading');
+  const result = document.getElementById('tendResult');
+  if (loading) loading.style.display = 'block';
+  if (result) result.style.display = 'none';
+  
+  setTimeout(() => {
+    let TEND_HISTORICAL_FREQ = {};
+    for (let i = 1; i <= 25; i++) TEND_HISTORICAL_FREQ[i] = 0.42;
+    if (estado.historico.length >= 5) {
+      const contagem = {};
+      for (let i = 1; i <= 25; i++) contagem[i] = 0;
+      estado.historico.forEach(cc => { cc.dezenas.forEach(n => { contagem[n]++; }); });
+      const total = estado.historico.length;
+      for (let i = 1; i <= 25; i++) TEND_HISTORICAL_FREQ[i] = contagem[i] / total;
+    }
+    
+    const repeated = currentNums.filter(n => previousNums.includes(n));
+    const repeatCt = repeated.length;
+    
+    const allScores = [];
+    for (let i = 1; i <= 25; i++) {
+      const cats = tendGetCategories(i);
+      allScores.push({
+        n: i,
+        score: tendCalcScore(i, currentNums, previousNums, TEND_HISTORICAL_FREQ),
+        cats,
+        inCurrent: currentNums.includes(i),
+        inPrevious: previousNums.includes(i),
+        freq: TEND_HISTORICAL_FREQ[i]
+      });
+    }
+    allScores.sort((a, b) => b.score - a.score);
+    
+    const fixas9 = tendSelectBalanced(allScores, currentNums);
+    tendState.fixas9 = fixas9.map(f => f.n);
+    tendState.currentNums = currentNums;
+    tendState.previousNums = previousNums;
+    
+    const even = fixas9.filter(f => f.cats.includes('even')).length;
+    const odd = fixas9.filter(f => f.cats.includes('odd')).length;
+    const prime = fixas9.filter(f => f.cats.includes('prime')).length;
+    const magic = fixas9.filter(f => f.cats.includes('magic')).length;
+    let conf = 70;
+    if (even >= 4 && even <= 5) conf += 10;
+    if (odd >= 4 && odd <= 5) conf += 10;
+    if (prime >= 3) conf += 5;
+    if (magic >= 3) conf += 5;
+    conf = Math.min(conf, 100);
+    
+    const ballsEl = document.getElementById('tendBalls');
+    if (ballsEl) {
+      ballsEl.innerHTML = '';
+      fixas9.forEach(f => {
+        const ball = document.createElement('div');
+        ball.className = 'tend-ball';
+        ball.title = f.cats.join(', ');
+        ball.textContent = String(f.n).padStart(2, '0');
+        if (f.cats.includes('magic')) ball.classList.add('t-magic');
+        else if (f.cats.includes('prime')) ball.classList.add('t-prime');
+        else if (f.cats.includes('even')) ball.classList.add('t-even');
+        else ball.classList.add('t-gold');
+        ballsEl.appendChild(ball);
+      });
+    }
+    
+    const statsEl = document.getElementById('tendStats');
+    if (statsEl) {
+      statsEl.innerHTML = `<div class="tend-stat-cell"><div class="tend-stat-val">${repeatCt}</div><div class="tend-stat-lbl">Repetidas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${even}</div><div class="tend-stat-lbl">Pares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${odd}</div><div class="tend-stat-lbl">Ímpares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${prime}</div><div class="tend-stat-lbl">Primas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${magic}</div><div class="tend-stat-lbl">Mágicas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${conf}%</div><div class="tend-stat-lbl">Confiança</div></div>`;
+    }
+    
+    const ccAtual = document.getElementById('tendCCAtual').value;
+    const ccAnt = document.getElementById('tendCCAnterior').value;
+    const analysisGrid = document.getElementById('tendAnalysisGrid');
+    if (analysisGrid) {
+      analysisGrid.innerHTML = `<div class="tend-analysis-item"><span class="tend-analysis-label">Repetidas CC${ccAnt}→CC${ccAtual}</span><span class="tend-analysis-value">${repeatCt} / 15</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Equilíbrio Par/Ímpar</span><span class="tend-analysis-value">${even}/${odd}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Primas</span><span class="tend-analysis-value">${prime} ${prime >= 3 ? '⭐' : ''}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Mágicas</span><span class="tend-analysis-value">${magic} ${magic >= 3 ? '✨' : ''}</span></div>`;
+    }
+    
+    const tbody = document.getElementById('tendTableBody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      allScores.slice(0, 15).forEach(f => {
+        const isFixed = fixas9.find(x => x.n === f.n);
+        const catBadges = f.cats.map(c => `<span class="tend-badge ${c}">${c === 'even' ? 'Par' : c === 'odd' ? 'Ímpar' : c === 'prime' ? 'Prima' : 'Mágica'}</span>`).join('');
+        const status = isFixed ? `<span style="color:var(--tend-green);font-weight:800">✓ Fixa</span>` : `<span style="color:var(--text3)">○</span>`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><strong style="font-family:'Fira Code',monospace">${String(f.n).padStart(2, '0')}</strong></td><td><strong style="color:var(--tend-gold)">${Math.round(f.score)}</strong></td><td>${(f.freq * 100).toFixed(1)}%</td><td>${catBadges}</td><td>${status}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    
+    if (loading) loading.style.display = 'none';
+    if (result) result.style.display = 'block';
+    fb(`🎯 9 fixas por tendência geradas! Confiança: ${conf}%`, 'success');
+  }, 800);
+}
+
+function tendLoadExample() {
+  const currentNums = [1, 2, 4, 5, 6, 7, 9, 10, 12, 13, 14, 18, 20, 23, 25];
+  const previousNums = [1, 2, 3, 5, 6, 9, 10, 13, 14, 16, 19, 20, 21, 22, 25];
+  document.getElementById('tendCCAtual').value = '3642';
+  document.getElementById('tendCCAnterior').value = '3641';
+  tendFillInputs('atual', currentNums);
+  tendFillInputs('anterior', previousNums);
+  fb('Dados de exemplo carregados.', 'info');
+}
+
+function tendCopy() {
+  if (!tendState.fixas9.length) { fb('Gere as fixas primeiro!', 'warning'); return; }
+  const txt = `🎯 9 Fixas por Tendência: ${tendState.fixas9.map(n => String(n).padStart(2, '0')).join(' - ')}`;
+  navigator.clipboard.writeText(txt).then(() => fb('✅ Copiado!', 'success'));
+}
+
+function tendSendToWizard() {
+  if (!tendState.fixas9.length) { fb('Gere as 9 fixas primeiro!', 'warning'); return; }
+  estado.fixas = [...tendState.fixas9];
+  setStepState(1, 'done');
+  setStepState(2, 'done');
+  setStepState(3, 'current');
+  setStepState(4, 'locked');
+  const ccAtual = document.getElementById('tendCCAtual').value;
+  const fixasStr = estado.fixas.map(n => String(n).padStart(2, '0')).join(' ');
+  document.getElementById('genInfo').innerHTML = `<span style="color:var(--tend-gold)">📈 Âncora por Tendência</span> · CC ${ccAtual || '?'} · Fixas: <strong style="color:var(--purple)">${fixasStr}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+  if (ccAtual) {
+    const foundIdx = estado.historico.findIndex(h => h.numero === String(ccAtual));
+    if (foundIdx >= 0) estado.ancoraIdx = foundIdx;
+    else estado.ancoraIdx = -1;
+  }
+  goTab('wizard');
+  document.getElementById('step1body').style.display = 'none';
+  document.getElementById('step2body').style.display = 'none';
+  document.getElementById('step3body').style.display = '';
+  document.getElementById('step4body').style.display = 'none';
+  setTimeout(() => { document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+  fb(`🔗 9 fixas de Tendência enviadas para o Wizard! Clique em GERAR VOLANTES MAX.`, 'success');
+}
+
+function fb(msg, tipo = 'info') {
+  const c = document.getElementById('fbContainer');
+  const d = document.createElement('div');
+  d.className = 'fb-msg ' + tipo;
+  d.textContent = msg;
+  c.appendChild(d);
+  const log = document.getElementById('epFbLog');
+  if (log) {
+    log.innerHTML = `<div style="margin-bottom:3px;color:${tipo === 'success' ? 'var(--green)' : tipo === 'error' ? 'var(--red)' : tipo === 'warning' ? 'var(--orange)' : 'var(--blue)'}">${msg}</div>` + log.innerHTML;
+  }
+  setTimeout(() => d.remove(), 5000);
+}
+
+// ==================== INICIALIZAÇÃO ====================
+document.addEventListener('DOMContentLoaded', () => {
+  carregarHistorico();
+  carregarCaixa();
+  atualizarCCList();
+  atualizarHistFullList();
+  atualizarCaixaUI();
+  gerarRelatorio();
+  populaAncoraSelect();
+  const pasteArea = document.getElementById('ccPasteArea');
+  if (pasteArea) pasteArea.addEventListener('input', atualizarContadorPaste);
+  tendInitInputs();
+  // Verifica se há recomendação ativa da Bridge
+  verificarRecomendacaoTrend();
+  fb('LotoFácil COCKPIT 2 · V54 BRIDGE pronto! 🔱🌉', 'success');
+});
+
+// ── NAVEGAÇÃO PARA O GUIA ──────────────────────────────────────────
+
+// ── NAVEGAÇÃO PARA O GUIA ──────────────────────────────────────────
+let _guiaWin = null;
+
+function abrirGuia() {
+  if (_guiaWin && !_guiaWin.closed) {
+    _guiaWin.focus();          // já está aberta? só traz para frente
+    return;
+  }
+  _guiaWin = window.open('guia_completo.html', 'guiaCompleto',
+    'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
+}
+
+// Escuta o pedido de fechamento vindo do guia
+window.addEventListener('message', function(e) {
+  if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) {
+    _guiaWin.close();
+    _guiaWin = null;
+  }
+});
+// ──────────────────────────────────────────────────────────────────
+
+
+
+</script>
+
+<div style="text-align:center;padding:18px 16px 28px;font-size:.75rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
+  © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> &amp; Cia · Todos os direitos reservados
+  <span style="margin:0 8px;color:var(--border)">|</span>
+  Suporte: <strong style="color:var(--text2)">61 99948-7649</strong>
+  <span style="margin:0 8px;color:var(--border)">|</span>
+  <a href="https://wa.me/5561999487649?text=Apoio%20LotoF%C3%A1cil%20COCKPIT%20-%20Pix%20chave%2061999487649" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:20px;color:#25d366;font-weight:800;font-size:.76rem;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='rgba(37,211,102,.22)'" onmouseout="this.style.background='rgba(37,211,102,.12)'">💚 Apoio Pix — Zap 61 99948-7649</a>
+</div>
+</body>
+</html>
