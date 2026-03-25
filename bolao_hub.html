@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔱 LotoFácil BOLÃO HUB · Rede Transparente de Bolões</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+           signOut, onAuthStateChanged, updateProfile }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, collection, doc, setDoc, getDoc, getDocs,
+           addDoc, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+  // ══════════════════════════════════════════════
+  // 🔧 CONFIGURE SEU FIREBASE AQUI
+  // ══════════════════════════════════════════════
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    projectId: "SEU_PROJETO",
+    storageBucket: "SEU_PROJETO.appspot.com",
+    messagingSenderId: "SEU_SENDER_ID",
+    appId: "SEU_APP_ID"
+  };
+
+  // UID do administrador — troque pelo seu após o primeiro login
+  const ADMIN_UID = "SEU_UID_ADMIN";
+
+  // Chave Pix do organizador (exibida para pagamento)
+  const PIX_CHAVE = "61999487649"; // Troque pela sua chave Pix
+
+  const app   = initializeApp(firebaseConfig);
+  const auth  = getAuth(app);
+  const db    = getFirestore(app);
+  const stor  = getStorage(app);
+
+  // ── Estado global ────────────────────────────
+  let currentUser  = null;
+  let isAdmin      = false;
+  let unsubBoloes  = null;
+
+  // ══════════════════════════════════════════════
+  // AUTH
+  // ══════════════════════════════════════════════
+  window.fazerLogin = async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const senha = document.getElementById('loginSenha').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+    } catch(e) { showMsg('loginMsg', '❌ ' + traduzErroAuth(e.code), 'error'); }
+  };
+
+  window.fazerCadastro = async () => {
+    const nome  = document.getElementById('cadNome').value.trim();
+    const email = document.getElementById('cadEmail').value.trim();
+    const zap   = document.getElementById('cadZap').value.trim();
+    const senha = document.getElementById('cadSenha').value;
+    if (!nome || !email || !zap || !senha) { showMsg('cadMsg','⚠️ Preencha todos os campos','warning'); return; }
+    if (senha.length < 6) { showMsg('cadMsg','⚠️ Senha mínima: 6 caracteres','warning'); return; }
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, senha);
+      await updateProfile(cred.user, { displayName: nome });
+      await setDoc(doc(db,'usuarios', cred.user.uid), {
+        nome, email, whatsapp: zap, criadoEm: serverTimestamp(), fidelidade: 0
+      });
+      showMsg('cadMsg','✅ Cadastro realizado! Entrando...','success');
+    } catch(e) { showMsg('cadMsg','❌ ' + traduzErroAuth(e.code),'error'); }
+  };
+
+  window.fazerLogout = async () => {
+    if(unsubBoloes) unsubBoloes();
+    await signOut(auth);
+  };
+
+  function traduzErroAuth(code) {
+    const m = {
+      'auth/email-already-in-use':'E-mail já cadastrado.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/wrong-password':'Senha incorreta.',
+      'auth/user-not-found':'Usuário não encontrado.',
+      'auth/weak-password':'Senha muito fraca.',
+      'auth/invalid-credential':'E-mail ou senha incorretos.'
+    };
+    return m[code] || code;
+  }
+
+  onAuthStateChanged(auth, async user => {
+    currentUser = user;
+    isAdmin = user && user.uid === ADMIN_UID;
+    renderApp();
+    if (user) {
+      carregarBoloes();
+      if (isAdmin) carregarAdminDados();
+      else carregarMinhasCotas();
+    }
+  });
+
+  // ══════════════════════════════════════════════
+  // RENDER PRINCIPAL
+  // ══════════════════════════════════════════════
+  function renderApp() {
+    const sections = ['secAuth','secPublico','secCliente','secAdmin'];
+    sections.forEach(s => hide(s));
+    document.getElementById('topnav').style.display = currentUser ? 'flex' : 'none';
+
+    if (!currentUser) { show('secAuth'); return; }
+
+    show('secPublico');
+    document.getElementById('navNome').textContent = currentUser.displayName || currentUser.email;
+    document.getElementById('navAdmin').style.display = isAdmin ? 'inline-flex' : 'none';
+
+    if (isAdmin) show('secAdmin');
+    else show('secCliente');
+
+    goTab(isAdmin ? 'admin' : 'cliente');
+  }
+
+  // ══════════════════════════════════════════════
+  // BOLÕES — LEITURA PÚBLICA (tempo real)
+  // ══════════════════════════════════════════════
+  function carregarBoloes() {
+    if(unsubBoloes) unsubBoloes();
+    const q = query(collection(db,'boloes'), orderBy('criadoEm','desc'));
+    unsubBoloes = onSnapshot(q, snap => {
+      const boloes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderBaloesPublico(boloes);
+      renderBoloesCliente(boloes);
+      renderBoloesAdmin(boloes);
+    });
+  }
+
+  function renderBaloesPublico(boloes) {
+    const el = document.getElementById('pubBoloes');
+    if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão ativo no momento.</p>'; return; }
+    el.innerHTML = boloes.map(b => `
+      <div class="bolao-card ${b.status}">
+        <div class="bc-header">
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-status">${labelStatus(b.status)}</span>
+        </div>
+        <div class="bc-title">${b.nome}</div>
+        <div class="bc-concurso">Concurso #${b.concurso || '—'} · ${b.dataReferencia || '—'}</div>
+        <div class="bc-stats">
+          <div class="bc-stat"><div class="bc-val">${b.totalParticipantes || 0}</div><div class="bc-lbl">Participantes</div></div>
+          <div class="bc-stat"><div class="bc-val">${b.volantes?.length || 0}</div><div class="bc-lbl">Volantes</div></div>
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.totalArrecadado || 0)}</div><div class="bc-lbl">Arrecadado</div></div>
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.totalDistribuido || 0)}</div><div class="bc-lbl">Distribuído</div></div>
+        </div>
+        ${b.volantes?.length ? `
+        <details class="bc-volantes-details">
+          <summary>📋 Ver ${b.volantes.length} volante(s) jogado(s)</summary>
+          <div class="bc-volantes">${b.volantes.map((v,i) => `
+            <div class="vol-item">
+              <span class="vol-num">#${i+1}</span>
+              ${v.dezenas.map(d=>`<span class="vol-bola">${String(d).padStart(2,'0')}</span>`).join('')}
+            </div>`).join('')}
+          </div>
+        </details>` : ''}
+        ${b.resultado ? `
+        <div class="bc-resultado">
+          <strong>🎯 Resultado CC${b.concurso}:</strong>
+          <div class="bc-volantes" style="margin-top:6px">
+            <div class="vol-item">
+              ${b.resultado.map(d=>`<span class="vol-bola sorteada">${String(d).padStart(2,'0')}</span>`).join('')}
+            </div>
+          </div>
+        </div>` : ''}
+        ${b.comprovanteUrl ? `<a class="bc-link" href="${b.comprovanteUrl}" target="_blank">🧾 Ver comprovante oficial</a>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ══════════════════════════════════════════════
+  // ÁREA DO CLIENTE
+  // ══════════════════════════════════════════════
+  function renderBoloesCliente(boloes) {
+    const abertos = boloes.filter(b => b.status === 'aberto');
+    const el = document.getElementById('cliDisponiveis');
+    if (!abertos.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão aberto no momento. Aguarde!</p>'; return; }
+    el.innerHTML = abertos.map(b => `
+      <div class="bolao-card aberto">
+        <div class="bc-header">
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-status">🟢 Aberto</span>
+        </div>
+        <div class="bc-title">${b.nome}</div>
+        <div class="bc-concurso">Concurso #${b.concurso || '—'} · ${b.dataReferencia || '—'}</div>
+        <div class="bc-stats">
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.valorCota)}</div><div class="bc-lbl">Valor da cota</div></div>
+          <div class="bc-stat"><div class="bc-val">${b.volantes?.length || '?'}</div><div class="bc-lbl">Volantes</div></div>
+        </div>
+        <button class="btn btn-primary" onclick="abrirModalParticipacao('${b.id}','${b.nome}',${b.valorCota},'${b.modalidade}')">
+          💰 Participar deste Bolão
+        </button>
+      </div>
+    `).join('');
+  }
+
+  async function carregarMinhasCotas() {
+    if (!currentUser) return;
+    const q = query(collection(db,'cotas'), where('userId','==',currentUser.uid), orderBy('criadoEm','desc'));
+    onSnapshot(q, snap => {
+      const cotas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderMinhasCotas(cotas);
+    });
+  }
+
+  function renderMinhasCotas(cotas) {
+    const el = document.getElementById('cliMinhasCotas');
+    if (!cotas.length) { el.innerHTML = '<p class="empty-msg">Você ainda não participou de nenhum bolão.</p>'; return; }
+    el.innerHTML = cotas.map(c => `
+      <div class="cota-card ${c.status}">
+        <div class="cc-top">
+          <strong>${c.bolaoNome}</strong>
+          <span class="cota-status ${c.status}">${labelCotaStatus(c.status)}</span>
+        </div>
+        <div class="cc-info">
+          <span>💰 R$ ${fmt(c.valor)}</span>
+          <span>📅 ${c.criadoEm?.toDate ? formatDate(c.criadoEm.toDate()) : '—'}</span>
+        </div>
+        ${c.premio ? `<div class="cc-premio">🏆 Prêmio recebido: <strong>R$ ${fmt(c.premio)}</strong></div>` : ''}
+        ${c.status === 'pendente' ? `
+        <div class="cc-pix">
+          <div class="pix-info">⚡ Aguardando confirmação do Pix</div>
+          <div class="pix-chave">Chave Pix: <strong>${PIX_CHAVE}</strong></div>
+          <div class="pix-valor">Valor: <strong>R$ ${fmt(c.valor)}</strong></div>
+          <div class="pix-obs">Envie o comprovante no WhatsApp após o Pix.</div>
+        </div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // Modal de participação
+  window.abrirModalParticipacao = (bolaoId, bolaoNome, valorCota, modalidade) => {
+    document.getElementById('mPartBolaoId').value = bolaoId;
+    document.getElementById('mPartNome').textContent = bolaoNome;
+    document.getElementById('mPartValor').textContent = `R$ ${fmt(valorCota)}`;
+    document.getElementById('mPartModal').textContent = labelModal(modalidade);
+    document.getElementById('mPartPixChave').textContent = PIX_CHAVE;
+    document.getElementById('mPartPixValor').textContent = `R$ ${fmt(valorCota)}`;
+    show('modalParticipacao');
+  };
+
+  window.confirmarParticipacao = async () => {
+    if (!currentUser) return;
+    const bolaoId = document.getElementById('mPartBolaoId').value;
+    const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
+    if (!bolaoSnap.exists()) { alert('Bolão não encontrado.'); return; }
+    const bolao = bolaoSnap.data();
+    const btn = document.getElementById('btnConfirmarPart');
+    btn.disabled = true; btn.textContent = 'Registrando...';
+    try {
+      const cotaRef = await addDoc(collection(db,'cotas'), {
+        userId: currentUser.uid,
+        userName: currentUser.displayName,
+        userEmail: currentUser.email,
+        bolaoId,
+        bolaoNome: bolao.nome,
+        valor: bolao.valorCota,
+        modalidade: bolao.modalidade,
+        status: 'pendente',
+        criadoEm: serverTimestamp()
+      });
+      // Incrementa fidelidade
+      const userRef = doc(db,'usuarios',currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const fid = (userSnap.data().fidelidade || 0) + 1;
+        await updateDoc(userRef, { fidelidade: fid });
+      }
+      hide('modalParticipacao');
+      showToast('✅ Participação registrada! Envie o Pix e aguarde confirmação.','success');
+    } catch(e) { showToast('❌ Erro: ' + e.message,'error'); }
+    btn.disabled = false; btn.textContent = '✅ Confirmar Participação';
+  };
+
+  // ══════════════════════════════════════════════
+  // ÁREA DO ADMIN
+  // ══════════════════════════════════════════════
+  async function carregarAdminDados() {
+    // Cotas pendentes
+    const q = query(collection(db,'cotas'), where('status','==','pendente'));
+    onSnapshot(q, snap => {
+      const pendentes = snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderCotasPendentes(pendentes);
+      document.getElementById('badgePendentes').textContent = pendentes.length || '';
+    });
+  }
+
+  function renderBoloesAdmin(boloes) {
+    const el = document.getElementById('adminBoloesList');
+    if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão cadastrado.</p>'; return; }
+    el.innerHTML = boloes.map(b => `
+      <div class="bolao-card ${b.status}" style="margin-bottom:10px">
+        <div class="bc-header">
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-status">${labelStatus(b.status)}</span>
+          <span style="margin-left:auto;font-size:.75rem;color:var(--text2)">${b.dataReferencia||''}</span>
+        </div>
+        <div class="bc-title">${b.nome} — CC#${b.concurso||'?'}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          ${b.status==='aberto' ? `
+            <button class="btn btn-sm btn-ghost" onclick="abrirUploadVolantes('${b.id}')">📤 Upload Volantes</button>
+            <button class="btn btn-sm btn-info" onclick="fecharBolao('${b.id}')">🔒 Fechar Bolão</button>
+          ` : ''}
+          ${b.status==='fechado' ? `
+            <button class="btn btn-sm btn-primary" onclick="abrirLancarResultado('${b.id}','${b.nome}')">🎯 Lançar Resultado</button>
+          ` : ''}
+          ${b.status==='apurado' ? `<span style="color:var(--green);font-size:.82rem">✅ Apurado</span>` : ''}
+          <button class="btn btn-sm btn-ghost" onclick="verCotas('${b.id}','${b.nome}')">👥 Ver Cotas</button>
+          <button class="btn btn-sm btn-danger" onclick="excluirBolao('${b.id}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCotasPendentes(pendentes) {
+    const el = document.getElementById('adminPendentes');
+    if (!pendentes.length) { el.innerHTML = '<p class="empty-msg">✅ Nenhum pagamento pendente.</p>'; return; }
+    el.innerHTML = pendentes.map(c => `
+      <div class="cota-pendente">
+        <div>
+          <strong>${c.userName}</strong> · <span style="color:var(--text2);font-size:.8rem">${c.userEmail}</span><br>
+          <span style="font-size:.82rem">${c.bolaoNome}</span>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;color:var(--accent)">R$ ${fmt(c.valor)}</div>
+          <div style="font-size:.75rem;color:var(--text2)">${c.criadoEm?.toDate ? formatDate(c.criadoEm.toDate()) : ''}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-success" onclick="confirmarPagamento('${c.id}','${c.bolaoId}',${c.valor})">✅ Confirmar</button>
+          <button class="btn btn-sm btn-danger" onclick="rejeitarCota('${c.id}')">❌</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Criar bolão
+  window.criarBolao = async () => {
+    const nome   = document.getElementById('novoBolaoNome').value.trim();
+    const modal  = document.getElementById('novoBolaoModal').value;
+    const cc     = document.getElementById('novoBolaoConcurso').value.trim();
+    const data   = document.getElementById('novoBolaoData').value;
+    const valor  = parseFloat(document.getElementById('novoBolaoValor').value);
+    if (!nome || !modal || !cc || !data || !valor) { showMsg('novoBolaoMsg','⚠️ Preencha todos os campos','warning'); return; }
+    try {
+      await addDoc(collection(db,'boloes'), {
+        nome, modalidade: modal, concurso: cc, dataReferencia: data,
+        valorCota: valor, status: 'aberto',
+        totalArrecadado: 0, totalDistribuido: 0, totalParticipantes: 0,
+        volantes: [], criadoEm: serverTimestamp()
+      });
+      showMsg('novoBolaoMsg','✅ Bolão criado!','success');
+      ['novoBolaoNome','novoBolaoConcurso','novoBolaoData','novoBolaoValor'].forEach(id => document.getElementById(id).value='');
+    } catch(e) { showMsg('novoBolaoMsg','❌ ' + e.message,'error'); }
+  };
+
+  // Upload de volantes (JSON do Cockpit)
+  window.abrirUploadVolantes = (bolaoId) => {
+    document.getElementById('uploadBolaoId').value = bolaoId;
+    show('modalUpload');
+  };
+
+  window.processarUploadVolantes = async () => {
+    const bolaoId = document.getElementById('uploadBolaoId').value;
+    const fileInput = document.getElementById('uploadFile');
+    const textArea = document.getElementById('uploadJSON');
+    let dados = null;
+
+    if (fileInput.files.length) {
+      const txt = await fileInput.files[0].text();
+      try { dados = JSON.parse(txt); } catch { showMsg('uploadMsg','❌ JSON inválido','error'); return; }
+    } else if (textArea.value.trim()) {
+      try { dados = JSON.parse(textArea.value.trim()); } catch { showMsg('uploadMsg','❌ JSON inválido','error'); return; }
+    } else { showMsg('uploadMsg','⚠️ Selecione arquivo ou cole o JSON','warning'); return; }
+
+    // Aceita array direto ou objeto com campo "volantes"
+    let volantes = Array.isArray(dados) ? dados : dados.volantes;
+    if (!volantes) { showMsg('uploadMsg','❌ Formato inválido. Esperado: array de volantes','error'); return; }
+
+    // Normaliza: cada item deve ter {dezenas:[...]}
+    volantes = volantes.map((v,i) => ({
+      idx: i+1,
+      dezenas: Array.isArray(v) ? v : (v.dezenas || v.numeros || [])
+    })).filter(v => v.dezenas.length === 15);
+
+    if (!volantes.length) { showMsg('uploadMsg','❌ Nenhum volante válido (15 dezenas) encontrado','error'); return; }
+
+    try {
+      await updateDoc(doc(db,'boloes',bolaoId), { volantes });
+      showMsg('uploadMsg',`✅ ${volantes.length} volante(s) importado(s)!`,'success');
+      setTimeout(()=>hide('modalUpload'),1500);
+    } catch(e) { showMsg('uploadMsg','❌ ' + e.message,'error'); }
+  };
+
+  // Confirmar pagamento
+  window.confirmarPagamento = async (cotaId, bolaoId, valor) => {
+    if (!confirm('Confirmar pagamento desta cota?')) return;
+    try {
+      await updateDoc(doc(db,'cotas',cotaId), { status: 'confirmado' });
+      // Atualiza totais do bolão
+      const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
+      if (bolaoSnap.exists()) {
+        const b = bolaoSnap.data();
+        await updateDoc(doc(db,'boloes',bolaoId), {
+          totalArrecadado: (b.totalArrecadado||0) + valor,
+          totalParticipantes: (b.totalParticipantes||0) + 1
+        });
+      }
+      showToast('✅ Pagamento confirmado!','success');
+    } catch(e) { showToast('❌ ' + e.message,'error'); }
+  };
+
+  window.rejeitarCota = async (cotaId) => {
+    if (!confirm('Rejeitar esta cota?')) return;
+    await updateDoc(doc(db,'cotas',cotaId), { status: 'rejeitado' });
+    showToast('Cota rejeitada.','warning');
+  };
+
+  window.fecharBolao = async (bolaoId) => {
+    if (!confirm('Fechar este bolão para novas participações?')) return;
+    await updateDoc(doc(db,'boloes',bolaoId), { status: 'fechado' });
+    showToast('🔒 Bolão fechado.','info');
+  };
+
+  window.excluirBolao = async (bolaoId) => {
+    if (!confirm('Excluir este bolão permanentemente?')) return;
+    await deleteDoc(doc(db,'boloes',bolaoId));
+    showToast('🗑️ Bolão excluído.','warning');
+  };
+
+  // Lançar resultado
+  window.abrirLancarResultado = (bolaoId, bolaoNome) => {
+    document.getElementById('resltBolaoId').value = bolaoId;
+    document.getElementById('resltBolaoNome').textContent = bolaoNome;
+    document.getElementById('resltDezeanas').value = '';
+    show('modalResultado');
+  };
+
+  window.lancarResultado = async () => {
+    const bolaoId = document.getElementById('resltBolaoId').value;
+    const raw = document.getElementById('resltDezeanas').value.trim();
+    const comp = document.getElementById('resltComp').value.trim();
+    const dezenas = raw.split(/[\s,]+/).map(Number).filter(n=>n>=1&&n<=25);
+    if (dezenas.length !== 15) { showMsg('resltMsg','⚠️ Informe exatamente 15 dezenas (1–25)','warning'); return; }
+
+    try {
+      const updateData = { status:'apurado', resultado: dezenas };
+      if (comp) updateData.comprovanteUrl = comp;
+
+      // Busca todos os volantes e calcula acertos
+      const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
+      const bolao = bolaoSnap.data();
+      const volantes = bolao.volantes || [];
+
+      const acertos = volantes.map(v => ({
+        idx: v.idx,
+        acertos: v.dezenas.filter(d => dezenas.includes(d)).length
+      }));
+
+      updateData.acertos = acertos;
+      updateData.maxAcertos = Math.max(...acertos.map(a=>a.acertos), 0);
+
+      await updateDoc(doc(db,'boloes',bolaoId), updateData);
+
+      // Calcula e distribui prêmios entre cotas confirmadas
+      const cotasSnap = await getDocs(query(collection(db,'cotas'),
+        where('bolaoId','==',bolaoId), where('status','==','confirmado')));
+      const cotas = cotasSnap.docs.map(d=>({id:d.id,...d.data()}));
+      const totalArrecadado = bolao.totalArrecadado || 0;
+
+      // Prêmio proporcional = cada cota recebe igual (transparência total)
+      if (cotas.length > 0) {
+        const premioPorCota = totalArrecadado / cotas.length;
+        for (const c of cotas) {
+          await updateDoc(doc(db,'cotas',c.id), {
+            premio: premioPorCota,
+            statusPremio: 'a_pagar'
+          });
+        }
+        await updateDoc(doc(db,'boloes',bolaoId), {
+          totalDistribuido: totalArrecadado,
+          statusPremio: 'calculado'
+        });
+      }
+
+      showMsg('resltMsg','✅ Resultado lançado e prêmios calculados!','success');
+      setTimeout(()=>hide('modalResultado'),2000);
+    } catch(e) { showMsg('resltMsg','❌ ' + e.message,'error'); }
+  };
+
+  // Ver cotas de um bolão
+  window.verCotas = async (bolaoId, bolaoNome) => {
+    document.getElementById('cotasModalTitulo').textContent = bolaoNome;
+    document.getElementById('cotasLista').innerHTML = '<p>Carregando...</p>';
+    show('modalCotas');
+    const snap = await getDocs(query(collection(db,'cotas'), where('bolaoId','==',bolaoId)));
+    const cotas = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (!cotas.length) { document.getElementById('cotasLista').innerHTML = '<p class="empty-msg">Nenhuma cota.</p>'; return; }
+    document.getElementById('cotasLista').innerHTML = cotas.map(c=>`
+      <div class="cota-pendente">
+        <div>
+          <strong>${c.userName}</strong><br>
+          <span style="font-size:.78rem;color:var(--text2)">${c.userEmail}</span>
+        </div>
+        <div style="text-align:right">
+          <div>R$ ${fmt(c.valor)}</div>
+          <span class="cota-status ${c.status}">${labelCotaStatus(c.status)}</span>
+        </div>
+        ${c.premio ? `<div style="color:var(--green);font-size:.82rem">🏆 R$ ${fmt(c.premio)}</div>` : '<div></div>'}
+      </div>
+    `).join('');
+  };
+
+  // ══════════════════════════════════════════════
+  // HELPERS
+  // ══════════════════════════════════════════════
+  function labelModal(m) {
+    return { pop:'🟡 Pop R$5', lite:'🔵 Lite R$10', top:'🟣 Top R$20', especial:'⭐ Especial R$50' }[m] || m;
+  }
+  function labelStatus(s) {
+    return { aberto:'🟢 Aberto', fechado:'🔒 Fechado', apurado:'✅ Apurado' }[s] || s;
+  }
+  function labelCotaStatus(s) {
+    return { pendente:'⏳ Pix Pendente', confirmado:'✅ Confirmado', rejeitado:'❌ Rejeitado' }[s] || s;
+  }
+  function fmt(v) { return Number(v||0).toFixed(2).replace('.',','); }
+  function formatDate(d) { return d.toLocaleDateString('pt-BR'); }
+  function show(id) { const el=document.getElementById(id); if(el) el.style.display=''; }
+  function hide(id) { const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+  function showMsg(id, msg, tipo) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'form-msg ' + tipo;
+    el.style.display = 'block';
+    setTimeout(()=>{ el.style.display='none'; }, 4000);
+  }
+
+  function showToast(msg, tipo='info') {
+    const t = document.createElement('div');
+    t.className = 'toast ' + tipo;
+    t.textContent = msg;
+    document.getElementById('toastContainer').appendChild(t);
+    setTimeout(()=>t.remove(), 4000);
+  }
+
+  // Tabs
+  window.goTab = (tab) => {
+    document.querySelectorAll('.tab-section').forEach(s=>s.style.display='none');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    const sec = document.getElementById('tab-'+tab);
+    if (sec) sec.style.display='';
+    const btn = document.getElementById('tabBtn-'+tab);
+    if (btn) btn.classList.add('active');
+  };
+
+  window.fecharModal = (id) => hide(id);
+</script>
+
+<style>
+:root {
+  --bg:#080c12; --surface:#0f1419; --surface2:#161c24; --surface3:#1e262f; --surface4:#252f3a;
+  --border:#2a3441; --text:#e8f0f8; --text2:#7a8fa6; --text3:#4a5f72;
+  --accent:#f0c040; --green:#3fb950; --red:#f85149;
+  --blue:#58a6ff; --purple:#bc8cff; --orange:#ffa657; --teal:#39d5c8;
+  --r:12px; --r-sm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── TOPNAV ── */
+#topnav{
+  display:none;position:sticky;top:0;z-index:200;
+  background:rgba(8,12,18,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;height:54px;gap:12px;align-items:center;justify-content:space-between;
+}
+.topnav-brand{font-family:'Oswald',sans-serif;font-size:1.1rem;letter-spacing:2px;color:var(--purple);white-space:nowrap;}
+.topnav-brand span{color:var(--accent);font-size:.65rem;background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);border-radius:10px;padding:2px 7px;font-family:'Nunito',sans-serif;font-weight:800;}
+.topnav-tabs{display:flex;gap:2px;}
+.tab-btn{padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;background:transparent;color:var(--text2);border:none;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.tab-btn:hover{color:var(--text);background:var(--surface3);}
+.tab-btn.active{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.3);}
+.topnav-right{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--text2);}
+#navNome{color:var(--accent);font-weight:700;}
+.btn-logout{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:.75rem;padding:4px 10px;border-radius:20px;cursor:pointer;}
+.btn-logout:hover{border-color:var(--red);color:var(--red);}
+
+/* ── WRAP ── */
+.wrap{max-width:1200px;margin:0 auto;padding:24px 16px 60px;}
+.tab-section{display:none;}
+
+/* ── AUTH ── */
+#secAuth{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;width:100%;max-width:420px;}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo h1{font-family:'Oswald',sans-serif;font-size:1.6rem;color:var(--purple);letter-spacing:2px;}
+.auth-logo p{font-size:.82rem;color:var(--text2);margin-top:6px;}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:.85rem;font-weight:700;cursor:pointer;color:var(--text2);border:none;background:transparent;}
+.auth-tab.active{color:var(--purple);border-bottom:2px solid var(--purple);}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:.75rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+input,select,textarea{width:100%;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:10px 13px;font-size:.9rem;font-family:'Nunito',sans-serif;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--purple);}
+textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-size:.82rem;}
+.form-msg{display:none;font-size:.82rem;padding:8px 12px;border-radius:var(--r-sm);margin-top:10px;}
+.form-msg.success{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.3);}
+.form-msg.error{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.3);}
+.form-msg.warning{background:rgba(255,166,87,.1);color:var(--orange);border:1px solid rgba(255,166,87,.3);}
+.form-msg.info{background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.3);}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;padding:9px 18px;border:none;border-radius:var(--r-sm);cursor:pointer;transition:filter .18s,transform .1s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{filter:brightness(1.15);}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--accent);color:var(--bg);}
+.btn-success{background:var(--green);color:var(--bg);}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-info{background:var(--blue);color:var(--bg);}
+.btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border);}
+.btn-purple{background:var(--purple);color:var(--bg);}
+.btn-full{width:100%;justify-content:center;}
+.btn-sm{font-size:.76rem !important;padding:5px 11px !important;}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.page-header h2{font-family:'Oswald',sans-serif;font-size:1.4rem;color:var(--purple);letter-spacing:1px;}
+.page-header p{font-size:.83rem;color:var(--text2);margin-top:4px;}
+
+/* ── BOLÃO CARDS ── */
+.boloes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.bolao-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:border-color .2s;}
+.bolao-card.aberto{border-color:rgba(63,185,80,.2);}
+.bolao-card.fechado{border-color:rgba(255,166,87,.2);}
+.bolao-card.apurado{border-color:rgba(88,166,255,.2);}
+.bc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.bc-modal{font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;}
+.bc-modal.pop{background:rgba(240,192,64,.15);color:var(--accent);}
+.bc-modal.lite{background:rgba(88,166,255,.15);color:var(--blue);}
+.bc-modal.top{background:rgba(188,140,255,.15);color:var(--purple);}
+.bc-modal.especial{background:rgba(63,185,80,.15);color:var(--green);}
+.bc-status{font-size:.72rem;color:var(--text2);}
+.bc-title{font-family:'Oswald',sans-serif;font-size:1rem;margin-bottom:4px;}
+.bc-concurso{font-size:.78rem;color:var(--text2);margin-bottom:12px;}
+.bc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.bc-stat{text-align:center;background:var(--surface2);border-radius:var(--r-sm);padding:8px 4px;}
+.bc-val{font-family:'Oswald',sans-serif;font-size:.95rem;color:var(--accent);}
+.bc-lbl{font-size:.65rem;color:var(--text2);margin-top:2px;}
+.bc-volantes-details summary{font-size:.78rem;color:var(--blue);cursor:pointer;padding:6px 0;}
+.bc-volantes{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.vol-item{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.vol-num{font-size:.7rem;color:var(--text3);width:24px;}
+.vol-bola{width:28px;height:28px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-family:'Fira Code',monospace;font-size:.7rem;font-weight:700;}
+.vol-bola.sorteada{background:rgba(240,192,64,.2);border-color:var(--accent);color:var(--accent);}
+.bc-resultado{background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.2);border-radius:var(--r-sm);padding:10px;margin-top:10px;font-size:.82rem;}
+.bc-link{display:block;text-align:center;font-size:.78rem;color:var(--blue);margin-top:10px;text-decoration:none;}
+.bc-link:hover{text-decoration:underline;}
+
+/* ── COTAS ── */
+.cota-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.cota-card.confirmado{border-color:rgba(63,185,80,.25);}
+.cota-card.pendente{border-color:rgba(255,166,87,.25);}
+.cota-card.rejeitado{border-color:rgba(248,81,73,.2);opacity:.6;}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.cc-info{font-size:.8rem;color:var(--text2);display:flex;gap:16px;}
+.cc-premio{margin-top:8px;font-size:.85rem;color:var(--green);}
+.cota-status{font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:10px;}
+.cota-status.pendente{background:rgba(255,166,87,.15);color:var(--orange);}
+.cota-status.confirmado{background:rgba(63,185,80,.15);color:var(--green);}
+.cota-status.rejeitado{background:rgba(248,81,73,.1);color:var(--red);}
+.pix-info{font-size:.82rem;color:var(--orange);margin-top:10px;font-weight:700;}
+.pix-chave,.pix-valor{font-size:.82rem;color:var(--text2);margin-top:4px;}
+.pix-obs{font-size:.75rem;color:var(--text3);margin-top:4px;font-style:italic;}
+
+/* ── ADMIN ── */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:700px){.admin-grid{grid-template-columns:1fr;}}
+.admin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.admin-card-title{font-family:'Oswald',sans-serif;font-size:.95rem;color:var(--accent);letter-spacing:1px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.cota-pendente{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:8px;}
+.badge{background:var(--red);color:#fff;border-radius:10px;font-size:.65rem;font-weight:800;padding:1px 6px;min-width:18px;text-align:center;}
+
+/* ── MODAIS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay[style*="display: block"],
+.modal-overlay:not([style*="display: none"]) { /* handled by show/hide */ }
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-title{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--purple);}
+.modal-close{background:none;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer;padding:4px;}
+
+/* ── PAINEL PÚBLICO ── */
+.pub-hero{text-align:center;padding:32px 16px;background:linear-gradient(135deg,rgba(188,140,255,.07),rgba(240,192,64,.05));border:1px solid var(--border);border-radius:var(--r);margin-bottom:24px;}
+.pub-hero h1{font-family:'Oswald',sans-serif;font-size:2rem;color:var(--purple);letter-spacing:2px;}
+.pub-hero p{color:var(--text2);font-size:.9rem;margin-top:8px;max-width:500px;margin-inline:auto;}
+.pub-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.pub-badge{font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);color:var(--green);}
+
+/* ── FIDELIDADE ── */
+.fid-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.fid-icon{font-size:1.5rem;}
+.fid-info{flex:1;}
+.fid-label{font-size:.78rem;color:var(--text2);}
+.fid-val{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--accent);}
+.fid-prog{height:6px;background:var(--surface4);border-radius:3px;margin-top:6px;}
+.fid-prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--orange));transition:width .5s;}
+
+/* ── TOAST ── */
+#toastContainer{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:10px 16px;border-radius:var(--r-sm);font-size:.85rem;font-weight:700;animation:slideIn .3s ease;max-width:300px;}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast.success{background:rgba(63,185,80,.9);color:var(--bg);}
+.toast.error{background:rgba(248,81,73,.9);color:#fff;}
+.toast.warning{background:rgba(255,166,87,.9);color:var(--bg);}
+.toast.info{background:rgba(88,166,255,.9);color:var(--bg);}
+
+/* ── MISC ── */
+.section-title{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.empty-msg{color:var(--text2);font-size:.88rem;text-align:center;padding:24px;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.input-row{grid-template-columns:1fr;}.bc-stats{grid-template-columns:repeat(2,1fr);}.topnav-tabs{display:none;}}
+
+/* ── AVISO LEGAL ── */
+.aviso-legal{background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.2);border-radius:var(--r-sm);padding:12px 14px;font-size:.78rem;color:var(--text2);line-height:1.6;margin-bottom:16px;}
+.aviso-legal strong{color:var(--red);}
+</style>
+</head>
+<body>
+
+<!-- ══ TOAST ══ -->
+<div id="toastContainer"></div>
+
+<!-- ══════════════════════════════════════════════
+     TOPNAV
+══════════════════════════════════════════════ -->
+<nav id="topnav">
+  <div class="topnav-brand">🔱 Bolão Hub <span>TRANSPARENTE</span></div>
+  <div class="topnav-tabs">
+    <button class="tab-btn active" id="tabBtn-publico" onclick="goTab('publico')">🌐 Painel Público</button>
+    <button class="tab-btn" id="tabBtn-cliente" onclick="goTab('cliente')">👤 Minha Área</button>
+    <button class="tab-btn" id="tabBtn-admin" style="display:none" id="navAdmin" onclick="goTab('admin')">⚙️ Admin</button>
+  </div>
+  <div class="topnav-right">
+    👤 <span id="navNome"></span>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     AUTH
+══════════════════════════════════════════════ -->
+<div id="secAuth">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <h1>🔱 BOLÃO HUB</h1>
+      <p>Rede Transparente de Bolões · LotoFácil</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchAuthTab('cadastro')">Cadastrar</button>
+    </div>
+
+    <!-- Login -->
+    <div class="auth-form active" id="authFormLogin">
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="loginEmail" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="loginSenha" placeholder="••••••">
+      </div>
+      <div id="loginMsg" class="form-msg"></div>
+      <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="fazerLogin()">Entrar</button>
+    </div>
+
+    <!-- Cadastro -->
+    <div class="auth-form" id="authFormCadastro">
+      <div class="aviso-legal">
+        <strong>⚖️ Aviso Legal:</strong> Este sistema organiza bolões sem fins lucrativos.
+        Cada participante paga exatamente o valor da cota do bilhete. Nenhuma taxa é retida pelo organizador.
+        Comprovantes de apostas são públicos.
+      </div>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" id="cadNome" placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="cadEmail" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" id="cadZap" placeholder="61 9 9999-9999">
+      </div>
+      <div class="form-group">
+        <label>Senha (mín. 6 caracteres)</label>
+        <input type="password" id="cadSenha" placeholder="••••••">
+      </div>
+      <div id="cadMsg" class="form-msg"></div>
+      <button class="btn btn-success btn-full" style="margin-top:14px" onclick="fazerCadastro()">Criar Conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SEÇÃO PÚBLICA + CLIENTE + ADMIN
+══════════════════════════════════════════════ -->
+<div id="secPublico" style="display:none">
+<div id="secCliente" style="display:none">
+<div id="secAdmin" style="display:none"></div>
+
+<div class="wrap">
+
+  <!-- ══ TAB: PAINEL PÚBLICO ══ -->
+  <div class="tab-section" id="tab-publico">
+    <div class="pub-hero">
+      <h1>🔱 REDE DE BOLÕES</h1>
+      <p>Transparência total · Sem taxas ocultas · Comprovantes públicos · Resultados em tempo real</p>
+      <div class="pub-badges">
+        <span class="pub-badge">✅ Sem lucro para o organizador</span>
+        <span class="pub-badge">📋 Comprovantes auditáveis</span>
+        <span class="pub-badge">💰 Valor exato do bilhete</span>
+        <span class="pub-badge">🔱 Cockpit V54 integrado</span>
+      </div>
+    </div>
+
+    <div class="section-title">📋 Bolões Ativos e Histórico</div>
+    <div class="boloes-grid" id="pubBoloes">
+      <p class="empty-msg">Carregando bolões...</p>
+    </div>
+  </div>
+
+  <!-- ══ TAB: ÁREA DO CLIENTE ══ -->
+  <div class="tab-section" id="tab-cliente">
+    <div class="page-header">
+      <h2>👤 Minha Área</h2>
+      <p>Suas cotas, participações, prêmios e fidelidade</p>
+    </div>
+
+    <!-- Fidelidade -->
+    <div class="fid-bar" id="fidBar">
+      <div class="fid-icon">🏅</div>
+      <div class="fid-info">
+        <div class="fid-label">Programa de Fidelidade · <span id="fidCount">0</span>/10 participações para 1 cota grátis</div>
+        <div class="fid-prog"><div class="fid-prog-fill" id="fidFill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:20px">🟢 Bolões Disponíveis para Participar</div>
+    <div class="boloes-grid" id="cliDisponiveis">
+      <p class="empty-msg">Carregando...</p>
+    </div>
+
+    <div class="section-title" style="margin-top:28px">📋 Minhas Cotas</div>
+    <div id="cliMinhasCotas">
+      <p class="empty-msg">Carregando...</p>
+    </div>
+  </div>
+
+  <!-- ══ TAB: ADMIN ══ -->
+  <div class="tab-section" id="tab-admin">
+    <div class="page-header">
+      <h2>⚙️ Painel Administrativo</h2>
+      <p>Gerencie bolões, confirme pagamentos e lance resultados</p>
+    </div>
+
+    <div class="admin-grid" style="margin-bottom:20px">
+
+      <!-- Criar Bolão -->
+      <div class="admin-card">
+        <div class="admin-card-title">➕ CRIAR NOVO BOLÃO</div>
+        <div class="form-group">
+          <label>Nome do Bolão</label>
+          <input type="text" id="novoBolaoNome" placeholder="Pop Diário #001">
+        </div>
+        <div class="input-row">
+          <div class="form-group">
+            <label>Modalidade</label>
+            <select id="novoBolaoModal">
+              <option value="pop">🟡 Pop (R$5)</option>
+              <option value="lite">🔵 Lite (R$10)</option>
+              <option value="top">🟣 Top (R$20)</option>
+              <option value="especial">⭐ Especial (R$50)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Valor da Cota (R$)</label>
+            <input type="number" id="novoBolaoValor" placeholder="5.00" step="0.01" min="1">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="form-group">
+            <label>Concurso #</label>
+            <input type="text" id="novoBolaoConcurso" placeholder="3645">
+          </div>
+          <div class="form-group">
+            <label>Data</label>
+            <input type="text" id="novoBolaoData" placeholder="27/03/2026">
+          </div>
+        </div>
+        <div id="novoBolaoMsg" class="form-msg"></div>
+        <button class="btn btn-primary btn-full" onclick="criarBolao()">➕ Criar Bolão</button>
+      </div>
+
+      <!-- Pagamentos Pendentes -->
+      <div class="admin-card">
+        <div class="admin-card-title">⏳ PAGAMENTOS PENDENTES <span class="badge" id="badgePendentes"></span></div>
+        <div id="adminPendentes">
+          <p class="empty-msg">Carregando...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Bolões Admin -->
+    <div class="admin-card">
+      <div class="admin-card-title">📋 TODOS OS BOLÕES</div>
+      <div id="adminBoloesList">
+        <p class="empty-msg">Carregando...</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+</div><!-- /secAdmin -->
+</div><!-- /secCliente -->
+</div><!-- /secPublico -->
+
+<!-- ══════════════════════════════════════════════
+     MODAIS
+══════════════════════════════════════════════ -->
+
+<!-- Modal Participação -->
+<div class="modal-overlay" id="modalParticipacao" style="display:none" onclick="if(event.target===this)fecharModal('modalParticipacao')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">💰 Participar do Bolão</div>
+      <button class="modal-close" onclick="fecharModal('modalParticipacao')">✕</button>
+    </div>
+    <input type="hidden" id="mPartBolaoId">
+    <div style="background:var(--surface2);border-radius:var(--r-sm);padding:14px;margin-bottom:16px;">
+      <div style="font-family:'Oswald',sans-serif;font-size:1.1rem;" id="mPartNome"></div>
+      <div style="font-size:.82rem;color:var(--text2);margin-top:4px;" id="mPartModal"></div>
+    </div>
+    <div class="aviso-legal">
+      <strong>⚖️ Transparência:</strong> O valor pago corresponde exatamente ao custo
+      do seu(s) volante(s) na Caixa. <strong>Zero taxa de administração.</strong>
+      Comprovante de apostas será publicado no painel público.
+    </div>
+    <div style="background:rgba(240,192,64,.07);border:1px solid rgba(240,192,64,.25);border-radius:var(--r-sm);padding:14px;margin-bottom:16px;">
+      <div style="font-weight:800;color:var(--accent);margin-bottom:8px;">⚡ Instrução de Pagamento via Pix</div>
+      <div style="font-size:.85rem;margin-bottom:4px;">Chave Pix: <strong id="mPartPixChave" style="color:var(--accent);font-family:'Fira Code',monospace"></strong></div>
+      <div style="font-size:.85rem;margin-bottom:4px;">Valor: <strong id="mPartPixValor" style="color:var(--green)"></strong></div>
+      <div style="font-size:.78rem;color:var(--text2);margin-top:8px;">
+        1. Faça o Pix com o valor exato<br>
+        2. Clique em "Confirmar" abaixo para registrar sua participação<br>
+        3. Envie o comprovante no WhatsApp para confirmação<br>
+        4. Após confirmação, seu nome aparece na lista de participantes
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" id="btnConfirmarPart" onclick="confirmarParticipacao()">
+      ✅ Confirmar Participação
+    </button>
+  </div>
+</div>
+
+<!-- Modal Upload Volantes -->
+<div class="modal-overlay" id="modalUpload" style="display:none" onclick="if(event.target===this)fecharModal('modalUpload')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">📤 Upload de Volantes (Cockpit V54)</div>
+      <button class="modal-close" onclick="fecharModal('modalUpload')">✕</button>
+    </div>
+    <input type="hidden" id="uploadBolaoId">
+    <div style="font-size:.82rem;color:var(--text2);margin-bottom:14px;line-height:1.6;">
+      Importe o JSON exportado pelo <strong>Cockpit V54</strong>.<br>
+      Formato esperado: <code style="color:var(--accent)">[ {"dezenas":[1,2,3,...15]}, ... ]</code>
+    </div>
+    <div class="form-group">
+      <label>Arquivo JSON do Cockpit</label>
+      <input type="file" id="uploadFile" accept=".json,.txt">
+    </div>
+    <div style="text-align:center;color:var(--text3);font-size:.8rem;margin:10px 0">— ou cole o JSON diretamente —</div>
+    <div class="form-group">
+      <label>JSON (cole aqui)</label>
+      <textarea id="uploadJSON" rows="5" placeholder='[{"dezenas":[1,4,7,9,12,13,14,16,18,19,20,21,22,23,25]}]'></textarea>
+    </div>
+    <div id="uploadMsg" class="form-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="processarUploadVolantes()">📥 Importar Volantes</button>
+  </div>
+</div>
+
+<!-- Modal Resultado -->
+<div class="modal-overlay" id="modalResultado" style="display:none" onclick="if(event.target===this)fecharModal('modalResultado')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🎯 Lançar Resultado</div>
+      <button class="modal-close" onclick="fecharModal('modalResultado')">✕</button>
+    </div>
+    <input type="hidden" id="resltBolaoId">
+    <div style="font-size:.85rem;color:var(--accent);font-weight:700;margin-bottom:14px;" id="resltBolaoNome"></div>
+    <div class="form-group">
+      <label>15 Dezenas Sorteadas (separadas por espaço ou vírgula)</label>
+      <input type="text" id="resltDezeanas" placeholder="01 04 06 07 09 10 11 13 14 15 16 18 19 22 24">
+    </div>
+    <div class="form-group">
+      <label>URL do Comprovante Oficial (opcional)</label>
+      <input type="url" id="resltComp" placeholder="https://loterias.caixa.gov.br/...">
+    </div>
+    <div id="resltMsg" class="form-msg"></div>
+    <button class="btn btn-primary btn-full" onclick="lancarResultado()">✅ Lançar e Calcular Prêmios</button>
+  </div>
+</div>
+
+<!-- Modal Cotas -->
+<div class="modal-overlay" id="modalCotas" style="display:none" onclick="if(event.target===this)fecharModal('modalCotas')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">👥 Cotas — <span id="cotasModalTitulo"></span></div>
+      <button class="modal-close" onclick="fecharModal('modalCotas')">✕</button>
+    </div>
+    <div id="cotasLista"></div>
+  </div>
+</div>
+
+<script>
+// Auth tabs (fora do módulo)
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('authForm'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+}
+
+// Enter no login
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter') {
+    const lEmail = document.getElementById('loginEmail');
+    if (lEmail && document.activeElement && document.activeElement.closest('#authFormLogin')) {
+      fazerLogin();
+    }
+  }
+});
+
+// Mostrar modais como flex
+const _origShow = window.show;
+window.show = function(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.classList.contains('modal-overlay')) {
+    el.style.display = 'flex';
+  } else {
+    el.style.display = '';
+  }
+};
+</script>
+
+<div style="text-align:center;padding:16px;font-size:.72rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
+  🔱 <strong style="color:var(--text2)">LotoFácil Bolão Hub</strong> · Rede Transparente de Bolões · Sem fins lucrativos<br>
+  © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> · Suporte:
+  <a href="https://wa.me/5561999487649" target="_blank" style="color:#25d366;text-decoration:none">💚 61 99948-7649</a>
+</div>
+
+</body>
+</html>
