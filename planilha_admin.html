@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>📊 Planilha Admin · Bolão Hub | LotoFácil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0c12 0%, #0f1419 100%);
+            color: #e8f0f8;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+            border-radius: 24px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(188, 140, 255, 0.2);
+        }
+
+        .header h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #bc8cff, #8b5cf6);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .sub {
+            color: #7a8fa6;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: #0f1419;
+            border: 1px solid #2a3441;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            border-color: rgba(188, 140, 255, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            color: #f0b90b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #2a3441;
+            padding-bottom: 12px;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: #7a8fa6;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            width: 100%;
+            background: #1e262f;
+            border: 1px solid #2a3441;
+            border-radius: 12px;
+            color: #e8f0f8;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #bc8cff;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Botões */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #bc8cff, #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(188, 140, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #1e262f;
+            color: #e8f0f8;
+            border: 1px solid #2a3441;
+        }
+
+        .btn-secondary:hover {
+            background: #2a3441;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #3fb950, #2ea043);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffa657, #f0883e);
+            color: #0a0c12;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* Tabelas */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #1e262f;
+            color: #f0b90b;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #2a3441;
+        }
+
+        .highlight {
+            background: rgba(188, 140, 255, 0.1);
+            font-weight: 700;
+            color: #bc8cff;
+        }
+
+        .success-text {
+            color: #3fb950;
+            font-weight: 700;
+        }
+
+        .warning-text {
+            color: #ffa657;
+            font-weight: 700;
+        }
+
+        .danger-text {
+            color: #f85149;
+            font-weight: 700;
+        }
+
+        /* Resultados */
+        .result-box {
+            background: linear-gradient(135deg, rgba(188, 140, 255, 0.08), rgba(63, 185, 80, 0.04));
+            border: 1px solid rgba(188, 140, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .result-item {
+            text-align: center;
+            padding: 16px;
+            background: #1e262f;
+            border-radius: 12px;
+        }
+
+        .result-label {
+            font-size: 0.7rem;
+            color: #7a8fa6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f0b90b;
+        }
+
+        /* Navegação */
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin: 32px 0 24px;
+            padding: 20px 0;
+            border-top: 1px solid #2a3441;
+            border-bottom: 1px solid #2a3441;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid #2a3441;
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: #5f7f9a;
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            .result-value {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <span>📊 Planilha Admin · Bolão Hub</span>
+            <span class="badge">🔱 LotoFácil R$ 3,50</span>
+        </h1>
+        <div class="sub">
+            Planeje seus bolões com precisão · Calcule cotas e participantes · Valide arrecadação
+        </div>
+    </div>
+
+    <!-- Navegação Rápida -->
+    <div class="nav-buttons">
+        <a href="https://khareis159.github.io/lotofacil-hub/bolao_hub.html" target="_blank" class="btn btn-primary">
+            <i class="fas fa-users"></i> 🔱 Ir para Bolão Hub
+        </a>
+        <a href="https://khareis159.github.io/lotofacil-hub/index.html" target="_blank" class="btn btn-secondary">
+            <i class="fas fa-chart-line"></i> ⚙️ Ir para COCKPIT V54
+        </a>
+        <button class="btn btn-secondary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Planilha
+        </button>
+    </div>
+
+    <!-- Calculadora Principal -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-calculator"></i> Calculadora de Bolões
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>📊 Número de Volantes</label>
+                <input type="number" id="volantes" value="40" step="1" min="1" onchange="calcular()">
+            </div>
+            <div class="input-group">
+                <label>💰 Valor da Cota (R$)</label>
+                <input type="number" id="valorCota" value="20.00" step="0.50" min="1" onchange="calcular()">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>🎯 Sugestão Rápida</label>
+            <select id="preset" onchange="aplicarPreset()">
+                <option value="">-- Selecione um modelo --</option>
+                <option value="pop">🟡 Pop · 10 volantes · Cota R$ 5,00</option>
+                <option value="lite">🔵 Lite · 20 volantes · Cota R$ 10,00</option>
+                <option value="top">🟣 Top · 40 volantes · Cota R$ 20,00</option>
+                <option value="especial">⭐ Especial · 60 volantes · Cota R$ 30,00</option>
+                <option value="semanal">📅 Semanal · 100 volantes · Cota R$ 50,00</option>
+                <option value="personalizado">🎲 Personalizado · 30 volantes · Cota R$ 15,00</option>
+            </select>
+        </div>
+
+        <!-- Resultados da Calculadora -->
+        <div class="result-box" id="resultado">
+            <div class="result-grid" id="resultGrid">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="calcularParticipantesIdeal()">
+                <i class="fas fa-users"></i> Calcular Participantes Ideais
+            </button>
+            <button class="btn btn-warning" onclick="validarArrecadacao()">
+                <i class="fas fa-check-circle"></i> Validar Arrecadação
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabela de Referência -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-table"></i> Tabela de Referência · Bolões Prontos
+        </div>
+        <div class="table-responsive">
+            <table id="tabelaReferencia">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Volantes</th>
+                        <th>Custo Total</th>
+                        <th>Cota Sugerida</th>
+                        <th>Participantes</th>
+                        <th>Arrecadação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Preenchido via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Premiação e Dicas -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-trophy"></i> Premiação Lotofácil (Referência)
+        </div>
+        <div class="input-row">
+            <div class="result-item">
+                <div class="result-label">11 Pontos</div>
+                <div class="result-value" style="color: #3fb950;">R$ 7,00</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">12 Pontos</div>
+                <div class="result-value" style="color: #3fb950;">R$ 14,00</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">13 Pontos</div>
+                <div class="result-value" style="color: #ffa657;">R$ 35,00</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">14 Pontos</div>
+                <div class="result-value" style="color: #f0b90b;">R$ 1.500,00</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">15 Pontos</div>
+                <div class="result-value" style="color: #bc8cff;">R$ 500.000+</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px; padding: 16px; background: rgba(255,166,87,0.08); border-radius: 12px; border-left: 3px solid #ffa657;">
+            <i class="fas fa-lightbulb"></i> <strong>Dica:</strong> O valor do volante é <strong>R$ 3,50</strong> (atualizado 2026). Para fechar o bolão, a arrecadação deve ser <strong>igual ou superior</strong> ao custo total dos volantes.
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 LotoFácil Bolão Hub · Planilha Administrativa<br>
+        Valor do volante: R$ 3,50 · Sistema de gestão transparente<br>
+        Suporte: <a href="https://wa.me/5561999487649" target="_blank" style="color: #25d366;">💚 61 99948-7649</a>
+    </div>
+</div>
+
+<script>
+    const VALOR_VOLANTE = 3.50;
+
+    function calcular() {
+        let volantes = parseInt(document.getElementById('volantes').value) || 0;
+        let valorCota = parseFloat(document.getElementById('valorCota').value) || 0;
+
+        let custoTotal = volantes * VALOR_VOLANTE;
+        let participantesNecessarios = valorCota > 0 ? Math.ceil(custoTotal / valorCota) : 0;
+        let arrecadacao = participantesNecessarios * valorCota;
+        let diferenca = arrecadacao - custoTotal;
+        let status = diferenca >= 0 ? 'success' : 'danger';
+        let statusText = diferenca >= 0 ? '✅ Coberto' : '⚠️ Faltando';
+        let statusColor = diferenca >= 0 ? '#3fb950' : '#f85149';
+
+        document.getElementById('resultGrid').innerHTML = `
+            <div class="result-item">
+                <div class="result-label">Custo Total (${volantes} volantes)</div>
+                <div class="result-value">R$ ${custoTotal.toFixed(2).replace('.', ',')}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Participantes Necessários</div>
+                <div class="result-value">${participantesNecessarios}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Arrecadação Prevista</div>
+                <div class="result-value">R$ ${arrecadacao.toFixed(2).replace('.', ',')}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Status</div>
+                <div class="result-value" style="color: ${statusColor};">${statusText}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Diferença</div>
+                <div class="result-value" style="color: ${statusColor};">${diferenca >= 0 ? '+' : '-'} R$ ${Math.abs(diferenca).toFixed(2).replace('.', ',')}</div>
+            </div>
+        `;
+    }
+
+    function calcularParticipantesIdeal() {
+        let volantes = parseInt(document.getElementById('volantes').value) || 0;
+        let custoTotal = volantes * VALOR_VOLANTE;
+        
+        // Sugerir valores de cota ideais (divisores exatos)
+        let sugestoes = [];
+        for (let participantes = 1; participantes <= 20; participantes++) {
+            let valorIdeal = custoTotal / participantes;
+            if (valorIdeal >= 3 && valorIdeal <= 100) {
+                sugestoes.push({ participantes, valor: valorIdeal });
+            }
+        }
+        
+        let html = '<div class="result-box" style="margin-top: 16px;"><strong>💡 Sugestões de Cotas Ideais:</strong><div class="result-grid" style="margin-top: 12px;">';
+        sugestoes.slice(0, 6).forEach(s => {
+            html += `
+                <div class="result-item" style="cursor: pointer;" onclick="aplicarSugestao(${s.participantes}, ${s.valor.toFixed(2)})">
+                    <div class="result-label">${s.participantes} participantes</div>
+                    <div class="result-value">R$ ${s.valor.toFixed(2).replace('.', ',')}</div>
+                    <div class="result-label">por cota</div>
+                </div>
+            `;
+        });
+        html += '</div></div>';
+        
+        const existing = document.getElementById('sugestoes');
+        if (existing) existing.remove();
+        
+        const div = document.createElement('div');
+        div.id = 'sugestoes';
+        div.innerHTML = html;
+        document.getElementById('resultado').after(div);
+    }
+    
+    function aplicarSugestao(participantes, valorCota) {
+        document.getElementById('valorCota').value = valorCota;
+        calcular();
+        document.getElementById('sugestoes')?.remove();
+    }
+
+    function validarArrecadacao() {
+        let volantes = parseInt(document.getElementById('volantes').value) || 0;
+        let valorCota = parseFloat(document.getElementById('valorCota').value) || 0;
+        let custoTotal = volantes * VALOR_VOLANTE;
+        let participantesNecessarios = Math.ceil(custoTotal / valorCota);
+        let arrecadacao = participantesNecessarios * valorCota;
+        
+        let msg = `📊 VALIDAÇÃO DO BOLÃO\n\n`;
+        msg += `Volantes: ${volantes}\n`;
+        msg += `Custo total: R$ ${custoTotal.toFixed(2).replace('.', ',')}\n`;
+        msg += `Valor da cota: R$ ${valorCota.toFixed(2).replace('.', ',')}\n`;
+        msg += `Participantes necessários: ${participantesNecessarios}\n`;
+        msg += `Arrecadação prevista: R$ ${arrecadacao.toFixed(2).replace('.', ',')}\n\n`;
+        
+        if (arrecadacao >= custoTotal) {
+            msg += `✅ BOLÃO VIÁVEL! A arrecadação cobre o custo dos volantes.\n`;
+            msg += `💰 Sobra: R$ ${(arrecadacao - custoTotal).toFixed(2).replace('.', ',')} (pode ser usado para volantes extras ou reserva)`;
+        } else {
+            msg += `❌ BOLÃO NÃO VIÁVEL! Faltam R$ ${(custoTotal - arrecadacao).toFixed(2).replace('.', ',')} para cobrir os volantes.\n`;
+            msg += `Sugestões:\n`;
+            msg += `• Aumente o valor da cota para R$ ${(custoTotal / Math.ceil(participantesNecessarios)).toFixed(2).replace('.', ',')}\n`;
+            msg += `• Ou reduza o número de volantes para ${Math.floor(arrecadacao / VALOR_VOLANTE)}`;
+        }
+        
+        alert(msg);
+    }
+
+    function aplicarPreset() {
+        const preset = document.getElementById('preset').value;
+        switch(preset) {
+            case 'pop':
+                document.getElementById('volantes').value = 10;
+                document.getElementById('valorCota').value = 5.00;
+                break;
+            case 'lite':
+                document.getElementById('volantes').value = 20;
+                document.getElementById('valorCota').value = 10.00;
+                break;
+            case 'top':
+                document.getElementById('volantes').value = 40;
+                document.getElementById('valorCota').value = 20.00;
+                break;
+            case 'especial':
+                document.getElementById('volantes').value = 60;
+                document.getElementById('valorCota').value = 30.00;
+                break;
+            case 'semanal':
+                document.getElementById('volantes').value = 100;
+                document.getElementById('valorCota').value = 50.00;
+                break;
+            case 'personalizado':
+                document.getElementById('volantes').value = 30;
+                document.getElementById('valorCota').value = 15.00;
+                break;
+            default:
+                return;
+        }
+        calcular();
+        document.getElementById('preset').value = '';
+    }
+
+    function carregarTabelaReferencia() {
+        const modelos = [
+            { nome: '🟡 Pop', volantes: 10, cota: 5.00, participantes: 7 },
+            { nome: '🔵 Lite', volantes: 20, cota: 10.00, participantes: 7 },
+            { nome: '🟣 Top', volantes: 40, cota: 20.00, participantes: 7 },
+            { nome: '⭐ Especial', volantes: 60, cota: 30.00, participantes: 7 },
+            { nome: '📅 Semanal', volantes: 100, cota: 50.00, participantes: 7 },
+            { nome: '🎲 Alternativo', volantes: 30, cota: 15.00, participantes: 7 },
+            { nome: '🎯 Econômico', volantes: 14, cota: 7.00, participantes: 7 },
+            { nome: '🏆 Premium', volantes: 80, cota: 40.00, participantes: 7 }
+        ];
+        
+        let html = '';
+        modelos.forEach(m => {
+            let custo = m.volantes * VALOR_VOLANTE;
+            let arrecadacao = m.participantes * m.cota;
+            html += `<tr>
+                <td><strong>${m.nome}</strong></td>
+                <td>${m.volantes}</td>
+                <td>R$ ${custo.toFixed(2).replace('.', ',')}</td>
+                <td>R$ ${m.cota.toFixed(2).replace('.', ',')}</td>
+                <td>${m.participantes}</td>
+                <td class="${arrecadacao >= custo ? 'success-text' : 'warning-text'}">R$ ${arrecadacao.toFixed(2).replace('.', ',')}</td>
+            </tr>`;
+        });
+        document.querySelector('#tabelaReferencia tbody').innerHTML = html;
+    }
+
+    // Inicialização
+    calcular();
+    carregarTabelaReferencia();
+</script>
+</body>
+</html>
