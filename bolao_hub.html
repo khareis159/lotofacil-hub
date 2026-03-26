@@ -95,8 +95,17 @@ const firebaseConfig = {
   onAuthStateChanged(auth, async user => {
     currentUser = user;
     isAdmin = user && user.uid === ADMIN_UID;
+    renderApp();  // ← Apenas a CHAMADA, não a definição
+    if (user) {
+        carregarBoloes();
+        if (isAdmin) carregarAdminDados();
+        else carregarMinhasCotas();
+    }
+});
 
-// ══════════════════════════════════════════════
+
+
+    // ══════════════════════════════════════════════
 // RENDER PRINCIPAL (CORRIGIDO)
 // ══════════════════════════════════════════════
 function renderApp() {
@@ -128,29 +137,7 @@ function renderApp() {
     goTab(isAdmin ? 'admin' : 'cliente');
 }
 
-
-
     
-  // ══════════════════════════════════════════════
-  // RENDER PRINCIPAL
-  // ══════════════════════════════════════════════
-  function renderApp() {
-    const sections = ['secAuth','secPublico','secCliente','secAdmin'];
-    sections.forEach(s => hide(s));
-    document.getElementById('topnav').style.display = currentUser ? 'flex' : 'none';
-
-    if (!currentUser) { show('secAuth'); return; }
-
-    show('secPublico');
-    document.getElementById('navNome').textContent = currentUser.displayName || currentUser.email;
-    document.getElementById('navAdmin').style.display = isAdmin ? 'inline-flex' : 'none';
-
-    if (isAdmin) show('secAdmin');
-    else show('secCliente');
-
-    goTab(isAdmin ? 'admin' : 'cliente');
-  }
-
   // ══════════════════════════════════════════════
   // BOLÕES — LEITURA PÚBLICA (tempo real)
   // ══════════════════════════════════════════════
