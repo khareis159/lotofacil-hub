@@ -92,43 +92,45 @@ const firebaseConfig = {
     return m[code] || code;
   }
 
+  // ══════════════════════════════════════════════
+  // RENDER PRINCIPAL
+  // ══════════════════════════════════════════════
+  function renderApp() {
+    ['secAuth','secPublico','secCliente','secAdmin'].forEach(s => hide(s));
+    const topnav = document.getElementById('topnav');
+    if (topnav) topnav.style.display = currentUser ? 'flex' : 'none';
+    if (!currentUser) { show('secAuth'); return; }
+    show('secPublico');
+    const navNome = document.getElementById('navNome');
+    if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
+    const navAdmin = document.getElementById('navAdmin');
+    if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
+    if (isAdmin) show('secAdmin');
+    else show('secCliente');
+    goTab(isAdmin ? 'admin' : 'cliente');
+  }
+
   onAuthStateChanged(auth, async user => {
     currentUser = user;
     isAdmin = user && user.uid === ADMIN_UID;
-  
-    // ══════════════════════════════════════════════
-// RENDER PRINCIPAL (CORRIGIDO)
-// ══════════════════════════════════════════════
-function renderApp() {
-    const sections = ['secAuth','secPublico','secCliente','secAdmin'];
-    sections.forEach(s => hide(s));
-    
-    // ✅ CORREÇÃO: Verifica se o elemento existe antes de mexer
-    const topnav = document.getElementById('topnav');
-    if (topnav) {
-        topnav.style.display = currentUser ? 'flex' : 'none';
+    renderApp();
+    if (user) {
+      carregarBoloes();
+      if (isAdmin) carregarAdminDados();
+      else carregarMinhasCotas();
+      // Fidelidade
+      const userSnap = await getDoc(doc(db,'usuarios',user.uid));
+      if (userSnap.exists()) {
+        const fid = userSnap.data().fidelidade || 0;
+        const fidEl = document.getElementById('fidCount');
+        const fidFill = document.getElementById('fidFill');
+        if (fidEl) fidEl.textContent = fid;
+        if (fidFill) fidFill.style.width = Math.min(fid*10,100)+'%';
+      }
     }
+  });
 
-    if (!currentUser) { 
-        show('secAuth'); 
-        return; 
-    }
-    
-    show('secPublico');
-    
-    const navNome = document.getElementById('navNome');
-    if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
-    
-    const navAdmin = document.getElementById('navAdmin');
-    if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
-    
-    if (isAdmin) show('secAdmin');
-    else show('secCliente');
-    
-    goTab(isAdmin ? 'admin' : 'cliente');
-}
 
-    
   // ══════════════════════════════════════════════
   // BOLÕES — LEITURA PÚBLICA (tempo real)
   // ══════════════════════════════════════════════
@@ -540,8 +542,17 @@ function renderApp() {
   }
   function fmt(v) { return Number(v||0).toFixed(2).replace('.',','); }
   function formatDate(d) { return d.toLocaleDateString('pt-BR'); }
-  function show(id) { const el=document.getElementById(id); if(el) el.style.display=''; }
-  function hide(id) { const el=document.getElementById(id); if(el) el.style.display='none'; }
+  window.show = function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = el.classList.contains('modal-overlay') ? 'flex' : '';
+  };
+  window.hide = function(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  };
+  function show(id) { window.show(id); }
+  function hide(id) { window.hide(id); }
 
   function showMsg(id, msg, tipo) {
     const el = document.getElementById(id);
@@ -562,16 +573,25 @@ function renderApp() {
 
   // Tabs
   window.goTab = (tab) => {
-    document.querySelectorAll('.tab-section').forEach(s=>s.style.display='none');
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    const sec = document.getElementById('tab-'+tab);
-    if (sec) sec.style.display='';
-    const btn = document.getElementById('tabBtn-'+tab);
+    document.querySelectorAll('.tab-section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const sec = document.getElementById('tab-' + tab);
+    if (sec) sec.style.display = '';
+    const btn = document.getElementById('tabBtn-' + tab);
     if (btn) btn.classList.add('active');
   };
 
-  window.fecharModal = (id) => hide(id);
-</script>
+  window.fecharModal = (id) => window.hide(id);
+  window.switchAuthTab = (tab) => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    const activeTab = document.querySelector(`.auth-tab[data-tab="${tab}"]`);
+    if (activeTab) activeTab.classList.add('active');
+    const formId = 'authForm' + tab.charAt(0).toUpperCase() + tab.slice(1);
+    const form = document.getElementById(formId);
+    if (form) form.classList.add('active');
+  };
+
 
 <style>
 :root {
@@ -761,7 +781,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   <div class="topnav-tabs">
     <button class="tab-btn active" id="tabBtn-publico" onclick="goTab('publico')">🌐 Painel Público</button>
     <button class="tab-btn" id="tabBtn-cliente" onclick="goTab('cliente')">👤 Minha Área</button>
-    <button class="tab-btn" id="tabBtn-admin" style="display:none" id="navAdmin" onclick="goTab('admin')">⚙️ Admin</button>
+    <button class="tab-btn" id="navAdmin" style="display:none" onclick="goTab('admin')">⚙️ Admin</button>
   </div>
   <div class="topnav-right">
     👤 <span id="navNome"></span>
@@ -779,8 +799,8 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
       <p>Rede Transparente de Bolões · LotoFácil</p>
     </div>
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
-      <button class="auth-tab" onclick="switchAuthTab('cadastro')">Cadastrar</button>
+      <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" data-tab="cadastro" onclick="switchAuthTab('cadastro')">Cadastrar</button>
     </div>
 
     <!-- Login -->
@@ -1046,36 +1066,13 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   </div>
 </div>
 
-<script>
-// Auth tabs (fora do módulo)
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('authForm'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
-}
-
 // Enter no login
 document.addEventListener('keydown', e => {
-  if (e.key==='Enter') {
-    const lEmail = document.getElementById('loginEmail');
-    if (lEmail && document.activeElement && document.activeElement.closest('#authFormLogin')) {
-      fazerLogin();
-    }
+  if (e.key === 'Enter' && document.activeElement &&
+      document.activeElement.closest('#authFormLogin')) {
+    if (window.fazerLogin) window.fazerLogin();
   }
 });
-
-// Mostrar modais como flex
-const _origShow = window.show;
-window.show = function(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (el.classList.contains('modal-overlay')) {
-    el.style.display = 'flex';
-  } else {
-    el.style.display = '';
-  }
-};
 </script>
 
 <div style="text-align:center;padding:16px;font-size:.72rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
