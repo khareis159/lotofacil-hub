@@ -95,14 +95,42 @@ const firebaseConfig = {
   onAuthStateChanged(auth, async user => {
     currentUser = user;
     isAdmin = user && user.uid === ADMIN_UID;
-    renderApp();
-    if (user) {
-      carregarBoloes();
-      if (isAdmin) carregarAdminDados();
-      else carregarMinhasCotas();
-    }
-  });
 
+// ══════════════════════════════════════════════
+// RENDER PRINCIPAL (CORRIGIDO)
+// ══════════════════════════════════════════════
+function renderApp() {
+    const sections = ['secAuth','secPublico','secCliente','secAdmin'];
+    sections.forEach(s => hide(s));
+    
+    // ✅ CORREÇÃO: Verifica se o elemento existe antes de mexer
+    const topnav = document.getElementById('topnav');
+    if (topnav) {
+        topnav.style.display = currentUser ? 'flex' : 'none';
+    }
+
+    if (!currentUser) { 
+        show('secAuth'); 
+        return; 
+    }
+    
+    show('secPublico');
+    
+    const navNome = document.getElementById('navNome');
+    if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
+    
+    const navAdmin = document.getElementById('navAdmin');
+    if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
+    
+    if (isAdmin) show('secAdmin');
+    else show('secCliente');
+    
+    goTab(isAdmin ? 'admin' : 'cliente');
+}
+
+
+
+    
   // ══════════════════════════════════════════════
   // RENDER PRINCIPAL
   // ══════════════════════════════════════════════
