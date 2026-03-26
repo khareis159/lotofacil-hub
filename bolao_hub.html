@@ -35,7 +35,10 @@ const firebaseConfig = {
   const ADMIN_UID = "jcIGSTgkTchmYkZ2iBf79SYrESH3";
 
   // Chave Pix do organizador (exibida para pagamento)
-  const PIX_CHAVE = "61999487649"; // Troque pela sua chave Pix
+  const PIX_CHAVE = "61999487649";
+  
+  // Valor atual do volante da Lotofácil (atualizado em 2026)
+  const VALOR_VOLANTE = 3.50;
 
   const app   = initializeApp(firebaseConfig);
   const auth  = getAuth(app);
@@ -98,40 +101,52 @@ const firebaseConfig = {
   function renderApp() {
     const topnav = document.getElementById('topnav');
     if (!currentUser) {
+      if (unsubBoloes) unsubBoloes();
       hide('secPublico');
       show('secAuth');
       if (topnav) topnav.style.display = 'none';
       return;
     }
+    
     hide('secAuth');
     show('secPublico');
     if (topnav) topnav.style.display = 'flex';
+    
     const navNome = document.getElementById('navNome');
     if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
+    
     const navAdmin = document.getElementById('tabBtn-admin');
     if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
-    // Esconde tab admin para não-admin
-    const tabAdmin = document.getElementById('tab-admin');
-    if (tabAdmin) tabAdmin.style.display = 'none';
-    goTab(isAdmin ? 'admin' : 'publico');
+    
+    // Define tab inicial baseado no tipo de usuário
+    const tabInicial = isAdmin ? 'admin' : 'cliente';
+    goTab(tabInicial);
   }
 
   onAuthStateChanged(auth, async user => {
     currentUser = user;
     isAdmin = user && user.uid === ADMIN_UID;
     renderApp();
+    
     if (user) {
       carregarBoloes();
-      if (isAdmin) carregarAdminDados();
-      else carregarMinhasCotas();
-      // Fidelidade
-      const userSnap = await getDoc(doc(db,'usuarios',user.uid));
-      if (userSnap.exists()) {
-        const fid = userSnap.data().fidelidade || 0;
-        const fidEl = document.getElementById('fidCount');
-        const fidFill = document.getElementById('fidFill');
-        if (fidEl) fidEl.textContent = fid;
-        if (fidFill) fidFill.style.width = Math.min(fid*10,100)+'%';
+      if (isAdmin) {
+        carregarAdminDados();
+      } else {
+        carregarMinhasCotas();
+      }
+      // Carrega fidelidade
+      try {
+        const userSnap = await getDoc(doc(db, 'usuarios', user.uid));
+        if (userSnap.exists()) {
+          const fid = userSnap.data().fidelidade || 0;
+          const fidCount = document.getElementById('fidCount');
+          const fidFill = document.getElementById('fidFill');
+          if (fidCount) fidCount.textContent = fid;
+          if (fidFill) fidFill.style.width = Math.min(fid * 10, 100) + '%';
+        }
+      } catch (e) {
+        console.error('Erro ao carregar fidelidade:', e);
       }
     }
   });
@@ -153,8 +168,11 @@ const firebaseConfig = {
 
   function renderBaloesPublico(boloes) {
     const el = document.getElementById('pubBoloes');
+    if (!el) return;
     if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão ativo no momento.</p>'; return; }
-    el.innerHTML = boloes.map(b => `
+    el.innerHTML = boloes.map(b => {
+      const custoTotalVolantes = (b.volantes?.length || 0) * VALOR_VOLANTE;
+      return `
       <div class="bolao-card ${b.status}">
         <div class="bc-header">
           <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
@@ -166,7 +184,7 @@ const firebaseConfig = {
           <div class="bc-stat"><div class="bc-val">${b.totalParticipantes || 0}</div><div class="bc-lbl">Participantes</div></div>
           <div class="bc-stat"><div class="bc-val">${b.volantes?.length || 0}</div><div class="bc-lbl">Volantes</div></div>
           <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.totalArrecadado || 0)}</div><div class="bc-lbl">Arrecadado</div></div>
-          <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.totalDistribuido || 0)}</div><div class="bc-lbl">Distribuído</div></div>
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(custoTotalVolantes)}</div><div class="bc-lbl">Custo Volantes</div></div>
         </div>
         ${b.volantes?.length ? `
         <details class="bc-volantes-details">
@@ -189,15 +207,16 @@ const firebaseConfig = {
         </div>` : ''}
         ${b.comprovanteUrl ? `<a class="bc-link" href="${b.comprovanteUrl}" target="_blank">🧾 Ver comprovante oficial</a>` : ''}
       </div>
-    `).join('');
+    `}).join('');
   }
 
   // ══════════════════════════════════════════════
   // ÁREA DO CLIENTE
   // ══════════════════════════════════════════════
   function renderBoloesCliente(boloes) {
-    const abertos = boloes.filter(b => b.status === 'aberto');
     const el = document.getElementById('cliDisponiveis');
+    if (!el) return;
+    const abertos = boloes.filter(b => b.status === 'aberto');
     if (!abertos.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão aberto no momento. Aguarde!</p>'; return; }
     el.innerHTML = abertos.map(b => `
       <div class="bolao-card aberto">
@@ -229,6 +248,7 @@ const firebaseConfig = {
 
   function renderMinhasCotas(cotas) {
     const el = document.getElementById('cliMinhasCotas');
+    if (!el) return;
     if (!cotas.length) { el.innerHTML = '<p class="empty-msg">Você ainda não participou de nenhum bolão.</p>'; return; }
     el.innerHTML = cotas.map(c => `
       <div class="cota-card ${c.status}">
@@ -253,13 +273,25 @@ const firebaseConfig = {
   }
 
   // Modal de participação
-  window.abrirModalParticipacao = (bolaoId, bolaoNome, valorCota, modalidade) => {
+  window.abrirModalParticipacao = async (bolaoId, bolaoNome, valorCota, modalidade) => {
+    // Buscar o bolão para saber quantos volantes tem
+    const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
+    const volantesCount = bolaoSnap.exists() ? (bolaoSnap.data().volantes?.length || 0) : 0;
+    const custoTotalVolantes = volantesCount * VALOR_VOLANTE;
+    
     document.getElementById('mPartBolaoId').value = bolaoId;
     document.getElementById('mPartNome').textContent = bolaoNome;
     document.getElementById('mPartValor').textContent = `R$ ${fmt(valorCota)}`;
     document.getElementById('mPartModal').textContent = labelModal(modalidade);
     document.getElementById('mPartPixChave').textContent = PIX_CHAVE;
     document.getElementById('mPartPixValor').textContent = `R$ ${fmt(valorCota)}`;
+    
+    // Adicionar informação de transparência sobre os volantes
+    const infoVolantes = document.getElementById('mPartInfoVolantes');
+    if (infoVolantes) {
+      infoVolantes.innerHTML = `<strong>📊 Transparência:</strong> ${volantesCount} volante(s) × R$ ${VALOR_VOLANTE.toFixed(2)} = <strong>R$ ${fmt(custoTotalVolantes)}</strong> (custo total da aposta na Caixa)`;
+    }
+    
     show('modalParticipacao');
   };
 
@@ -305,12 +337,14 @@ const firebaseConfig = {
     onSnapshot(q, snap => {
       const pendentes = snap.docs.map(d=>({id:d.id,...d.data()}));
       renderCotasPendentes(pendentes);
-      document.getElementById('badgePendentes').textContent = pendentes.length || '';
+      const badge = document.getElementById('badgePendentes');
+      if (badge) badge.textContent = pendentes.length || '';
     });
   }
 
   function renderBoloesAdmin(boloes) {
     const el = document.getElementById('adminBoloesList');
+    if (!el) return;
     if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão cadastrado.</p>'; return; }
     el.innerHTML = boloes.map(b => `
       <div class="bolao-card ${b.status}" style="margin-bottom:10px">
@@ -338,6 +372,7 @@ const firebaseConfig = {
 
   function renderCotasPendentes(pendentes) {
     const el = document.getElementById('adminPendentes');
+    if (!el) return;
     if (!pendentes.length) { el.innerHTML = '<p class="empty-msg">✅ Nenhum pagamento pendente.</p>'; return; }
     el.innerHTML = pendentes.map(c => `
       <div class="cota-pendente">
@@ -424,10 +459,22 @@ const firebaseConfig = {
       const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
       if (bolaoSnap.exists()) {
         const b = bolaoSnap.data();
+        const novoArrecadado = (b.totalArrecadado||0) + valor;
+        const volantesCount = b.volantes?.length || 0;
+        const custoNecessario = volantesCount * VALOR_VOLANTE;
+        
         await updateDoc(doc(db,'boloes',bolaoId), {
-          totalArrecadado: (b.totalArrecadado||0) + valor,
+          totalArrecadado: novoArrecadado,
           totalParticipantes: (b.totalParticipantes||0) + 1
         });
+        
+        // Verificar se já cobriu o custo dos volantes
+        if (novoArrecadado >= custoNecessario) {
+          showToast(`✅ Custo dos volantes atingido! R$ ${fmt(custoNecessario)} arrecadado.`, 'success');
+        } else {
+          const faltante = custoNecessario - novoArrecadado;
+          showToast(`⚠️ Ainda faltam R$ ${fmt(faltante)} para cobrir os volantes.`, 'warning');
+        }
       }
       showToast('✅ Pagamento confirmado!','success');
     } catch(e) { showToast('❌ ' + e.message,'error'); }
@@ -734,8 +781,6 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 
 /* ── MODAIS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay[style*="display: block"],
-.modal-overlay:not([style*="display: none"]) { /* handled by show/hide */ }
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
 .modal-title{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--purple);}
@@ -872,6 +917,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
         <span class="pub-badge">📋 Comprovantes auditáveis</span>
         <span class="pub-badge">💰 Valor exato do bilhete</span>
         <span class="pub-badge">🔱 Cockpit V54 integrado</span>
+        <span class="pub-badge">🎫 Volante R$ 3,50 (Caixa)</span>
       </div>
     </div>
 
@@ -1006,6 +1052,9 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
         4. Após confirmação, seu nome aparece na lista de participantes
       </div>
     </div>
+    <div class="aviso-legal" style="margin-top:10px; background:rgba(63,185,80,.05); border-color:rgba(63,185,80,.2);" id="mPartInfoVolantes">
+      <!-- Informação de transparência dos volantes será preenchida dinamicamente -->
+    </div>
     <button class="btn btn-primary btn-full" id="btnConfirmarPart" onclick="confirmarParticipacao()">
       ✅ Confirmar Participação
     </button>
@@ -1023,6 +1072,8 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
     <div style="font-size:.82rem;color:var(--text2);margin-bottom:14px;line-height:1.6;">
       Importe o JSON exportado pelo <strong>Cockpit V54</strong>.<br>
       Formato esperado: <code style="color:var(--accent)">[ {"dezenas":[1,2,3,...15]}, ... ]</code>
+      <br><br>
+      <strong>Valor do volante na Caixa: R$ 3,50</strong>
     </div>
     <div class="form-group">
       <label>Arquivo JSON do Cockpit</label>
@@ -1085,6 +1136,8 @@ document.addEventListener('keydown', e => {
   🔱 <strong style="color:var(--text2)">LotoFácil Bolão Hub</strong> · Rede Transparente de Bolões · Sem fins lucrativos<br>
   © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> · Suporte:
   <a href="https://wa.me/5561999487649" target="_blank" style="color:#25d366;text-decoration:none">💚 61 99948-7649</a>
+  <br>
+  <span style="font-size:.65rem;">🎫 Valor do volante Lotofácil: R$ 3,50 (atualizado 2026)</span>
 </div>
 
 </body>
