@@ -118,6 +118,12 @@ const firebaseConfig = {
     const navAdmin = document.getElementById('tabBtn-admin');
     if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
     
+// Mostrar botão Voltar ao COCKPIT apenas para admin
+const btnCockpit = document.getElementById('btnVoltarCockpit');
+if (btnCockpit) {
+    btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
+}
+       
     // Define tab inicial baseado no tipo de usuário
     const tabInicial = isAdmin ? 'admin' : 'cliente';
     goTab(tabInicial);
