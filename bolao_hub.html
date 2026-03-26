@@ -96,18 +96,24 @@ const firebaseConfig = {
   // RENDER PRINCIPAL
   // ══════════════════════════════════════════════
   function renderApp() {
-    ['secAuth','secPublico','secCliente','secAdmin'].forEach(s => hide(s));
     const topnav = document.getElementById('topnav');
-    if (topnav) topnav.style.display = currentUser ? 'flex' : 'none';
-    if (!currentUser) { show('secAuth'); return; }
+    if (!currentUser) {
+      hide('secPublico');
+      show('secAuth');
+      if (topnav) topnav.style.display = 'none';
+      return;
+    }
+    hide('secAuth');
     show('secPublico');
+    if (topnav) topnav.style.display = 'flex';
     const navNome = document.getElementById('navNome');
     if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
-    const navAdmin = document.getElementById('navAdmin');
+    const navAdmin = document.getElementById('tabBtn-admin');
     if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
-    if (isAdmin) show('secAdmin');
-    else show('secCliente');
-    goTab(isAdmin ? 'admin' : 'cliente');
+    // Esconde tab admin para não-admin
+    const tabAdmin = document.getElementById('tab-admin');
+    if (tabAdmin) tabAdmin.style.display = 'none';
+    goTab(isAdmin ? 'admin' : 'publico');
   }
 
   onAuthStateChanged(auth, async user => {
@@ -573,10 +579,14 @@ const firebaseConfig = {
 
   // Tabs
   window.goTab = (tab) => {
+    // Esconde todas as tab-sections
     document.querySelectorAll('.tab-section').forEach(s => s.style.display = 'none');
+    // Remove active de todos os botões
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // Mostra a section alvo
     const sec = document.getElementById('tab-' + tab);
     if (sec) sec.style.display = '';
+    // Marca botão ativo
     const btn = document.getElementById('tabBtn-' + tab);
     if (btn) btn.classList.add('active');
   };
@@ -782,7 +792,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   <div class="topnav-tabs">
     <button class="tab-btn active" id="tabBtn-publico" onclick="goTab('publico')">🌐 Painel Público</button>
     <button class="tab-btn" id="tabBtn-cliente" onclick="goTab('cliente')">👤 Minha Área</button>
-    <button class="tab-btn" id="navAdmin" style="display:none" onclick="goTab('admin')">⚙️ Admin</button>
+    <button class="tab-btn" id="tabBtn-admin" data-navadmin style="display:none" onclick="goTab('admin')">⚙️ Admin</button>
   </div>
   <div class="topnav-right">
     👤 <span id="navNome"></span>
@@ -848,12 +858,9 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 </div>
 
 <!-- ══════════════════════════════════════════════
-     SEÇÃO PÚBLICA + CLIENTE + ADMIN
+     CONTEÚDO PRINCIPAL
 ══════════════════════════════════════════════ -->
 <div id="secPublico" style="display:none">
-<div id="secCliente" style="display:none">
-<div id="secAdmin" style="display:none"></div>
-
 <div class="wrap">
 
   <!-- ══ TAB: PAINEL PÚBLICO ══ -->
@@ -966,8 +973,6 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   </div>
 
 </div><!-- /wrap -->
-</div><!-- /secAdmin -->
-</div><!-- /secCliente -->
 </div><!-- /secPublico -->
 
 <!-- ══════════════════════════════════════════════
