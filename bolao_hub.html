@@ -118,13 +118,11 @@ const firebaseConfig = {
     const navAdmin = document.getElementById('tabBtn-admin');
     if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
     
-// Mostrar botão Voltar ao COCKPIT apenas para admin
-const btnCockpit = document.getElementById('btnVoltarCockpit');
-if (btnCockpit) {
-    btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
-}
+    const btnCockpit = document.getElementById('btnVoltarCockpit');
+    if (btnCockpit) {
+      btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
+    }
        
-    // Define tab inicial baseado no tipo de usuário
     const tabInicial = isAdmin ? 'admin' : 'cliente';
     goTab(tabInicial);
   }
@@ -141,7 +139,6 @@ if (btnCockpit) {
       } else {
         carregarMinhasCotas();
       }
-      // Carrega fidelidade
       try {
         const userSnap = await getDoc(doc(db, 'usuarios', user.uid));
         if (userSnap.exists()) {
@@ -156,7 +153,6 @@ if (btnCockpit) {
       }
     }
   });
-
 
   // ══════════════════════════════════════════════
   // BOLÕES — LEITURA PÚBLICA (tempo real)
@@ -178,14 +174,19 @@ if (btnCockpit) {
     if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão ativo no momento.</p>'; return; }
     el.innerHTML = boloes.map(b => {
       const custoTotalVolantes = (b.volantes?.length || 0) * VALOR_VOLANTE;
+      const isAntecipado = b.modalidade === 'antecipado';
+      const antecipadoBadge = isAntecipado ? '<span class="bc-antecipado">⏰ Antecipado</span>' : '';
+      const entregaInfo = isAntecipado && b.dataEntrega ? `<div style="font-size:.7rem;color:var(--orange);margin-top:4px;">📅 Volantes serão entregues em: ${b.dataEntrega}</div>` : '';
       return `
       <div class="bolao-card ${b.status}">
         <div class="bc-header">
           <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
           <span class="bc-status">${labelStatus(b.status)}</span>
+          ${antecipadoBadge}
         </div>
         <div class="bc-title">${b.nome}</div>
         <div class="bc-concurso">Concurso #${b.concurso || '—'} · ${b.dataReferencia || '—'}</div>
+        ${entregaInfo}
         <div class="bc-stats">
           <div class="bc-stat"><div class="bc-val">${b.totalParticipantes || 0}</div><div class="bc-lbl">Participantes</div></div>
           <div class="bc-stat"><div class="bc-val">${b.volantes?.length || 0}</div><div class="bc-lbl">Volantes</div></div>
@@ -224,7 +225,15 @@ if (btnCockpit) {
     if (!el) return;
     const abertos = boloes.filter(b => b.status === 'aberto');
     if (!abertos.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão aberto no momento. Aguarde!</p>'; return; }
-    el.innerHTML = abertos.map(b => `
+    el.innerHTML = abertos.map(b => {
+      const isAntecipado = b.modalidade === 'antecipado';
+      const avisoAntecipado = isAntecipado ? `
+        <div style="background:rgba(255,166,87,.1);border-radius:8px;padding:8px;margin:8px 0;font-size:.75rem;color:var(--orange);">
+          ⏰ Este é um BOLÃO ANTECIPADO. Os volantes serão entregues apenas na data definida pelo organizador (${b.dataEntrega || 'a definir'}). 
+          Ao participar, você concorda em aguardar até a data de entrega.
+        </div>
+      ` : '';
+      return `
       <div class="bolao-card aberto">
         <div class="bc-header">
           <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
@@ -232,6 +241,7 @@ if (btnCockpit) {
         </div>
         <div class="bc-title">${b.nome}</div>
         <div class="bc-concurso">Concurso #${b.concurso || '—'} · ${b.dataReferencia || '—'}</div>
+        ${avisoAntecipado}
         <div class="bc-stats">
           <div class="bc-stat"><div class="bc-val">R$ ${fmt(b.valorCota)}</div><div class="bc-lbl">Valor da cota</div></div>
           <div class="bc-stat"><div class="bc-val">${b.volantes?.length || '?'}</div><div class="bc-lbl">Volantes</div></div>
@@ -240,7 +250,7 @@ if (btnCockpit) {
           💰 Participar deste Bolão
         </button>
       </div>
-    `).join('');
+    `}).join('');
   }
 
   async function carregarMinhasCotas() {
@@ -280,10 +290,17 @@ if (btnCockpit) {
 
   // Modal de participação
   window.abrirModalParticipacao = async (bolaoId, bolaoNome, valorCota, modalidade) => {
-    // Buscar o bolão para saber quantos volantes tem
     const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
     const volantesCount = bolaoSnap.exists() ? (bolaoSnap.data().volantes?.length || 0) : 0;
     const custoTotalVolantes = volantesCount * VALOR_VOLANTE;
+    const isAntecipado = modalidade === 'antecipado';
+    const avisoAntecipadoModal = isAntecipado ? `
+      <div class="aviso-legal" style="background:rgba(255,166,87,.1); border-color:rgba(255,166,87,.3); margin-bottom:16px;">
+        <strong>⏰ BOLÃO ANTECIPADO</strong><br>
+        Você está participando de um bolão antecipado. Os volantes serão entregues pelo organizador na data combinada (${bolaoSnap.data()?.dataEntrega || 'a definir'}). 
+        Seu pagamento será confirmado e você receberá os volantes via WhatsApp na data do sorteio.
+      </div>
+    ` : '';
     
     document.getElementById('mPartBolaoId').value = bolaoId;
     document.getElementById('mPartNome').textContent = bolaoNome;
@@ -292,10 +309,9 @@ if (btnCockpit) {
     document.getElementById('mPartPixChave').textContent = PIX_CHAVE;
     document.getElementById('mPartPixValor').textContent = `R$ ${fmt(valorCota)}`;
     
-    // Adicionar informação de transparência sobre os volantes
     const infoVolantes = document.getElementById('mPartInfoVolantes');
     if (infoVolantes) {
-      infoVolantes.innerHTML = `<strong>📊 Transparência:</strong> ${volantesCount} volante(s) × R$ ${VALOR_VOLANTE.toFixed(2)} = <strong>R$ ${fmt(custoTotalVolantes)}</strong> (custo total da aposta na Caixa)`;
+      infoVolantes.innerHTML = `${avisoAntecipadoModal}<strong>📊 Transparência:</strong> ${volantesCount} volante(s) × R$ ${VALOR_VOLANTE.toFixed(2)} = <strong>R$ ${fmt(custoTotalVolantes)}</strong> (custo total da aposta na Caixa)`;
     }
     
     show('modalParticipacao');
@@ -321,7 +337,6 @@ if (btnCockpit) {
         status: 'pendente',
         criadoEm: serverTimestamp()
       });
-      // Incrementa fidelidade
       const userRef = doc(db,'usuarios',currentUser.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
@@ -338,7 +353,6 @@ if (btnCockpit) {
   // ÁREA DO ADMIN
   // ══════════════════════════════════════════════
   async function carregarAdminDados() {
-    // Cotas pendentes
     const q = query(collection(db,'cotas'), where('status','==','pendente'));
     onSnapshot(q, snap => {
       const pendentes = snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -352,14 +366,23 @@ if (btnCockpit) {
     const el = document.getElementById('adminBoloesList');
     if (!el) return;
     if (!boloes.length) { el.innerHTML = '<p class="empty-msg">Nenhum bolão cadastrado.</p>'; return; }
-    el.innerHTML = boloes.map(b => `
+    
+    el.innerHTML = boloes.map(b => {
+      const isAntecipado = b.modalidade === 'antecipado';
+      const entregaStatus = isAntecipado && b.dataEntrega ? `📅 Entrega: ${b.dataEntrega}` : '';
+      const badgeAntecipado = isAntecipado ? '<span class="badge-antecipado">⏰ ANTECIPADO</span>' : '';
+      const mostraBtnEntrega = isAntecipado && b.status === 'fechado' && !b.volantesEntregues;
+      
+      return `
       <div class="bolao-card ${b.status}" style="margin-bottom:10px">
         <div class="bc-header">
           <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
           <span class="bc-status">${labelStatus(b.status)}</span>
+          ${badgeAntecipado}
           <span style="margin-left:auto;font-size:.75rem;color:var(--text2)">${b.dataReferencia||''}</span>
         </div>
         <div class="bc-title">${b.nome} — CC#${b.concurso||'?'}</div>
+        <div style="font-size:.72rem;color:var(--text2);margin:4px 0">${entregaStatus}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
           ${b.status==='aberto' ? `
             <button class="btn btn-sm btn-ghost" onclick="abrirUploadVolantes('${b.id}')">📤 Upload Volantes</button>
@@ -369,11 +392,14 @@ if (btnCockpit) {
             <button class="btn btn-sm btn-primary" onclick="abrirLancarResultado('${b.id}','${b.nome}')">🎯 Lançar Resultado</button>
           ` : ''}
           ${b.status==='apurado' ? `<span style="color:var(--green);font-size:.82rem">✅ Apurado</span>` : ''}
+          ${mostraBtnEntrega ? `
+            <button class="btn btn-sm btn-success" onclick="entregarVolantesAntecipado('${b.id}')">📦 ENTREGAR VOLANTES</button>
+          ` : ''}
           <button class="btn btn-sm btn-ghost" onclick="verCotas('${b.id}','${b.nome}')">👥 Ver Cotas</button>
           <button class="btn btn-sm btn-danger" onclick="excluirBolao('${b.id}')">🗑️</button>
         </div>
       </div>
-    `).join('');
+    `}).join('');
   }
 
   function renderCotasPendentes(pendentes) {
@@ -398,27 +424,56 @@ if (btnCockpit) {
     `).join('');
   }
 
-  // Criar bolão
+  // Criar bolão (ATUALIZADO COM BOLÃO ANTECIPADO)
   window.criarBolao = async () => {
     const nome   = document.getElementById('novoBolaoNome').value.trim();
     const modal  = document.getElementById('novoBolaoModal').value;
     const cc     = document.getElementById('novoBolaoConcurso').value.trim();
     const data   = document.getElementById('novoBolaoData').value;
     const valor  = parseFloat(document.getElementById('novoBolaoValor').value);
-    if (!nome || !modal || !cc || !data || !valor) { showMsg('novoBolaoMsg','⚠️ Preencha todos os campos','warning'); return; }
+    
+    const dataEntrega = modal === 'antecipado' ? document.getElementById('novoBolaoDataEntrega').value.trim() : null;
+    
+    if (!nome || !modal || !cc || !data || !valor) { 
+      showMsg('novoBolaoMsg','⚠️ Preencha todos os campos','warning'); 
+      return; 
+    }
+    
+    if (modal === 'antecipado' && !dataEntrega) {
+      showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
+      return;
+    }
+    
     try {
-      await addDoc(collection(db,'boloes'), {
+      const bolaoData = {
         nome, modalidade: modal, concurso: cc, dataReferencia: data,
         valorCota: valor, status: 'aberto',
         totalArrecadado: 0, totalDistribuido: 0, totalParticipantes: 0,
-        volantes: [], criadoEm: serverTimestamp()
-      });
+        volantes: [], criadoEm: serverTimestamp(),
+        tipo: modal === 'antecipado' ? 'antecipado' : 'normal'
+      };
+      
+      if (modal === 'antecipado') {
+        bolaoData.dataEntrega = dataEntrega;
+        bolaoData.statusEntrega = 'aguardando_entrega';
+        bolaoData.volantesEntregues = false;
+      }
+      
+      await addDoc(collection(db,'boloes'), bolaoData);
       showMsg('novoBolaoMsg','✅ Bolão criado!','success');
-      ['novoBolaoNome','novoBolaoConcurso','novoBolaoData','novoBolaoValor'].forEach(id => document.getElementById(id).value='');
-    } catch(e) { showMsg('novoBolaoMsg','❌ ' + e.message,'error'); }
+      
+      ['novoBolaoNome','novoBolaoConcurso','novoBolaoData','novoBolaoValor','novoBolaoDataEntrega'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('dataEntregaGroup').style.display = 'none';
+      
+    } catch(e) { 
+      showMsg('novoBolaoMsg','❌ ' + e.message,'error'); 
+    }
   };
 
-  // Upload de volantes (JSON do Cockpit)
+  // Upload de volantes
   window.abrirUploadVolantes = (bolaoId) => {
     document.getElementById('uploadBolaoId').value = bolaoId;
     show('modalUpload');
@@ -437,11 +492,9 @@ if (btnCockpit) {
       try { dados = JSON.parse(textArea.value.trim()); } catch { showMsg('uploadMsg','❌ JSON inválido','error'); return; }
     } else { showMsg('uploadMsg','⚠️ Selecione arquivo ou cole o JSON','warning'); return; }
 
-    // Aceita array direto ou objeto com campo "volantes"
     let volantes = Array.isArray(dados) ? dados : dados.volantes;
     if (!volantes) { showMsg('uploadMsg','❌ Formato inválido. Esperado: array de volantes','error'); return; }
 
-    // Normaliza: cada item deve ter {dezenas:[...]}
     volantes = volantes.map((v,i) => ({
       idx: i+1,
       dezenas: Array.isArray(v) ? v : (v.dezenas || v.numeros || [])
@@ -461,7 +514,6 @@ if (btnCockpit) {
     if (!confirm('Confirmar pagamento desta cota?')) return;
     try {
       await updateDoc(doc(db,'cotas',cotaId), { status: 'confirmado' });
-      // Atualiza totais do bolão
       const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
       if (bolaoSnap.exists()) {
         const b = bolaoSnap.data();
@@ -474,7 +526,6 @@ if (btnCockpit) {
           totalParticipantes: (b.totalParticipantes||0) + 1
         });
         
-        // Verificar se já cobriu o custo dos volantes
         if (novoArrecadado >= custoNecessario) {
           showToast(`✅ Custo dos volantes atingido! R$ ${fmt(custoNecessario)} arrecadado.`, 'success');
         } else {
@@ -504,6 +555,35 @@ if (btnCockpit) {
     showToast('🗑️ Bolão excluído.','warning');
   };
 
+  // ENTREGAR VOLANTES DO BOLÃO ANTECIPADO (NOVA FUNÇÃO)
+  window.entregarVolantesAntecipado = async (bolaoId) => {
+    if (!confirm('⚠️ Confirmar ENTREGA dos volantes do BOLÃO ANTECIPADO?\n\nApós confirmar, os participantes receberão os volantes via WhatsApp conforme combinado.')) return;
+    
+    try {
+      await updateDoc(doc(db,'boloes',bolaoId), {
+        statusEntrega: 'entregue',
+        volantesEntregues: true,
+        dataEntregaRealizada: new Date().toISOString()
+      });
+      
+      const cotasSnap = await getDocs(query(collection(db,'cotas'),
+        where('bolaoId','==',bolaoId), where('status','==','confirmado')));
+      const cotas = cotasSnap.docs.map(d => ({id:d.id, ...d.data()}));
+      
+      const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
+      const bolao = bolaoSnap.data();
+      const mensagemZap = `🔱 BOLÃO ANTECIPADO ENTREGUE!\n\n📌 Bolão: ${bolao.nome}\n🎯 Concurso: ${bolao.concurso}\n📅 Data: ${bolao.dataReferencia}\n\n✅ ${cotas.length} participante(s) confirmado(s)\n💰 Total arrecadado: R$ ${(cotas.length * bolao.valorCota).toFixed(2).replace('.',',')}\n\n📦 Volantes disponíveis no sistema. Envie para cada participante individualmente conforme combinado.\n\nAcesse: https://khareis159.github.io/lotofacil-hub/bolao_hub.html`;
+      
+      await navigator.clipboard.writeText(mensagemZap);
+      
+      showToast(`✅ ENTREGA REGISTRADA!\n\nMensagem copiada. Envie no WhatsApp para os ${cotas.length} participantes.`, 'success');
+      carregarBoloes();
+      
+    } catch(e) {
+      showToast('❌ Erro na entrega: ' + e.message, 'error');
+    }
+  };
+
   // Lançar resultado
   window.abrirLancarResultado = (bolaoId, bolaoNome) => {
     document.getElementById('resltBolaoId').value = bolaoId;
@@ -523,7 +603,6 @@ if (btnCockpit) {
       const updateData = { status:'apurado', resultado: dezenas };
       if (comp) updateData.comprovanteUrl = comp;
 
-      // Busca todos os volantes e calcula acertos
       const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
       const bolao = bolaoSnap.data();
       const volantes = bolao.volantes || [];
@@ -538,13 +617,11 @@ if (btnCockpit) {
 
       await updateDoc(doc(db,'boloes',bolaoId), updateData);
 
-      // Calcula e distribui prêmios entre cotas confirmadas
       const cotasSnap = await getDocs(query(collection(db,'cotas'),
         where('bolaoId','==',bolaoId), where('status','==','confirmado')));
       const cotas = cotasSnap.docs.map(d=>({id:d.id,...d.data()}));
       const totalArrecadado = bolao.totalArrecadado || 0;
 
-      // Prêmio proporcional = cada cota recebe igual (transparência total)
       if (cotas.length > 0) {
         const premioPorCota = totalArrecadado / cotas.length;
         for (const c of cotas) {
@@ -564,7 +641,7 @@ if (btnCockpit) {
     } catch(e) { showMsg('resltMsg','❌ ' + e.message,'error'); }
   };
 
-  // Ver cotas de um bolão
+  // Ver cotas
   window.verCotas = async (bolaoId, bolaoNome) => {
     document.getElementById('cotasModalTitulo').textContent = bolaoNome;
     document.getElementById('cotasLista').innerHTML = '<p>Carregando...</p>';
@@ -591,7 +668,13 @@ if (btnCockpit) {
   // HELPERS
   // ══════════════════════════════════════════════
   function labelModal(m) {
-    return { pop:'🟡 Pop R$5', lite:'🔵 Lite R$10', top:'🟣 Top R$20', especial:'⭐ Especial R$50' }[m] || m;
+    return { 
+      pop:'🟡 Pop R$5', 
+      lite:'🔵 Lite R$10', 
+      top:'🟣 Top R$20', 
+      especial:'⭐ Especial R$50',
+      antecipado:'⏰ Bolão Antecipado R$30'
+    }[m] || m;
   }
   function labelStatus(s) {
     return { aberto:'🟢 Aberto', fechado:'🔒 Fechado', apurado:'✅ Apurado' }[s] || s;
@@ -651,6 +734,23 @@ if (btnCockpit) {
     const form = document.getElementById(formId);
     if (form) form.classList.add('active');
   };
+  
+  // Event listener para mostrar/esconder campo de data de entrega
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalSelect = document.getElementById('novoBolaoModal');
+    if (modalSelect) {
+      modalSelect.addEventListener('change', function() {
+        const entregaGroup = document.getElementById('dataEntregaGroup');
+        if (this.value === 'antecipado') {
+          entregaGroup.style.display = 'block';
+        } else {
+          entregaGroup.style.display = 'none';
+          const dataEntregaInput = document.getElementById('novoBolaoDataEntrega');
+          if (dataEntregaInput) dataEntregaInput.value = '';
+        }
+      });
+    }
+  });
 
 </script>
 
@@ -738,12 +838,13 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 .bolao-card.aberto{border-color:rgba(63,185,80,.2);}
 .bolao-card.fechado{border-color:rgba(255,166,87,.2);}
 .bolao-card.apurado{border-color:rgba(88,166,255,.2);}
-.bc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.bc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
 .bc-modal{font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;}
 .bc-modal.pop{background:rgba(240,192,64,.15);color:var(--accent);}
 .bc-modal.lite{background:rgba(88,166,255,.15);color:var(--blue);}
 .bc-modal.top{background:rgba(188,140,255,.15);color:var(--purple);}
 .bc-modal.especial{background:rgba(63,185,80,.15);color:var(--green);}
+.bc-modal.antecipado{background:rgba(255,166,87,.2);color:var(--orange);}
 .bc-status{font-size:.72rem;color:var(--text2);}
 .bc-title{font-family:'Oswald',sans-serif;font-size:1rem;margin-bottom:4px;}
 .bc-concurso{font-size:.78rem;color:var(--text2);margin-bottom:12px;}
@@ -760,6 +861,31 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 .bc-resultado{background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.2);border-radius:var(--r-sm);padding:10px;margin-top:10px;font-size:.82rem;}
 .bc-link{display:block;text-align:center;font-size:.78rem;color:var(--blue);margin-top:10px;text-decoration:none;}
 .bc-link:hover{text-decoration:underline;}
+
+/* Bolão Antecipado */
+.badge-antecipado {
+  background: linear-gradient(135deg, #ffa657, #f0883e);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #0a0c12;
+}
+.bc-antecipado {
+  background: rgba(255, 166, 87, 0.15);
+  border: 1px solid rgba(255, 166, 87, 0.3);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ffa657;
+}
+#dataEntregaGroup {
+  transition: all 0.3s ease;
+}
+#dataEntregaGroup input {
+  border-color: rgba(255, 166, 87, 0.5);
+}
 
 /* ── COTAS ── */
 .cota-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
@@ -850,14 +976,12 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   <div class="topnav-right">
     👤 <span id="navNome"></span>
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-
-     <!-- BOTÃO VOLTAR AO COCKPIT - VISÍVEL APENAS PARA ADMIN -->
     <a id="btnVoltarCockpit" href="https://khareis159.github.io/lotofacil-hub/index.html" target="_blank" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #fbbf24; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem; margin-left: 8px;">
         <i class="fas fa-chart-line"></i> ⚙️ COCKPIT
     </a>
-<a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
-    <i class="fas fa-chart-line"></i> 📊 Planilha Admin
-</a>
+    <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
+        <i class="fas fa-chart-line"></i> 📊 Planilha Admin
+    </a>
    </div>
 </nav>
 
@@ -996,6 +1120,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
               <option value="lite">🔵 Lite (R$10)</option>
               <option value="top">🟣 Top (R$20)</option>
               <option value="especial">⭐ Especial (R$50)</option>
+              <option value="antecipado">⏰ Bolão Antecipado (R$30)</option>
             </select>
           </div>
           <div class="form-group">
@@ -1012,6 +1137,11 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
             <label>Data</label>
             <input type="text" id="novoBolaoData" placeholder="27/03/2026">
           </div>
+        </div>
+        <div class="input-group" id="dataEntregaGroup" style="display:none;">
+          <label>📅 Data de Entrega dos Volantes (dd/mm/aaaa)</label>
+          <input type="text" id="novoBolaoDataEntrega" placeholder="30/04/2026">
+          <div style="font-size:.7rem;color:var(--orange);margin-top:4px;">⚠️ Para Bolão Antecipado: o cliente só recebe os volantes nesta data</div>
         </div>
         <div id="novoBolaoMsg" class="form-msg"></div>
         <button class="btn btn-primary btn-full" onclick="criarBolao()">➕ Criar Bolão</button>
