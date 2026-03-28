@@ -19,7 +19,7 @@
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
   // ══════════════════════════════════════════════
-  // 🔧 CONFIGURE SEU FIREBASE AQUI
+  // 🔧 CONFIGURAÇÃO FIREBASE
   // ══════════════════════════════════════════════
 
 const firebaseConfig = {
@@ -180,7 +180,7 @@ const firebaseConfig = {
       return `
       <div class="bolao-card ${b.status}">
         <div class="bc-header">
-          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade, b.valorCota)}</span>
           <span class="bc-status">${labelStatus(b.status)}</span>
           ${antecipadoBadge}
         </div>
@@ -236,7 +236,7 @@ const firebaseConfig = {
       return `
       <div class="bolao-card aberto">
         <div class="bc-header">
-          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade, b.valorCota)}</span>
           <span class="bc-status">🟢 Aberto</span>
         </div>
         <div class="bc-title">${b.nome}</div>
@@ -288,16 +288,21 @@ const firebaseConfig = {
     `).join('');
   }
 
-  // Modal de participação
+  // Modal de participação (CORRIGIDO)
   window.abrirModalParticipacao = async (bolaoId, bolaoNome, valorCota, modalidade) => {
     const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
-    const volantesCount = bolaoSnap.exists() ? (bolaoSnap.data().volantes?.length || 0) : 0;
+    if (!bolaoSnap.exists()) {
+      showToast('❌ Bolão não encontrado.', 'error');
+      return;
+    }
+    const bolao = bolaoSnap.data();
+    const volantesCount = bolao.volantes?.length || 0;
     const custoTotalVolantes = volantesCount * VALOR_VOLANTE;
     const isAntecipado = modalidade === 'antecipado';
     const avisoAntecipadoModal = isAntecipado ? `
       <div class="aviso-legal" style="background:rgba(255,166,87,.1); border-color:rgba(255,166,87,.3); margin-bottom:16px;">
         <strong>⏰ BOLÃO ANTECIPADO</strong><br>
-        Você está participando de um bolão antecipado. Os volantes serão entregues pelo organizador na data combinada (${bolaoSnap.data()?.dataEntrega || 'a definir'}). 
+        Você está participando de um bolão antecipado. Os volantes serão entregues pelo organizador na data combinada (${bolao.dataEntrega || 'a definir'}). 
         Seu pagamento será confirmado e você receberá os volantes via WhatsApp na data do sorteio.
       </div>
     ` : '';
@@ -305,7 +310,7 @@ const firebaseConfig = {
     document.getElementById('mPartBolaoId').value = bolaoId;
     document.getElementById('mPartNome').textContent = bolaoNome;
     document.getElementById('mPartValor').textContent = `R$ ${fmt(valorCota)}`;
-    document.getElementById('mPartModal').textContent = labelModal(modalidade);
+    document.getElementById('mPartModal').textContent = labelModal(modalidade, valorCota);
     document.getElementById('mPartPixChave').textContent = PIX_CHAVE;
     document.getElementById('mPartPixValor').textContent = `R$ ${fmt(valorCota)}`;
     
@@ -318,15 +323,18 @@ const firebaseConfig = {
   };
 
   window.confirmarParticipacao = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      showToast('⚠️ Faça login primeiro!', 'warning');
+      return;
+    }
     const bolaoId = document.getElementById('mPartBolaoId').value;
     const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
-    if (!bolaoSnap.exists()) { alert('Bolão não encontrado.'); return; }
+    if (!bolaoSnap.exists()) { showToast('❌ Bolão não encontrado.', 'error'); return; }
     const bolao = bolaoSnap.data();
     const btn = document.getElementById('btnConfirmarPart');
     btn.disabled = true; btn.textContent = 'Registrando...';
     try {
-      const cotaRef = await addDoc(collection(db,'cotas'), {
+      await addDoc(collection(db,'cotas'), {
         userId: currentUser.uid,
         userName: currentUser.displayName,
         userEmail: currentUser.email,
@@ -376,7 +384,7 @@ const firebaseConfig = {
       return `
       <div class="bolao-card ${b.status}" style="margin-bottom:10px">
         <div class="bc-header">
-          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade)}</span>
+          <span class="bc-modal ${b.modalidade}">${labelModal(b.modalidade, b.valorCota)}</span>
           <span class="bc-status">${labelStatus(b.status)}</span>
           ${badgeAntecipado}
           <span style="margin-left:auto;font-size:.75rem;color:var(--text2)">${b.dataReferencia||''}</span>
@@ -387,16 +395,18 @@ const firebaseConfig = {
           ${b.status==='aberto' ? `
             <button class="btn btn-sm btn-ghost" onclick="abrirUploadVolantes('${b.id}')">📤 Upload Volantes</button>
             <button class="btn btn-sm btn-info" onclick="fecharBolao('${b.id}')">🔒 Fechar Bolão</button>
+            <button class="btn btn-sm btn-warning" onclick="editarBolao('${b.id}')">✏️ Editar</button>
           ` : ''}
           ${b.status==='fechado' ? `
             <button class="btn btn-sm btn-primary" onclick="abrirLancarResultado('${b.id}','${b.nome}')">🎯 Lançar Resultado</button>
+            <button class="btn btn-sm btn-warning" onclick="editarBolao('${b.id}')">✏️ Editar</button>
           ` : ''}
           ${b.status==='apurado' ? `<span style="color:var(--green);font-size:.82rem">✅ Apurado</span>` : ''}
           ${mostraBtnEntrega ? `
             <button class="btn btn-sm btn-success" onclick="entregarVolantesAntecipado('${b.id}')">📦 ENTREGAR VOLANTES</button>
           ` : ''}
           <button class="btn btn-sm btn-ghost" onclick="verCotas('${b.id}','${b.nome}')">👥 Ver Cotas</button>
-          <button class="btn btn-sm btn-danger" onclick="excluirBolao('${b.id}')">🗑️</button>
+          <button class="btn btn-sm btn-danger" onclick="excluirBolao('${b.id}')">🗑️ Excluir</button>
         </div>
       </div>
     `}).join('');
@@ -424,7 +434,72 @@ const firebaseConfig = {
     `).join('');
   }
 
-  // Criar bolão (ATUALIZADO COM BOLÃO ANTECIPADO)
+  // EDITAR BOLÃO (NOVA FUNÇÃO)
+  window.editarBolao = async (bolaoId) => {
+    const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
+    if (!bolaoSnap.exists()) { showToast('Bolão não encontrado.', 'error'); return; }
+    const bolao = bolaoSnap.data();
+    
+    document.getElementById('editBolaoId').value = bolaoId;
+    document.getElementById('editBolaoNome').value = bolao.nome;
+    document.getElementById('editBolaoModal').value = bolao.modalidade;
+    document.getElementById('editBolaoConcurso').value = bolao.concurso;
+    document.getElementById('editBolaoData').value = bolao.dataReferencia;
+    document.getElementById('editBolaoValor').value = bolao.valorCota;
+    
+    const entregaGroup = document.getElementById('editDataEntregaGroup');
+    if (bolao.modalidade === 'antecipado') {
+      entregaGroup.style.display = 'block';
+      document.getElementById('editBolaoDataEntrega').value = bolao.dataEntrega || '';
+    } else {
+      entregaGroup.style.display = 'none';
+    }
+    
+    show('modalEditarBolao');
+  };
+
+  window.salvarEdicaoBolao = async () => {
+    const bolaoId = document.getElementById('editBolaoId').value;
+    const nome = document.getElementById('editBolaoNome').value.trim();
+    const modal = document.getElementById('editBolaoModal').value;
+    const concurso = document.getElementById('editBolaoConcurso').value.trim();
+    const dataReferencia = document.getElementById('editBolaoData').value;
+    const valorCota = parseFloat(document.getElementById('editBolaoValor').value);
+    const dataEntrega = modal === 'antecipado' ? document.getElementById('editBolaoDataEntrega').value.trim() : null;
+    
+    if (!nome || !concurso || !dataReferencia || !valorCota) {
+      showMsg('editBolaoMsg', '⚠️ Preencha todos os campos', 'warning');
+      return;
+    }
+    
+    if (modal === 'antecipado' && !dataEntrega) {
+      showMsg('editBolaoMsg', '⚠️ Para Bolão Antecipado, informe a Data de Entrega', 'warning');
+      return;
+    }
+    
+    const updateData = {
+      nome,
+      modalidade: modal,
+      concurso,
+      dataReferencia,
+      valorCota
+    };
+    
+    if (modal === 'antecipado') {
+      updateData.dataEntrega = dataEntrega;
+    }
+    
+    try {
+      await updateDoc(doc(db, 'boloes', bolaoId), updateData);
+      showToast('✅ Bolão atualizado com sucesso!', 'success');
+      hide('modalEditarBolao');
+      carregarBoloes();
+    } catch(e) {
+      showMsg('editBolaoMsg', '❌ ' + e.message, 'error');
+    }
+  };
+
+  // Criar bolão (CORRIGIDO)
   window.criarBolao = async () => {
     const nome   = document.getElementById('novoBolaoNome').value.trim();
     const modal  = document.getElementById('novoBolaoModal').value;
@@ -439,9 +514,17 @@ const firebaseConfig = {
       return; 
     }
     
-    if (modal === 'antecipado' && !dataEntrega) {
-      showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
-      return;
+    if (modal === 'antecipado') {
+      if (!dataEntrega) {
+        showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
+        return;
+      }
+      // VALIDAÇÃO DE DATA
+      const hoje = new Date().toISOString().split('T')[0];
+      if (dataEntrega < hoje) {
+        showMsg('novoBolaoMsg','⚠️ Data de entrega não pode ser anterior a hoje','warning');
+        return;
+      }
     }
     
     try {
@@ -553,9 +636,10 @@ const firebaseConfig = {
     if (!confirm('Excluir este bolão permanentemente?')) return;
     await deleteDoc(doc(db,'boloes',bolaoId));
     showToast('🗑️ Bolão excluído.','warning');
+    carregarBoloes();
   };
 
-  // ENTREGAR VOLANTES DO BOLÃO ANTECIPADO (NOVA FUNÇÃO)
+  // ENTREGAR VOLANTES DO BOLÃO ANTECIPADO
   window.entregarVolantesAntecipado = async (bolaoId) => {
     if (!confirm('⚠️ Confirmar ENTREGA dos volantes do BOLÃO ANTECIPADO?\n\nApós confirmar, os participantes receberão os volantes via WhatsApp conforme combinado.')) return;
     
@@ -667,15 +751,21 @@ const firebaseConfig = {
   // ══════════════════════════════════════════════
   // HELPERS
   // ══════════════════════════════════════════════
-  function labelModal(m) {
-    return { 
-      pop:'🟡 Pop R$5', 
-      lite:'🔵 Lite R$10', 
-      top:'🟣 Top R$20', 
-      especial:'⭐ Especial R$50',
-      antecipado:'⏰ Bolão Antecipado R$30'
-    }[m] || m;
+  function labelModal(m, valorCota = null) {
+    const labels = {
+      pop: '🟡 Pop',
+      lite: '🔵 Lite',
+      top: '🟣 Top',
+      especial: '⭐ Especial',
+      antecipado: '⏰ Bolão Antecipado'
+    };
+    const nome = labels[m] || m;
+    if (valorCota !== null && valorCota !== undefined) {
+      return `${nome} R$ ${valorCota.toFixed(2).replace('.',',')}`;
+    }
+    return nome;
   }
+  
   function labelStatus(s) {
     return { aberto:'🟢 Aberto', fechado:'🔒 Fechado', apurado:'✅ Apurado' }[s] || s;
   }
@@ -735,16 +825,20 @@ const firebaseConfig = {
     if (form) form.classList.add('active');
   };
   
-  // Event listener para mostrar/esconder campo de data de entrega
+  // Event listener para mostrar/esconder campo de data de entrega e pré-preencher valor
   document.addEventListener('DOMContentLoaded', () => {
     const modalSelect = document.getElementById('novoBolaoModal');
     if (modalSelect) {
       modalSelect.addEventListener('change', function() {
         const entregaGroup = document.getElementById('dataEntregaGroup');
+        const valorInput = document.getElementById('novoBolaoValor');
         if (this.value === 'antecipado') {
           entregaGroup.style.display = 'block';
+          valorInput.value = '21.00';
+          valorInput.readOnly = true;
         } else {
           entregaGroup.style.display = 'none';
+          valorInput.readOnly = false;
           const dataEntregaInput = document.getElementById('novoBolaoDataEntrega');
           if (dataEntregaInput) dataEntregaInput.value = '';
         }
@@ -1120,7 +1214,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
               <option value="lite">🔵 Lite (R$10)</option>
               <option value="top">🟣 Top (R$20)</option>
               <option value="especial">⭐ Especial (R$50)</option>
-              <option value="antecipado">⏰ Bolão Antecipado (R$ 21,00)</option>
+              <option value="antecipado">⏰ Bolão Antecipado (R$21,00)</option>
             </select>
           </div>
           <div class="form-group">
@@ -1183,6 +1277,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
     <div style="background:var(--surface2);border-radius:var(--r-sm);padding:14px;margin-bottom:16px;">
       <div style="font-family:'Oswald',sans-serif;font-size:1.1rem;" id="mPartNome"></div>
       <div style="font-size:.82rem;color:var(--text2);margin-top:4px;" id="mPartModal"></div>
+      <div style="font-size:1.2rem;font-weight:800;color:var(--accent);margin-top:6px;" id="mPartValor"></div>
     </div>
     <div class="aviso-legal">
       <strong>⚖️ Transparência:</strong> O valor pago corresponde exatamente ao custo
@@ -1270,12 +1365,77 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   </div>
 </div>
 
+<!-- Modal Editar Bolão (NOVO) -->
+<div class="modal-overlay" id="modalEditarBolao" style="display:none" onclick="if(event.target===this)fecharModal('modalEditarBolao')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Editar Bolão</div>
+      <button class="modal-close" onclick="fecharModal('modalEditarBolao')">✕</button>
+    </div>
+    <input type="hidden" id="editBolaoId">
+    <div class="form-group">
+      <label>Nome do Bolão</label>
+      <input type="text" id="editBolaoNome" placeholder="Nome do bolão">
+    </div>
+    <div class="input-row">
+      <div class="form-group">
+        <label>Modalidade</label>
+        <select id="editBolaoModal">
+          <option value="pop">🟡 Pop</option>
+          <option value="lite">🔵 Lite</option>
+          <option value="top">🟣 Top</option>
+          <option value="especial">⭐ Especial</option>
+          <option value="antecipado">⏰ Bolão Antecipado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Valor da Cota (R$)</label>
+        <input type="number" id="editBolaoValor" step="0.01" min="1">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="form-group">
+        <label>Concurso #</label>
+        <input type="text" id="editBolaoConcurso" placeholder="3645">
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="text" id="editBolaoData" placeholder="27/03/2026">
+      </div>
+    </div>
+    <div class="input-group" id="editDataEntregaGroup" style="display:none;">
+      <label>📅 Data de Entrega dos Volantes (dd/mm/aaaa)</label>
+      <input type="text" id="editBolaoDataEntrega" placeholder="30/04/2026">
+    </div>
+    <div id="editBolaoMsg" class="form-msg"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="salvarEdicaoBolao()">💾 Salvar Alterações</button>
+      <button class="btn btn-secondary" onclick="fecharModal('modalEditarBolao')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // Enter no login
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.activeElement &&
       document.activeElement.closest('#authFormLogin')) {
     if (window.fazerLogin) window.fazerLogin();
+  }
+});
+
+// Event listener para edição do modal de bolão
+document.addEventListener('DOMContentLoaded', () => {
+  const editModalSelect = document.getElementById('editBolaoModal');
+  if (editModalSelect) {
+    editModalSelect.addEventListener('change', function() {
+      const entregaGroup = document.getElementById('editDataEntregaGroup');
+      if (this.value === 'antecipado') {
+        entregaGroup.style.display = 'block';
+      } else {
+        entregaGroup.style.display = 'none';
+      }
+    });
   }
 });
 </script>
