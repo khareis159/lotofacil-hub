@@ -98,34 +98,41 @@ const firebaseConfig = {
   // ══════════════════════════════════════════════
   // RENDER PRINCIPAL
   // ══════════════════════════════════════════════
-  function renderApp() {
-    const topnav = document.getElementById('topnav');
-    if (!currentUser) {
-      if (unsubBoloes) unsubBoloes();
-      hide('secPublico');
-      show('secAuth');
-      if (topnav) topnav.style.display = 'none';
-      return;
-    }
-    
-    hide('secAuth');
-    show('secPublico');
-    if (topnav) topnav.style.display = 'flex';
-    
-    const navNome = document.getElementById('navNome');
-    if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
-    
-    const navAdmin = document.getElementById('tabBtn-admin');
-    if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
-    
-    const btnCockpit = document.getElementById('btnVoltarCockpit');
-    if (btnCockpit) {
-      btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
-    }
-       
-    const tabInicial = isAdmin ? 'admin' : 'cliente';
-    goTab(tabInicial);
+ 
+function renderApp() {
+  const topnav = document.getElementById('topnav');
+  if (!currentUser) {
+    if (unsubBoloes) unsubBoloes();
+    hide('secPublico');
+    show('secAuth');
+    if (topnav) topnav.style.display = 'none';
+    return;
   }
+  
+  hide('secAuth');
+  show('secPublico');
+  if (topnav) topnav.style.display = 'flex';
+  
+  const navNome = document.getElementById('navNome');
+  if (navNome) navNome.textContent = currentUser.displayName || currentUser.email;
+  
+  const navAdmin = document.getElementById('tabBtn-admin');
+  if (navAdmin) navAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
+  
+  const btnCockpit = document.getElementById('btnVoltarCockpit');
+  if (btnCockpit) {
+    btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
+  }
+  
+  // NOVO: Controlar visibilidade do botão Planilha Admin
+  const btnPlanilhaAdmin = document.getElementById('btnPlanilhaAdmin');
+  if (btnPlanilhaAdmin) {
+    btnPlanilhaAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
+  }
+     
+  const tabInicial = isAdmin ? 'admin' : 'cliente';
+  goTab(tabInicial);
+}
 
   onAuthStateChanged(auth, async user => {
     currentUser = user;
@@ -1056,12 +1063,13 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 <!-- ══════════════════════════════════════════════
      TOPNAV
 ══════════════════════════════════════════════ -->
+
 <nav id="topnav">
   <div class="topnav-brand">🔱 Bolão Hub <span>TRANSPARENTE</span></div>
   
   <a href="https://bolao-hub.blogspot.com" target="_blank" style="color: var(--text2); text-decoration: none; font-size: 0.8rem; margin-left: 16px;">
-  <i class="fas fa-home"></i> Voltar à Capa
-</a>   
+    <i class="fas fa-home"></i> Voltar à Capa
+  </a>   
   <div class="topnav-tabs">
     <button class="tab-btn active" id="tabBtn-publico" onclick="goTab('publico')">🌐 Painel Público</button>
     <button class="tab-btn" id="tabBtn-cliente" onclick="goTab('cliente')">👤 Minha Área</button>
@@ -1071,12 +1079,16 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
     👤 <span id="navNome"></span>
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     <a id="btnVoltarCockpit" href="https://khareis159.github.io/lotofacil-hub/index.html" target="_blank" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #fbbf24; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem; margin-left: 8px;">
-        <i class="fas fa-chart-line"></i> ⚙️ COCKPIT
+      <i class="fas fa-chart-line"></i> ⚙️ COCKPIT
     </a>
-    <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
-        <i class="fas fa-chart-line"></i> 📊 Planilha Admin
+    <a id="btnPlanilhaAdmin" href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" class="btn btn-secondary" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
+      <i class="fas fa-chart-line"></i> 📊 Planilha Admin
     </a>
-   </div>
+  </div>
+</nav>
+
+
+
 </nav>
 
 <!-- ══════════════════════════════════════════════
