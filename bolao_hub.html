@@ -260,14 +260,38 @@ function renderApp() {
     `}).join('');
   }
 
-  async function carregarMinhasCotas() {
-    if (!currentUser) return;
-    const q = query(collection(db,'cotas'), where('userId','==',currentUser.uid), orderBy('criadoEm','desc'));
-    onSnapshot(q, snap => {
-      const cotas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderMinhasCotas(cotas);
-    });
-  }
+async function carregarMinhasCotas() {
+    if (!currentUser) {
+        console.log('[DEBUG] Nenhum usuário logado');
+        return;
+    }
+    
+    const el = document.getElementById('cliMinhasCotas');
+    if (el) el.innerHTML = '<p class="empty-msg">🔄 Carregando suas cotas...</p>';
+    
+    try {
+        console.log('[DEBUG] Carregando cotas para usuário:', currentUser.uid);
+        
+        const q = query(
+            collection(db, 'cotas'),
+            where('userId', '==', currentUser.uid),
+            orderBy('criadoEm', 'desc')
+        );
+        
+        onSnapshot(q, (snap) => {
+            const cotas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            console.log('[DEBUG] Cotas carregadas:', cotas.length);
+            renderMinhasCotas(cotas);
+        }, (error) => {
+            console.error('[ERRO] onSnapshot cotas:', error);
+            if (el) el.innerHTML = '<p class="empty-msg" style="color:var(--red);">❌ Erro ao carregar cotas. Verifique sua conexão.</p>';
+        });
+        
+    } catch (e) {
+        console.error('[ERRO] carregarMinhasCotas:', e);
+        if (el) el.innerHTML = '<p class="empty-msg" style="color:var(--red);">❌ Erro ao carregar cotas.</p>';
+    }
+}
 
   function renderMinhasCotas(cotas) {
     const el = document.getElementById('cliMinhasCotas');
@@ -329,40 +353,86 @@ function renderApp() {
     show('modalParticipacao');
   };
 
-  window.confirmarParticipacao = async () => {
+window.confirmarParticipacao = async () => {
     if (!currentUser) {
-      showToast('⚠️ Faça login primeiro!', 'warning');
-      return;
+        showToast('⚠️ Faça login primeiro!', 'warning');
+        return;
     }
+    
     const bolaoId = document.getElementById('mPartBolaoId').value;
-    const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
-    if (!bolaoSnap.exists()) { showToast('❌ Bolão não encontrado.', 'error'); return; }
-    const bolao = bolaoSnap.data();
+    if (!bolaoId) {
+        showToast('❌ ID do bolão não encontrado.', 'error');
+        return;
+    }
+    
+    console.log('[DEBUG] Confirmando participação para bolão:', bolaoId);
+    
     const btn = document.getElementById('btnConfirmarPart');
-    btn.disabled = true; btn.textContent = 'Registrando...';
+    btn.disabled = true;
+    btn.textContent = 'Registrando...';
+    
     try {
-      await addDoc(collection(db,'cotas'), {
-        userId: currentUser.uid,
-        userName: currentUser.displayName,
-        userEmail: currentUser.email,
-        bolaoId,
-        bolaoNome: bolao.nome,
-        valor: bolao.valorCota,
-        modalidade: bolao.modalidade,
-        status: 'pendente',
-        criadoEm: serverTimestamp()
-      });
-      const userRef = doc(db,'usuarios',currentUser.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        const fid = (userSnap.data().fidelidade || 0) + 1;
-        await updateDoc(userRef, { fidelidade: fid });
-      }
-      hide('modalParticipacao');
-      showToast('✅ Participação registrada! Envie o Pix e aguarde confirmação.','success');
-    } catch(e) { showToast('❌ Erro: ' + e.message,'error'); }
-    btn.disabled = false; btn.textContent = '✅ Confirmar Participação';
-  };
+        const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
+        if (!bolaoSnap.exists()) {
+            throw new Error('Bolão não encontrado');
+        }
+        
+        const bolao = bolaoSnap.data();
+        console.log('[DEBUG] Bolão encontrado:', bolao.nome, 'Valor:', bolao.valorCota);
+        
+        // Verificar se usuário já participou
+        const cotasExistentes = await getDocs(query(
+            collection(db, 'cotas'),
+            where('bolaoId', '==', bolaoId),
+            where('userId', '==', currentUser.uid)
+        ));
+        
+        if (!cotasExistentes.empty) {
+            throw new Error('Você já participou deste bolão!');
+        }
+        
+        // Registrar participação
+        const cotaRef = await addDoc(collection(db, 'cotas'), {
+            userId: currentUser.uid,
+            userName: currentUser.displayName || currentUser.email,
+            userEmail: currentUser.email,
+            bolaoId: bolaoId,
+            bolaoNome: bolao.nome,
+            valor: bolao.valorCota,
+            modalidade: bolao.modalidade,
+            status: 'pendente',
+            criadoEm: serverTimestamp()
+        });
+        
+        console.log('[DEBUG] Cota registrada com ID:', cotaRef.id);
+        
+        // Atualizar fidelidade
+        const userRef = doc(db, 'usuarios', currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+            const fidAtual = userSnap.data().fidelidade || 0;
+            await updateDoc(userRef, { fidelidade: fidAtual + 1 });
+            console.log('[DEBUG] Fidelidade atualizada:', fidAtual + 1);
+        }
+        
+        // Fechar modal
+        hide('modalParticipacao');
+        
+        // Recarregar dados
+        carregarMinhasCotas();
+        carregarBoloes();
+        if (isAdmin) carregarAdminDados();
+        
+        showToast('✅ Participação registrada! Envie o Pix e aguarde confirmação.', 'success');
+        
+    } catch (e) {
+        console.error('[ERRO] Participação:', e);
+        showToast('❌ ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '✅ Confirmar Participação';
+    }
+}; 
 
   // ══════════════════════════════════════════════
   // ÁREA DO ADMIN
@@ -853,6 +923,8 @@ function renderApp() {
     }
   });
 
+
+
 </script>
 
 <style>
@@ -1260,6 +1332,18 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
           <p class="empty-msg">Carregando...</p>
         </div>
       </div>
+
+<!-- 🧹 Limpar Banco de Dados -->
+<div class="admin-card" style="border-color: rgba(220, 38, 38, 0.3);">
+    <div class="admin-card-title" style="color: var(--red);">🧹 MANUTENÇÃO</div>
+    <p style="font-size: 0.75rem; color: var(--text2); margin-bottom: 12px;">
+        ⚠️ Remove TODOS os bolões e cotas. O administrador NÃO é afetado.
+    </p>
+    <button class="btn btn-danger" onclick="limparBancoTestes()" style="background: #dc2626; width: 100%;">
+        🧹 LIMPAR DADOS DE TESTE
+    </button>
+</div>
+
     </div>
 
     <!-- Lista de Bolões Admin -->
