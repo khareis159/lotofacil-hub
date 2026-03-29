@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔱 LotoFácil BOLÃO HUB · Rede Transparente de Bolões</title>
+<title>🔱 LotoFácil BOLÃO HUB V100 · Rede Transparente de Bolões</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <!-- Firebase SDK -->
 <script type="module">
@@ -31,13 +32,13 @@ const firebaseConfig = {
   appId: "1:532175981654:web:151ad29aa5a58af3ebbff7"
 };
 
-  // UID do administrador — troque pelo seu após o primeiro login
+  // UID do administrador
   const ADMIN_UID = "jcIGSTgkTchmYkZ2iBf79SYrESH3";
 
-  // Chave Pix do organizador (exibida para pagamento)
+  // Chave Pix do organizador
   const PIX_CHAVE = "61999487649";
   
-  // Valor atual do volante da Lotofácil (atualizado em 2026)
+  // Valor atual do volante da Lotofácil
   const VALOR_VOLANTE = 3.50;
 
   const app   = initializeApp(firebaseConfig);
@@ -124,7 +125,6 @@ function renderApp() {
     btnCockpit.style.display = isAdmin ? 'inline-flex' : 'none';
   }
   
-  // NOVO: Controlar visibilidade do botão Planilha Admin
   const btnPlanilhaAdmin = document.getElementById('btnPlanilhaAdmin');
   if (btnPlanilhaAdmin) {
     btnPlanilhaAdmin.style.display = isAdmin ? 'inline-flex' : 'none';
@@ -143,6 +143,7 @@ function renderApp() {
       carregarBoloes();
       if (isAdmin) {
         carregarAdminDados();
+        carregarHistoricoBoloes();
       } else {
         carregarMinhasCotas();
       }
@@ -319,7 +320,7 @@ async function carregarMinhasCotas() {
     `).join('');
   }
 
-  // Modal de participação (CORRIGIDO)
+  // Modal de participação
   window.abrirModalParticipacao = async (bolaoId, bolaoNome, valorCota, modalidade) => {
     const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
     if (!bolaoSnap.exists()) {
@@ -380,7 +381,6 @@ window.confirmarParticipacao = async () => {
         const bolao = bolaoSnap.data();
         console.log('[DEBUG] Bolão encontrado:', bolao.nome, 'Valor:', bolao.valorCota);
         
-        // Verificar se usuário já participou
         const cotasExistentes = await getDocs(query(
             collection(db, 'cotas'),
             where('bolaoId', '==', bolaoId),
@@ -391,7 +391,6 @@ window.confirmarParticipacao = async () => {
             throw new Error('Você já participou deste bolão!');
         }
         
-        // Registrar participação
         const cotaRef = await addDoc(collection(db, 'cotas'), {
             userId: currentUser.uid,
             userName: currentUser.displayName || currentUser.email,
@@ -406,7 +405,6 @@ window.confirmarParticipacao = async () => {
         
         console.log('[DEBUG] Cota registrada com ID:', cotaRef.id);
         
-        // Atualizar fidelidade
         const userRef = doc(db, 'usuarios', currentUser.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
@@ -415,10 +413,7 @@ window.confirmarParticipacao = async () => {
             console.log('[DEBUG] Fidelidade atualizada:', fidAtual + 1);
         }
         
-        // Fechar modal
         hide('modalParticipacao');
-        
-        // Recarregar dados
         carregarMinhasCotas();
         carregarBoloes();
         if (isAdmin) carregarAdminDados();
@@ -511,7 +506,7 @@ window.confirmarParticipacao = async () => {
     `).join('');
   }
 
-  // EDITAR BOLÃO (NOVA FUNÇÃO)
+  // EDITAR BOLÃO
   window.editarBolao = async (bolaoId) => {
     const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
     if (!bolaoSnap.exists()) { showToast('Bolão não encontrado.', 'error'); return; }
@@ -576,7 +571,7 @@ window.confirmarParticipacao = async () => {
     }
   };
 
-  // Criar bolão (CORRIGIDO)
+  // Criar bolão
   window.criarBolao = async () => {
     const nome   = document.getElementById('novoBolaoNome').value.trim();
     const modal  = document.getElementById('novoBolaoModal').value;
@@ -596,7 +591,6 @@ window.confirmarParticipacao = async () => {
         showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
         return;
       }
-      // VALIDAÇÃO DE DATA
       const hoje = new Date().toISOString().split('T')[0];
       if (dataEntrega < hoje) {
         showMsg('novoBolaoMsg','⚠️ Data de entrega não pode ser anterior a hoje','warning');
@@ -745,14 +739,7 @@ window.confirmarParticipacao = async () => {
     }
   };
 
-  // Lançar resultado
-  window.abrirLancarResultado = (bolaoId, bolaoNome) => {
-    document.getElementById('resltBolaoId').value = bolaoId;
-    document.getElementById('resltBolaoNome').textContent = bolaoNome;
-    document.getElementById('resltDezeanas').value = '';
-    show('modalResultado');
-  };
-
+  // Lançar resultado COM ARQUIVAMENTO
   window.lancarResultado = async () => {
     const bolaoId = document.getElementById('resltBolaoId').value;
     const raw = document.getElementById('resltDezeanas').value.trim();
@@ -761,34 +748,31 @@ window.confirmarParticipacao = async () => {
     if (dezenas.length !== 15) { showMsg('resltMsg','⚠️ Informe exatamente 15 dezenas (1–25)','warning'); return; }
 
     try {
-      const updateData = { status:'apurado', resultado: dezenas };
-      if (comp) updateData.comprovanteUrl = comp;
-
-      const bolaoSnap = await getDoc(doc(db,'boloes',bolaoId));
+      const bolaoSnap = await getDoc(doc(db, 'boloes', bolaoId));
+      if (!bolaoSnap.exists()) throw new Error('Bolão não encontrado');
       const bolao = bolaoSnap.data();
-      const volantes = bolao.volantes || [];
-
-      const acertos = volantes.map(v => ({
-        idx: v.idx,
-        acertos: v.dezenas.filter(d => dezenas.includes(d)).length
-      }));
-
-      updateData.acertos = acertos;
-      updateData.maxAcertos = Math.max(...acertos.map(a=>a.acertos), 0);
-
-      await updateDoc(doc(db,'boloes',bolaoId), updateData);
-
+      
+      // 1. Atualizar status do bolão original
+      await updateDoc(doc(db, 'boloes', bolaoId), {
+        status: 'apurado',
+        resultado: dezenas,
+        dataApuracao: serverTimestamp(),
+        comprovanteUrl: comp || null
+      });
+      
+      // 2. Calcular prêmios
       const cotasSnap = await getDocs(query(collection(db,'cotas'),
         where('bolaoId','==',bolaoId), where('status','==','confirmado')));
       const cotas = cotasSnap.docs.map(d=>({id:d.id,...d.data()}));
       const totalArrecadado = bolao.totalArrecadado || 0;
-
+      
       if (cotas.length > 0) {
         const premioPorCota = totalArrecadado / cotas.length;
         for (const c of cotas) {
           await updateDoc(doc(db,'cotas',c.id), {
             premio: premioPorCota,
-            statusPremio: 'a_pagar'
+            statusPremio: 'a_pagar',
+            dataPremio: serverTimestamp()
           });
         }
         await updateDoc(doc(db,'boloes',bolaoId), {
@@ -796,10 +780,42 @@ window.confirmarParticipacao = async () => {
           statusPremio: 'calculado'
         });
       }
-
-      showMsg('resltMsg','✅ Resultado lançado e prêmios calculados!','success');
+      
+      // 3. ARQUIVAR NO HISTÓRICO
+      const historicoRef = doc(collection(db, 'historico_boloes'));
+      await setDoc(historicoRef, {
+        ...bolao,
+        id_original: bolaoId,
+        dataArquivamento: serverTimestamp(),
+        resultado: dezenas,
+        comprovanteUrl: comp || null,
+        totalPremiado: totalArrecadado,
+        numeroParticipantes: cotas.length
+      });
+      
+      // 4. ARQUIVAR COTAS NO HISTÓRICO
+      for (const c of cotas) {
+        const histCotaRef = doc(collection(db, 'historico_cotas'));
+        await setDoc(histCotaRef, {
+          ...c,
+          id_original: c.id,
+          bolaoId_original: bolaoId,
+          dataArquivamento: serverTimestamp(),
+          premio: totalArrecadado / cotas.length
+        });
+      }
+      
+      showMsg('resltMsg','✅ Resultado lançado e bolão arquivado no histórico!','success');
       setTimeout(()=>hide('modalResultado'),2000);
-    } catch(e) { showMsg('resltMsg','❌ ' + e.message,'error'); }
+      
+      // Recarregar listas
+      carregarBoloes();
+      if (isAdmin) carregarAdminDados();
+      
+    } catch(e) { 
+      console.error('[ERRO] lancarResultado:', e);
+      showMsg('resltMsg','❌ ' + e.message,'error'); 
+    }
   };
 
   // Ver cotas
@@ -823,6 +839,102 @@ window.confirmarParticipacao = async () => {
         ${c.premio ? `<div style="color:var(--green);font-size:.82rem">🏆 R$ ${fmt(c.premio)}</div>` : '<div></div>'}
       </div>
     `).join('');
+  };
+
+  // ══════════════════════════════════════════════
+  // HISTÓRICO DE BOLÕES (NOVO)
+  // ══════════════════════════════════════════════
+  async function carregarHistoricoBoloes() {
+    const q = query(collection(db, 'historico_boloes'), orderBy('dataArquivamento', 'desc'));
+    onSnapshot(q, snap => {
+      const historico = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderHistoricoAdmin(historico);
+    });
+  }
+
+  function renderHistoricoAdmin(historico) {
+    const el = document.getElementById('adminHistoricoList');
+    if (!el) return;
+    if (!historico.length) {
+      el.innerHTML = '<p class="empty-msg">Nenhum bolão arquivado.</p>';
+      return;
+    }
+    el.innerHTML = historico.map(h => `
+      <div class="bolao-card apurado" style="opacity:0.85">
+        <div class="bc-header">
+          <span class="bc-modal ${h.modalidade}">${labelModal(h.modalidade, h.valorCota)}</span>
+          <span class="bc-status">📦 Arquivado</span>
+        </div>
+        <div class="bc-title">${h.nome} — CC#${h.concurso}</div>
+        <div class="bc-concurso">Data: ${h.dataReferencia} | Arquivado: ${formatDate(h.dataArquivamento?.toDate())}</div>
+        <div class="bc-stats">
+          <div class="bc-stat"><div class="bc-val">${h.numeroParticipantes || h.totalParticipantes || 0}</div><div class="bc-lbl">Participantes</div></div>
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(h.totalArrecadado || 0)}</div><div class="bc-lbl">Arrecadado</div></div>
+          <div class="bc-stat"><div class="bc-val">R$ ${fmt(h.totalPremiado || 0)}</div><div class="bc-lbl">Premiado</div></div>
+        </div>
+        ${h.resultado ? `
+        <div class="bc-resultado">
+          <strong>🎯 Resultado CC${h.concurso}:</strong>
+          <div class="bc-volantes" style="margin-top:6px">
+            <div class="vol-item">
+              ${h.resultado.map(d=>`<span class="vol-bola sorteada">${String(d).padStart(2,'0')}</span>`).join('')}
+            </div>
+          </div>
+        </div>` : ''}
+        ${h.comprovanteUrl ? `<a class="bc-link" href="${h.comprovanteUrl}" target="_blank">🧾 Ver comprovante oficial</a>` : ''}
+        <div style="font-size:.7rem;color:var(--text3);margin-top:8px;">📅 Arquivado em: ${formatDate(h.dataArquivamento?.toDate())}</div>
+      </div>
+    `).join('');
+  }
+
+  // LIMPAR BANCO DE TESTES
+  window.limparBancoTestes = async () => {
+    if (!confirm('⚠️ ATENÇÃO! Isso irá apagar TODOS os bolões e TODAS as cotas.\n\nDeseja continuar?')) return;
+    const confirmacao = prompt('Digite "LIMPAR" para confirmar a exclusão total de todos os bolões e cotas:');
+    if (confirmacao !== 'LIMPAR') {
+      showToast('❌ Operação cancelada. Digite "LIMPAR" para confirmar.', 'warning');
+      return;
+    }
+    if (!confirm('⚠️ ÚLTIMA CHANCE! Tem certeza absoluta? Esta ação é irreversível.')) return;
+    
+    showToast('🧹 Iniciando limpeza do banco de dados...', 'info');
+    
+    try {
+      const boloesSnap = await getDocs(collection(db, 'boloes'));
+      let countBoloes = 0;
+      for (const docSnap of boloesSnap.docs) {
+        await deleteDoc(doc(db, 'boloes', docSnap.id));
+        countBoloes++;
+      }
+      
+      const cotasSnap = await getDocs(collection(db, 'cotas'));
+      let countCotas = 0;
+      for (const docSnap of cotasSnap.docs) {
+        await deleteDoc(doc(db, 'cotas', docSnap.id));
+        countCotas++;
+      }
+      
+      const usuariosSnap = await getDocs(collection(db, 'usuarios'));
+      let countUsuarios = 0;
+      for (const docSnap of usuariosSnap.docs) {
+        if (docSnap.id !== ADMIN_UID) {
+          await deleteDoc(doc(db, 'usuarios', docSnap.id));
+          countUsuarios++;
+        }
+      }
+      
+      showToast(`✅ LIMPEZA CONCLUÍDA!\n\n📦 Bolões: ${countBoloes} removidos\n🎫 Cotas: ${countCotas} removidas\n👥 Usuários: ${countUsuarios} removidos`, 'success');
+      carregarBoloes();
+      if (isAdmin) {
+        carregarAdminDados();
+        carregarHistoricoBoloes();
+      } else {
+        carregarMinhasCotas();
+      }
+    } catch (e) {
+      console.error('Erro na limpeza:', e);
+      showToast('❌ Erro ao limpar banco: ' + e.message, 'error');
+    }
   };
 
   // ══════════════════════════════════════════════
@@ -850,7 +962,7 @@ window.confirmarParticipacao = async () => {
     return { pendente:'⏳ Pix Pendente', confirmado:'✅ Confirmado', rejeitado:'❌ Rejeitado' }[s] || s;
   }
   function fmt(v) { return Number(v||0).toFixed(2).replace('.',','); }
-  function formatDate(d) { return d.toLocaleDateString('pt-BR'); }
+  function formatDate(d) { return d ? d.toLocaleDateString('pt-BR') : '—'; }
   window.show = function(id) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -922,8 +1034,6 @@ window.confirmarParticipacao = async () => {
       });
     }
   });
-
-
 
 </script>
 
@@ -1137,7 +1247,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 ══════════════════════════════════════════════ -->
 
 <nav id="topnav">
-  <div class="topnav-brand">🔱 Bolão Hub <span>TRANSPARENTE</span></div>
+  <div class="topnav-brand">🔱 Bolão Hub <span>V100</span></div>
   
   <a href="https://bolao-hub.blogspot.com" target="_blank" style="color: var(--text2); text-decoration: none; font-size: 0.8rem; margin-left: 16px;">
     <i class="fas fa-home"></i> Voltar à Capa
@@ -1157,10 +1267,6 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
       <i class="fas fa-chart-line"></i> 📊 Planilha Admin
     </a>
   </div>
-</nav>
-
-
-
 </nav>
 
 <!-- ══════════════════════════════════════════════
@@ -1333,16 +1439,16 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
         </div>
       </div>
 
-<!-- 🧹 Limpar Banco de Dados -->
-<div class="admin-card" style="border-color: rgba(220, 38, 38, 0.3);">
-    <div class="admin-card-title" style="color: var(--red);">🧹 MANUTENÇÃO</div>
-    <p style="font-size: 0.75rem; color: var(--text2); margin-bottom: 12px;">
-        ⚠️ Remove TODOS os bolões e cotas. O administrador NÃO é afetado.
-    </p>
-    <button class="btn btn-danger" onclick="limparBancoTestes()" style="background: #dc2626; width: 100%;">
-        🧹 LIMPAR DADOS DE TESTE
-    </button>
-</div>
+      <!-- 🧹 Limpar Banco de Dados -->
+      <div class="admin-card" style="border-color: rgba(220, 38, 38, 0.3);">
+        <div class="admin-card-title" style="color: var(--red);">🧹 MANUTENÇÃO</div>
+        <p style="font-size: 0.75rem; color: var(--text2); margin-bottom: 12px;">
+          ⚠️ Remove TODOS os bolões e cotas. O administrador NÃO é afetado.
+        </p>
+        <button class="btn btn-danger" onclick="limparBancoTestes()" style="background: #dc2626; width: 100%;">
+          🧹 LIMPAR DADOS DE TESTE
+        </button>
+      </div>
 
     </div>
 
@@ -1351,6 +1457,14 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
       <div class="admin-card-title">📋 TODOS OS BOLÕES</div>
       <div id="adminBoloesList">
         <p class="empty-msg">Carregando...</p>
+      </div>
+    </div>
+
+    <!-- 📜 Histórico de Bolões (NOVO) -->
+    <div class="admin-card" style="margin-top:20px">
+      <div class="admin-card-title">📜 HISTÓRICO DE BOLÕES</div>
+      <div id="adminHistoricoList">
+        <p class="empty-msg">Carregando histórico...</p>
       </div>
     </div>
   </div>
@@ -1461,7 +1575,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   </div>
 </div>
 
-<!-- Modal Editar Bolão (NOVO) -->
+<!-- Modal Editar Bolão -->
 <div class="modal-overlay" id="modalEditarBolao" style="display:none" onclick="if(event.target===this)fecharModal('modalEditarBolao')">
   <div class="modal-box">
     <div class="modal-header">
@@ -1537,7 +1651,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <div style="text-align:center;padding:16px;font-size:.72rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
-  🔱 <strong style="color:var(--text2)">LotoFácil Bolão Hub</strong> · Rede Transparente de Bolões · Sem fins lucrativos<br>
+  🔱 <strong style="color:var(--text2)">LotoFácil Bolão Hub V100</strong> · Rede Transparente de Bolões · Sem fins lucrativos<br>
   © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> · Suporte:
   <a href="https://wa.me/5561999487649" target="_blank" style="color:#25d366;text-decoration:none">💚 61 99948-7649</a>
  <br>
