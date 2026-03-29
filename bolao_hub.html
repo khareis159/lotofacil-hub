@@ -572,61 +572,109 @@ window.confirmarParticipacao = async () => {
   };
 
   // Criar bolão
-  window.criarBolao = async () => {
-    const nome   = document.getElementById('novoBolaoNome').value.trim();
-    const modal  = document.getElementById('novoBolaoModal').value;
-    const cc     = document.getElementById('novoBolaoConcurso').value.trim();
-    const data   = document.getElementById('novoBolaoData').value;
-    const valor  = parseFloat(document.getElementById('novoBolaoValor').value);
+window.criarBolao = async () => {
+    const nome = document.getElementById('novoBolaoNome').value.trim();
+    const modal = document.getElementById('novoBolaoModal').value;
+    const concursoRaw = document.getElementById('novoBolaoConcurso').value.trim();
+    const dataRaw = document.getElementById('novoBolaoData').value.trim();
+    const valor = parseFloat(document.getElementById('novoBolaoValor').value);
     
     const dataEntrega = modal === 'antecipado' ? document.getElementById('novoBolaoDataEntrega').value.trim() : null;
     
-    if (!nome || !modal || !cc || !data || !valor) { 
-      showMsg('novoBolaoMsg','⚠️ Preencha todos os campos','warning'); 
-      return; 
+    if (!nome || !modal || !concursoRaw || !dataRaw || !valor) { 
+        showMsg('novoBolaoMsg','⚠️ Preencha todos os campos','warning'); 
+        return; 
     }
     
-    if (modal === 'antecipado') {
-      if (!dataEntrega) {
-        showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
-        return;
-      }
-      const hoje = new Date().toISOString().split('T')[0];
-      if (dataEntrega < hoje) {
-        showMsg('novoBolaoMsg','⚠️ Data de entrega não pode ser anterior a hoje','warning');
-        return;
-      }
+    const isAntecipado = modal === 'antecipado';
+    
+    // VALIDAÇÃO PARA BOLÕES NORMAIS (com dados completos)
+    if (!isAntecipado) {
+        // Concurso deve ser número válido
+        if (!/^\d+$/.test(concursoRaw)) {
+            showMsg('novoBolaoMsg','⚠️ Concurso deve ser um número válido (ex: 3645)','warning');
+            return;
+        }
+        
+        // Data deve estar no formato dd/mm/aaaa
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataRaw)) {
+            showMsg('novoBolaoMsg','⚠️ Data deve estar no formato dd/mm/aaaa (ex: 27/03/2026)','warning');
+            return;
+        }
+        
+        // Validar se a data é real
+        const [dia, mes, ano] = dataRaw.split('/');
+        const dataObj = new Date(ano, mes-1, dia);
+        if (dataObj.getDate() != dia || dataObj.getMonth() != mes-1 || dataObj.getFullYear() != ano) {
+            showMsg('novoBolaoMsg','⚠️ Data inválida','warning');
+            return;
+        }
+    }
+    
+    // VALIDAÇÃO PARA BOLÃO ANTECIPADO (flexível)
+    if (isAntecipado) {
+        // Concurso pode ser "36##" ou número
+        // Data pode ser "##/04/2026" ou data completa
+        // Apenas verifica se não está vazio
+        if (!concursoRaw || !dataRaw) {
+            showMsg('novoBolaoMsg','⚠️ Preencha Concurso e Data','warning');
+            return;
+        }
+        
+        if (!dataEntrega) {
+            showMsg('novoBolaoMsg','⚠️ Para Bolão Antecipado, informe a Data de Entrega dos Volantes','warning');
+            return;
+        }
+        
+        // Se a data de entrega for completa (dd/mm/aaaa), valida se não é anterior a hoje
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataEntrega)) {
+            const hoje = new Date();
+            const [dia, mes, ano] = dataEntrega.split('/');
+            const dataEntregaObj = new Date(ano, mes-1, dia);
+            if (dataEntregaObj < hoje) {
+                showMsg('novoBolaoMsg','⚠️ Data de entrega não pode ser anterior a hoje','warning');
+                return;
+            }
+        }
     }
     
     try {
-      const bolaoData = {
-        nome, modalidade: modal, concurso: cc, dataReferencia: data,
-        valorCota: valor, status: 'aberto',
-        totalArrecadado: 0, totalDistribuido: 0, totalParticipantes: 0,
-        volantes: [], criadoEm: serverTimestamp(),
-        tipo: modal === 'antecipado' ? 'antecipado' : 'normal'
-      };
-      
-      if (modal === 'antecipado') {
-        bolaoData.dataEntrega = dataEntrega;
-        bolaoData.statusEntrega = 'aguardando_entrega';
-        bolaoData.volantesEntregues = false;
-      }
-      
-      await addDoc(collection(db,'boloes'), bolaoData);
-      showMsg('novoBolaoMsg','✅ Bolão criado!','success');
-      
-      ['novoBolaoNome','novoBolaoConcurso','novoBolaoData','novoBolaoValor','novoBolaoDataEntrega'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-      document.getElementById('dataEntregaGroup').style.display = 'none';
-      
+        const bolaoData = {
+            nome, 
+            modalidade: modal, 
+            concurso: concursoRaw,      // Aceita "36##" ou número
+            dataReferencia: dataRaw,    // Aceita "##/04/2026" ou data completa
+            valorCota: valor, 
+            status: 'aberto',
+            totalArrecadado: 0, 
+            totalDistribuido: 0, 
+            totalParticipantes: 0,
+            volantes: [], 
+            criadoEm: serverTimestamp(),
+            tipo: isAntecipado ? 'antecipado' : 'normal'
+        };
+        
+        if (isAntecipado) {
+            bolaoData.dataEntrega = dataEntrega;  // Aceita "##/04/2026" ou data completa
+            bolaoData.statusEntrega = 'aguardando_entrega';
+            bolaoData.volantesEntregues = false;
+        }
+        
+        await addDoc(collection(db,'boloes'), bolaoData);
+        showMsg('novoBolaoMsg','✅ Bolão criado!','success');
+        
+        // Limpar campos
+        ['novoBolaoNome','novoBolaoConcurso','novoBolaoData','novoBolaoValor','novoBolaoDataEntrega'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        document.getElementById('dataEntregaGroup').style.display = 'none';
+        
     } catch(e) { 
-      showMsg('novoBolaoMsg','❌ ' + e.message,'error'); 
+        console.error('Erro ao criar bolão:', e);
+        showMsg('novoBolaoMsg','❌ ' + e.message,'error'); 
     }
-  };
-
+};
   // Upload de volantes
   window.abrirUploadVolantes = (bolaoId) => {
     document.getElementById('uploadBolaoId').value = bolaoId;
