@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔱 LotoFácil COCKPIT 2 · V54 · Bridge Trend</title>
+<title>🔱 LotoFácil COCKPIT 2 · V55 · Bridge Trend</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ══ TOKENS ══ */
@@ -72,7 +72,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .section{display:none;}
 .section.active{display:block;}
 
-/* ══ WIZARD STEPS (resumido para brevidade - mantido da v53) ══ */
+/* ══ WIZARD STEPS ══ */
 .step{
   border:1px solid var(--border);border-radius:var(--r);
   margin-bottom:12px;overflow:hidden;transition:border-color .3s;
@@ -171,7 +171,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   filter:brightness(1);
 }
 
-/* ══ CARD, INPUTS, BUTTONS (mantidos) ══ */
+/* ══ CARD, INPUTS, BUTTONS ══ */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
 .card-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:1px;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .input-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
@@ -255,7 +255,7 @@ button:active{transform:scale(.96);}
 .summary-bar strong{color:var(--purple);}
 .sb-badge{background:rgba(74,29,138,.3);border:1px solid rgba(188,140,255,.2);border-radius:6px;padding:2px 9px;font-size:.74rem;color:#e9d5ff;}
 
-/* ══ EXPERT PANEL, MODAL, FEEDBACK (resumido) ══ */
+/* ══ EXPERT PANEL, MODAL, FEEDBACK ══ */
 .expert-panel{position:fixed;right:0;top:54px;bottom:0;width:320px;background:rgba(10,15,22,.97);backdrop-filter:blur(16px);border-left:1px solid var(--border);z-index:150;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
 .expert-panel.open{transform:translateX(0);}
 .ep-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
@@ -389,6 +389,58 @@ button:active{transform:scale(.96);}
 @keyframes spin{to{transform:rotate(360deg);}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
 
+/* ══ NOVOS ESTILOS PARA TABELA COMPARATIVA E BOTÕES ══ */
+.fixas-comparativo table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.fixas-comparativo th {
+  background: var(--surface3);
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 8px;
+}
+
+.fixas-comparativo td {
+  padding: 10px 8px;
+  font-size: 0.75rem;
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--border);
+}
+
+.fixas-comparativo tr:hover td {
+  background: rgba(188, 140, 255, 0.05);
+}
+
+.pos-btn {
+  padding: 6px 14px;
+  border-radius: 30px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.pos-btn:hover {
+  background: rgba(188, 140, 255, 0.2);
+}
+
+.pos-btn.active {
+  background: var(--purple);
+  color: white;
+  border-color: var(--purple);
+}
+
 /* ══ RESPONSIVO ══ */
 @media(max-width:640px){
   .topnav-tabs{display:none;}
@@ -399,6 +451,10 @@ button:active{transform:scale(.96);}
   .viab-grid{grid-template-columns:repeat(3,1fr);}
   .peneira-controles{flex-direction:column;}
   .tend-synergy-bar{flex-direction:column;}
+  .fixas-comparativo { overflow-x: auto; }
+  .fixas-comparativo table { font-size: 0.7rem; }
+  .pos-nav { gap: 6px; }
+  .pos-btn { padding: 4px 10px; font-size: 0.7rem; }
 }
 @media(max-width:400px){
   .max-grid{grid-template-columns:1fr;}
@@ -410,7 +466,7 @@ button:active{transform:scale(.96);}
 
 <!-- ══ TOP NAV ══ -->
 <nav class="topnav">
-  <div class="topnav-brand">🔱 LotoFácil <span>COCKPIT 2 · V54 BRIDGE</span></div>
+  <div class="topnav-brand">🔱 LotoFácil <span>COCKPIT 2 · V55</span></div>
   <div class="topnav-tabs">
     <button class="tab-btn active" onclick="goTab('wizard')">🎯 Jogo</button>
     <button class="tab-btn tend-tab" onclick="goTab('tendencias')">📈 Tendências</button>
@@ -433,7 +489,7 @@ button:active{transform:scale(.96);}
 
 </nav>
 
-<!-- ══ EXPERT PANEL (resumido) ══ -->
+<!-- ══ EXPERT PANEL ══ -->
 <div class="ep-overlay" id="epOverlay" onclick="toggleExpert()"></div>
 <div class="expert-panel" id="expertPanel">
   <div class="ep-header"><div class="ep-title">⚙️ PAINEL EXPERT</div><button class="ep-close" onclick="toggleExpert()">✕</button></div>
@@ -468,14 +524,87 @@ button:active{transform:scale(.96);}
       <div id="ccListWrapper" style="display:none;margin-top:14px"><div style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px">Concursos no histórico</div><div class="cc-list" id="ccList"></div><div class="btn-row" style="margin-top:10px"><button class="btn-success" onclick="avancarStep2()">▶ Analisar Âncoras →</button></div></div>
     </div>
   </div>
-  <div class="step locked" id="step2"><div class="step-header" onclick="toggleStep(2)"><div class="step-num">2</div><div><div class="step-title">🔬 Análise de Viabilidade — Escolha a Âncora</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">O sistema identifica as melhores posições automaticamente</div></div><div class="step-subtitle" id="step2badge"></div></div><div class="step-body" id="step2body"><div style="font-size:.82rem;color:var(--text2);margin-bottom:12px;line-height:1.6">Clique em uma posição para ver as dezenas que serão fixadas. Posições <strong style="color:var(--green)">verdes ⭐</strong> são estatisticamente mais favoráveis com base no histórico carregado.</div><div class="input-row" style="margin-bottom:14px"><div class="input-group"><label>Concurso Âncora</label><select id="ancoraSelectWiz" onchange="onAncoraChange()" style="font-size:.85rem"></select></div><div class="input-group"><label>Posições recomendadas baseadas em</label><div style="padding:9px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);font-size:.82rem;color:var(--text2)" id="viabBase">— aguardando análise —</div></div></div><div class="viab-grid" id="viabGrid"></div><div class="ancora-info" id="ancoraInfo" style="display:none"><div class="ai-label" id="ancoraInfoLabel">🔒 Dezenas Fixadas</div><div class="ai-fixas" id="ancoraInfoFixas"></div><div class="ai-chips" id="ancoraInfoChips"></div></div><div class="btn-row" style="margin-top:14px"><button class="btn-success" onclick="avancarStep3()" id="btnStep3">▶ Configurar Geração →</button></div></div></div>
+  
+  <!-- ══ STEP 2: ANÁLISE DE VIABILIDADE COM EXPANSÃO COMPLETA ══ -->
+  <div class="step locked" id="step2">
+    <div class="step-header" onclick="toggleStep(2)">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">🔬 Análise de Viabilidade — Escolha a Âncora</div>
+        <div style="font-size:.76rem;color:var(--text2);margin-top:2px">O sistema identifica as melhores posições automaticamente. Você pode escolher qualquer posição manualmente.</div>
+      </div>
+      <div class="step-subtitle" id="step2badge"></div>
+    </div>
+    <div class="step-body" id="step2body">
+      <div style="font-size:.82rem;color:var(--text2);margin-bottom:12px;line-height:1.6">
+        🔬 O sistema já escolheu a <strong style="color:var(--green)">melhor posição automaticamente</strong> (⭐). 
+        Você pode <strong>clicar em qualquer outra posição</strong> se quiser alterar manualmente.
+      </div>
+
+      <!-- NOVO: Navegação Rápida entre Posições -->
+      <div class="pos-nav" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;justify-content:center;">
+        <button class="pos-btn" data-pos="0" onclick="selecionarPosicaoViab(0)">1ª</button>
+        <button class="pos-btn" data-pos="1" onclick="selecionarPosicaoViab(1)">2ª</button>
+        <button class="pos-btn" data-pos="2" onclick="selecionarPosicaoViab(2)">3ª ⭐</button>
+        <button class="pos-btn" data-pos="3" onclick="selecionarPosicaoViab(3)">4ª</button>
+        <button class="pos-btn" data-pos="4" onclick="selecionarPosicaoViab(4)">5ª</button>
+        <button class="pos-btn" data-pos="5" onclick="selecionarPosicaoViab(5)">6ª</button>
+        <button class="pos-btn" data-pos="6" onclick="selecionarPosicaoViab(6)">7ª</button>
+      </div>
+
+      <div class="input-row" style="margin-bottom:14px">
+        <div class="input-group">
+          <label>📌 Concurso Âncora</label>
+          <select id="ancoraSelectWiz" onchange="onAncoraChange()" style="font-size:.85rem"></select>
+        </div>
+        <div class="input-group">
+          <label>📊 Base de Análise</label>
+          <div style="padding:9px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);font-size:.82rem;color:var(--text2)" id="viabBase">
+            — aguardando análise —
+          </div>
+        </div>
+      </div>
+
+      <!-- NOVO: Tabela Comparativa com Todas as Posições e suas Fixas -->
+      <div class="fixas-comparativo" style="margin-bottom:16px;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:var(--surface3);">
+              <th style="padding:8px;text-align:center;">Posição</th>
+              <th style="padding:8px;text-align:center;">Média</th>
+              <th style="padding:8px;text-align:center;">Dezenas Fixas (9 números)</th>
+              <th style="padding:8px;text-align:center;">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="fixasComparativoBody">
+            <!-- Preenchido dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Grid de Viabilidade (mantido para referência visual) -->
+      <div class="viab-grid" id="viabGrid"></div>
+
+      <!-- Área de Fixas Selecionadas -->
+      <div class="ancora-info" id="ancoraInfo" style="display:none">
+        <div class="ai-label" id="ancoraInfoLabel">🔒 Dezenas Fixadas (posição selecionada)</div>
+        <div class="ai-fixas" id="ancoraInfoFixas"></div>
+        <div class="ai-chips" id="ancoraInfoChips"></div>
+      </div>
+
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn-success" onclick="avancarStep3()" id="btnStep3">▶ Configurar Geração →</button>
+      </div>
+    </div>
+  </div>
+  
   <div class="step locked" id="step3"><div class="step-header" onclick="toggleStep(3)"><div class="step-num">3</div><div><div class="step-title">🔱 Gerar Volantes MAX</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">9 fixas garantidas + 6 livres filtradas pelo motor inteligente</div></div><div class="step-subtitle" id="step3badge"></div></div><div class="step-body" id="step3body"><div class="gen-center"><div class="gen-qty-wrap"><span class="gen-qty-label">Quantidade de volantes:</span><input type="number" class="gen-qty-input" id="genQtd" value="10" min="1" max="999"></div><div class="gen-info" id="genInfo">Escolha a quantidade e clique em Gerar.<br>O motor inteligente gera internamente <strong>300×</strong> e entrega os melhores por Score Geral.</div><div style="width:100%"><div class="adv-toggle" id="advToggle" onclick="toggleAdv()"><span>⚙️ Filtros avançados</span><span id="advArrow">▼</span></div><div class="adv-body" id="advBody"><div class="filter-row"><div><label>Qualidade da Soma</label><select id="genSoma"><option value="otimo">⭐ Apenas Ótima (181–220)</option><option value="bom" selected>✅ Boa ou melhor (161–240)</option><option value="any">🎯 Qualquer</option></select></div><div><label>Paridade</label><select id="genParidade"><option value="any">Qualquer</option><option value="78" selected>7 ou 8 pares</option><option value="balanced">6–9 pares</option><option value="67">6P/9I</option><option value="76">7P/8I</option></select></div><div><label>Mínimo de Mágicas</label><select id="genMagicas"><option value="any">Qualquer</option><option value="3" selected>≥ 3</option><option value="4">≥ 4</option><option value="5">≥ 5</option></select></div><div><label>Miolo</label><select id="genMoldura"><option value="any">Qualquer</option><option value="balanced" selected>≤ 4 (balanceado)</option><option value="strict">≤ 3 (estrito)</option></select></div></div></div></div><button class="btn-max" onclick="gerarWizard()">🔱 GERAR VOLANTES MAX</button></div><div id="genSummary" style="display:none" class="summary-bar"></div><div id="genGrid" class="max-grid"></div><div id="genActions" style="display:none" class="btn-row"><button class="btn-success" onclick="avancarStep4()">▶ Conferir Resultado →</button><button class="btn-ghost" onclick="limparGeracao()">↺ Gerar de novo</button></div><div class="peneira-wrap" id="peneiraWrap" style="display:none"><div class="peneira-title">🔮 Peneira de Mágicas<span style="font-size:.7rem;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:400;letter-spacing:0"> — filtra volantes baseado nos dois padrões históricos (94.1% de confiança)</span></div><div class="peneira-controles"><div class="peneira-ctrl"><label>Qtd de Mágicas no jogo</label><select id="peneiraQtd" onchange="aplicarPeneira()"><option value="any">Qualquer quantidade</option><option value="4-7" selected>✅ 4 a 7 mágicas (normal — 94%)</option><option value="5-7">⭐ 5 a 7 mágicas (mais provável)</option><option value="4-6">4 a 6 mágicas</option></select></div><div class="peneira-ctrl"><label>Casa da 1ª mágica</label><select id="peneiraCasa" onchange="aplicarPeneira()"><option value="any">Qualquer casa</option><option value="3-4" selected>✅ 3ª ou 4ª casa (normal — 79%)</option><option value="3">3ª casa somente (41%)</option><option value="2-4">2ª a 4ª casa (91%)</option></select></div><div class="peneira-ctrl" style="justify-content:flex-end;padding-top:18px"><button class="btn-ghost btn-sm" onclick="limparPeneira()" style="border-color:rgba(255,166,87,.3);color:var(--orange)">↺ Remover Filtros</button></div></div><div class="peneira-result" id="peneiraResult">Ajuste os filtros acima para ativar a peneira.</div></div></div></div>
   <div class="step locked" id="step4"><div class="step-header" onclick="toggleStep(4)"><div class="step-num">4</div><div><div class="step-title">✅ Conferir Resultado</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">Cole as dezenas sorteadas e veja o resultado de todos os volantes</div></div><div class="step-subtitle" id="step4badge"></div></div><div class="step-body" id="step4body"><div class="input-group"><label>15 dezenas do resultado oficial (espaço ou vírgula)</label><input type="text" class="conf-input" id="confResultado" placeholder="Ex: 01 04 06 07 09 10 11 13 14 15 16 18 19 22 24"></div><div class="btn-row" style="margin-bottom:14px"><button class="btn-primary" onclick="conferirWizard()">🔍 Conferir Todos os Volantes</button><button class="btn-ghost" onclick="document.getElementById('confResultado').value='';document.getElementById('confResultados').innerHTML=''">↺ Limpar</button></div><div id="confResultados"></div></div></div>
 </div>
 
-<!-- ████████████████ TAB: TENDÊNCIAS (mantido da v53) ████████████████ -->
+<!-- ████████████████ TAB: TENDÊNCIAS (mantido) ████████████████ -->
 <div class="section" id="tab-tendencias">
-  <div class="tend-header"><div class="tend-header-left"><h2>📈 DETECTOR DE TENDÊNCIA · V54 BRIDGE</h2><p>Heurística de 9 fixas baseada em repetições entre concursos consecutivos</p></div><div style="font-size:.75rem;color:var(--text2);text-align:right;"><div style="color:var(--tend-gold);font-weight:800;font-size:.85rem;">MÓDULO OPCIONAL</div><div>Integrado com COCKPIT via BRIDGE</div></div></div>
+  <div class="tend-header"><div class="tend-header-left"><h2>📈 DETECTOR DE TENDÊNCIA · V55 BRIDGE</h2><p>Heurística de 9 fixas baseada em repetições entre concursos consecutivos</p></div><div style="font-size:.75rem;color:var(--text2);text-align:right;"><div style="color:var(--tend-gold);font-weight:800;font-size:.85rem;">MÓDULO OPCIONAL</div><div>Integrado com COCKPIT via BRIDGE</div></div></div>
   <div class="tend-optional-banner"><span style="font-size:1.1rem">ℹ️</span><div><strong>Modo independente + BRIDGE</strong> — Analise tendências e <strong>exporte as 9 fixas para o COCKPIT</strong> via botão abaixo. O COCKPIT também pode exportar seu histórico para alimentar esta análise.</div></div>
   <div class="tend-autoload-bar" id="tendAutoloadBar" style="display:none"><span>⚡ Histórico detectado — <strong id="tendAutoloadInfo">2 concursos</strong> mais recentes pré-carregados automaticamente</span><button class="btn-ghost btn-sm" onclick="tendAutoLoad()" style="border-color:rgba(57,213,200,.3);color:var(--teal)">🔄 Aplicar do Histórico</button></div>
   <div class="tend-inputs-grid"><div class="tend-card"><div class="tend-card-title">📊 Concurso Atual <span style="font-size:.72rem;color:var(--text2);margin-left:auto;font-family:'Nunito',sans-serif;">(mais recente)</span></div><div class="input-group" style="margin-bottom:14px"><label>Número do Concurso</label><input type="number" id="tendCCAtual" class="tend-cc-input" placeholder="Ex: 3642" value=""></div><div class="tend-num-label">15 Dezenas Sorteadas</div><div class="tend-num-row" id="tendNumAtual"></div><div id="tendErrorAtual" style="font-size:.78rem;color:var(--red);margin-top:8px;display:none"></div></div><div class="tend-card"><div class="tend-card-title">📈 Concurso Anterior <span style="font-size:.72rem;color:var(--text2);margin-left:auto;font-family:'Nunito',sans-serif;">(imediatamente anterior)</span></div><div class="input-group" style="margin-bottom:14px"><label>Número do Concurso</label><input type="number" id="tendCCAnterior" class="tend-cc-input" placeholder="Ex: 3641" value=""></div><div class="tend-num-label">15 Dezenas Sorteadas</div><div class="tend-num-row" id="tendNumAnterior"></div><div id="tendErrorAnterior" style="font-size:.78rem;color:var(--red);margin-top:8px;display:none"></div></div></div>
@@ -488,7 +617,7 @@ button:active{transform:scale(.96);}
     <div class="tend-legend"><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"></div><span>Normal</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"></div><span>Mágica</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#10b981,#059669)"></div><span>Prima</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#06b6d4,#0891b2)"></div><span>Par comum</span></div></div>
     <div class="tend-stats-grid" id="tendStats"></div>
     <div class="tend-analysis"><div class="tend-analysis-title">📊 Análise Detalhada</div><div class="tend-analysis-grid" id="tendAnalysisGrid"></div></div>
-    <div style="margin-top:12px"><div style="font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);letter-spacing:.5px;margin-bottom:10px;">📜 Top Dezenas por Score</div><div style="overflow-x:auto"><table class="tend-table" id="tendTable"><thead><tr><th>Dezena</th><th>Score</th><th>Freq. Hist.</th><th>Categorias</th><th>Status</th></tr></thead><tbody id="tendTableBody"></tbody></table></div></div>
+    <div style="margin-top:12px"><div style="font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);letter-spacing:.5px;margin-bottom:10px;">📜 Top Dezenas por Score</div><div style="overflow-x:auto"><table class="tend-table" id="tendTable"><thead> transduction<th>Dezena</th><th>Score</th><th>Freq. Hist.</th><th>Categorias</th><th>Status</th> </thead><tbody id="tendTableBody"></tbody> </table></div></div>
     <div class="tend-synergy-bar" id="tendSynergyBar"><div class="tend-synergy-bar-left"><strong>🔗 Usar no Wizard principal</strong><small>Envia as 9 fixas de tendência como âncora alternativa para o Passo 3 — Gerar Volantes MAX</small></div><button class="btn-synergy" onclick="tendSendToWizard()">🔱 Enviar para o Wizard →</button></div>
     <button class="btn-ghost" style="width:100%;margin-top:10px" onclick="tendCopy()">📋 Copiar 9 Fixas</button>
     <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);"><button class="btn-info" style="width:100%;" onclick="exportarFixasParaBridge()">🌉 EXPORTAR FIXAS PARA BRIDGE (COCKPIT)</button></div>
@@ -510,12 +639,9 @@ button:active{transform:scale(.96);}
 <div class="modal-overlay" id="modalCC"><div class="modal"><div class="modal-title" id="modalCCTitulo">➕ Inserir Concurso</div><div class="input-row"><div class="input-group"><label>Nº do Concurso</label><input type="number" id="mNum" placeholder="3640" min="1"></div><div class="input-group"><label>Data (dd/mm/aaaa)</label><input type="text" id="mData" placeholder="19/03/2026"></div></div><div class="input-group"><label>15 Dezenas</label><textarea id="mDezenas" rows="2" placeholder="01 04 06 07 09 10 11 13 14 15 16 18 19 22 24"></textarea></div><input type="hidden" id="mEditIdx" value="-1"><div class="btn-row"><button class="btn-primary" onclick="salvarModalCC()">💾 Salvar</button><button class="btn-ghost" onclick="fecharModalCC()">✕ Cancelar</button></div></div></div>
 <div class="fb-container" id="fbContainer"></div>
 
-<!-- ── NAVEGAÇÃO PARA O GUIA ────────────────────────────────────────── -->
-  
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
-   V54 - COCKPIT + TREND BRIDGE
-   Integração via localStorage entre os dois sistemas
+   V55 - COCKPIT + TREND BRIDGE COM EXPANSÃO DE ÂNCORAS
 ═══════════════════════════════════════════════════════════════════════════ */
 
 // ==================== CONSTANTES GLOBAIS ====================
@@ -528,7 +654,7 @@ const NOMES_POS = ['1ª','2ª','3ª','4ª','5ª','6ª','7ª'];
 const DESC_POS = ['dz 1–9','dz 2–10','dz 3–11','dz 4–12','dz 5–13','dz 6–14','dz 7–15'];
 
 // Bridge key para comunicação
-const BRIDGE_KEY = 'cockpit_trend_bridge_v54';
+const BRIDGE_KEY = 'cockpit_trend_bridge_v55';
 
 // Estado global
 let estado = {
@@ -541,10 +667,10 @@ let estado = {
 };
 let caixa = {sessoes:[], totalGasto:0, totalPremios:0};
 
-// ==================== FUNÇÕES BRIDGE (INTEGRAÇÃO) ====================
+// ==================== FUNÇÕES BRIDGE ====================
 function salvarBridge(momento, fixas, projecao, ultimoConcurso, proximoConcurso, periodo, heuristica) {
   const bridge = {
-    momento_entrada: momento, // 'ALTA', 'MEDIA', 'BAIXA'
+    momento_entrada: momento,
     fixas_recomendadas: fixas,
     projecao_repeticao: projecao,
     ultimo_concurso: ultimoConcurso,
@@ -561,106 +687,43 @@ function salvarBridge(momento, fixas, projecao, ultimoConcurso, proximoConcurso,
 function lerBridge() {
   const data = localStorage.getItem(BRIDGE_KEY);
   if (!data) return null;
-  try {
-    return JSON.parse(data);
-  } catch(e) {
-    return null;
-  }
+  try { return JSON.parse(data); } catch(e) { return null; }
 }
 
-function limparBridge() {
-  localStorage.removeItem(BRIDGE_KEY);
-  console.log('[BRIDGE] Dados limpos');
-}
+function limparBridge() { localStorage.removeItem(BRIDGE_KEY); }
 
-// ==================== FUNÇÕES DO COCKPIT PARA BRIDGE ====================
 function exportarHistoricoParaTrend() {
-  if (!estado.historico.length) {
-    fb('Nenhum histórico para exportar!', 'warning');
-    return;
-  }
-  
-  // Converte o histórico do Cockpit para o formato do Trend Analyzer
-  const draws = estado.historico.map(cc => {
-    return [parseInt(cc.numero), ...cc.dezenas];
-  }).sort((a,b) => a[0] - b[0]);
-  
-  const exportData = {
-    draws: draws,
-    historico_cockpit: estado.historico,
-    exportDate: new Date().toISOString(),
-    source: 'cockpit_v54'
-  };
-  
-  localStorage.setItem('cockpit_export_trend', JSON.stringify(exportData));
+  if (!estado.historico.length) { fb('Nenhum histórico para exportar!', 'warning'); return; }
+  const draws = estado.historico.map(cc => [parseInt(cc.numero), ...cc.dezenas]).sort((a,b) => a[0] - b[0]);
+  localStorage.setItem('cockpit_export_trend', JSON.stringify({ draws, historico_cockpit: estado.historico, exportDate: new Date().toISOString(), source: 'cockpit_v55' }));
   fb(`✅ ${draws.length} concursos exportados para o Trend Analyzer!`, 'success');
   fb('Agora abra a aba "Tendências" e clique em "IMPORTAR HISTÓRICO DO COCKPIT"', 'info');
 }
 
 function importarFixasDoTrend() {
   const bridge = lerBridge();
-  if (!bridge) {
-    fb('Nenhuma recomendação do Trend Analyzer encontrada. Primeiro analise no módulo Tendências e exporte para Bridge.', 'warning');
-    return;
-  }
+  if (!bridge) { fb('Nenhuma recomendação do Trend Analyzer encontrada.', 'warning'); return; }
+  const diffHoras = (Date.now() - bridge.timestamp) / (1000 * 60 * 60);
+  if (diffHoras > 24) { fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h).`, 'warning'); return; }
+  if (!bridge.fixas_recomendadas || bridge.fixas_recomendadas.length !== 9) { fb('Fixas inválidas na Bridge.', 'error'); return; }
   
-  const agora = Date.now();
-  const diffHoras = (agora - bridge.timestamp) / (1000 * 60 * 60);
-  
-  if (diffHoras > 24) {
-    fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h). Gere uma nova análise no módulo Tendências.`, 'warning');
-    return;
-  }
-  
-  if (!bridge.fixas_recomendadas || bridge.fixas_recomendadas.length !== 9) {
-    fb('Fixas inválidas na Bridge. Reanalise no módulo Tendências.', 'error');
-    return;
-  }
-  
-  // Aplica as fixas
   estado.fixas = [...bridge.fixas_recomendadas];
-  
-  // Configura os steps
-  setStepState(1, 'done');
-  setStepState(2, 'done');
-  setStepState(3, 'current');
-  setStepState(4, 'locked');
-  
-  // Atualiza interface
+  setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
   atualizarGenInfo();
-  
-  // Navega para o Wizard
   goTab('wizard');
-  
-  // Esconde os bodies anteriores
   document.getElementById('step1body').style.display = 'none';
   document.getElementById('step2body').style.display = 'none';
   document.getElementById('step3body').style.display = '';
   document.getElementById('step4body').style.display = 'none';
-  
-  const fixasStr = estado.fixas.map(n => String(n).padStart(2,'0')).join(' - ');
   fb(`✅ Fixas importadas da Bridge! Projeção: ${bridge.projecao_repeticao} repetições (${bridge.momento_entrada})`, 'success');
-  fb(`📌 Fixas: ${fixasStr}`, 'info');
-  
-  // Exibe banner com recomendação
   mostrarBannerRecomendacao(bridge);
 }
 
 function verificarRecomendacaoTrend() {
   const bridge = lerBridge();
-  if (!bridge) {
-    fb('Nenhuma recomendação ativa. Acesse o módulo Tendências, analise e exporte para Bridge.', 'info');
-    return;
-  }
-  
-  const agora = Date.now();
-  const diffHoras = (agora - bridge.timestamp) / (1000 * 60 * 60);
-  
-  if (diffHoras > 24) {
-    fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h atrás). Gere uma nova análise.`, 'warning');
-    return;
-  }
-  
+  if (!bridge) { fb('Nenhuma recomendação ativa.', 'info'); return; }
+  const diffHoras = (Date.now() - bridge.timestamp) / (1000 * 60 * 60);
+  if (diffHoras > 24) { fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h).`, 'warning'); return; }
   mostrarBannerRecomendacao(bridge);
   fb(`📊 Bridge ativa: ${bridge.momento_entrada} | Projeção: ${bridge.projecao_repeticao} repetições | Válida por ${Math.round(24 - diffHoras)}h`, 'success');
 }
@@ -668,155 +731,67 @@ function verificarRecomendacaoTrend() {
 function mostrarBannerRecomendacao(bridge) {
   const banner = document.getElementById('trendBridgeBanner');
   if (!banner) return;
-  
   const momento = bridge.momento_entrada;
   const projecao = bridge.projecao_repeticao;
   const fixas = bridge.fixas_recomendadas;
   const proximo = bridge.proximo_concurso || '?';
-  
-  let corClasse = '';
-  let icone = '';
-  let mensagem = '';
-  
-  if (momento === 'ALTA' || projecao >= 8) {
-    corClasse = 'alta';
-    icone = '🔥🔥🔥';
-    mensagem = 'MOMENTO FAVORÁVEL! Alta probabilidade de premiação.';
-  } else if (momento === 'MEDIA' || projecao >= 6) {
-    corClasse = 'media';
-    icone = '⚡';
-    mensagem = 'Momento moderado. Considere entrar com cautela.';
-  } else {
-    corClasse = 'baixa';
-    icone = '⏸️';
-    mensagem = 'Momento desfavorável. Aguarde próxima tendência.';
-  }
-  
+  let corClasse = '', icone = '', mensagem = '';
+  if (momento === 'ALTA' || projecao >= 8) { corClasse = 'alta'; icone = '🔥🔥🔥'; mensagem = 'MOMENTO FAVORÁVEL! Alta probabilidade de premiação.'; }
+  else if (momento === 'MEDIA' || projecao >= 6) { corClasse = 'media'; icone = '⚡'; mensagem = 'Momento moderado. Considere entrar com cautela.'; }
+  else { corClasse = 'baixa'; icone = '⏸️'; mensagem = 'Momento desfavorável. Aguarde próxima tendência.'; }
   banner.className = `trend-bridge-banner ${corClasse}`;
-  banner.innerHTML = `
-    <div class="trend-bridge-header">
-      <div class="trend-bridge-title">
-        <span>🌉 TREND ANALYZER BRIDGE</span>
-        <span class="trend-bridge-badge ${corClasse}">${momento}</span>
-      </div>
-      <div>${icone}</div>
-    </div>
-    <div style="font-size:.85rem; margin-bottom:8px;">
-      <strong>Próximo concurso: ${proximo}</strong> | Projeção: <strong style="color:var(--tend-gold)">${projecao} repetições</strong>
-      ${projecao >= 8 ? '<span style="color:var(--green)"> ✅ Zona de entrada</span>' : projecao >= 6 ? '<span style="color:var(--orange)"> ⚠️ Atenção</span>' : '<span style="color:var(--red)"> ⏸️ Aguardar</span>'}
-    </div>
-    <div style="font-size:.75rem; color:var(--text2); margin-bottom:12px;">
-      ${mensagem}
-    </div>
-    <div class="trend-bridge-fixas">
-      ${fixas.map(n => `<div class="trend-bridge-fixa">${String(n).padStart(2,'0')}</div>`).join('')}
-    </div>
-    <div class="trend-bridge-buttons">
-      <button class="btn-bridge btn-sm" onclick="aplicarFixasBridge()">✅ APLICAR FIXAS</button>
-      <button class="btn-bridge-outline btn-sm" onclick="fecharBannerBridge()">✕ FECHAR</button>
-    </div>
-  `;
+  banner.innerHTML = `<div class="trend-bridge-header"><div class="trend-bridge-title"><span>🌉 TREND ANALYZER BRIDGE</span><span class="trend-bridge-badge ${corClasse}">${momento}</span></div><div>${icone}</div></div><div style="font-size:.85rem; margin-bottom:8px;"><strong>Próximo concurso: ${proximo}</strong> | Projeção: <strong style="color:var(--tend-gold)">${projecao} repetições</strong>${projecao >= 8 ? '<span style="color:var(--green)"> ✅ Zona de entrada</span>' : projecao >= 6 ? '<span style="color:var(--orange)"> ⚠️ Atenção</span>' : '<span style="color:var(--red)"> ⏸️ Aguardar</span>'}</div><div style="font-size:.75rem; color:var(--text2); margin-bottom:12px;">${mensagem}</div><div class="trend-bridge-fixas">${fixas.map(n => `<div class="trend-bridge-fixa">${String(n).padStart(2,'0')}</div>`).join('')}</div><div class="trend-bridge-buttons"><button class="btn-bridge btn-sm" onclick="aplicarFixasBridge()">✅ APLICAR FIXAS</button><button class="btn-bridge-outline btn-sm" onclick="fecharBannerBridge()">✕ FECHAR</button></div>`;
   banner.style.display = 'block';
 }
 
 function aplicarFixasBridge() {
   const bridge = lerBridge();
-  if (!bridge || !bridge.fixas_recomendadas) {
-    fb('Nenhuma recomendação ativa.', 'warning');
-    return;
-  }
-  
+  if (!bridge || !bridge.fixas_recomendadas) { fb('Nenhuma recomendação ativa.', 'warning'); return; }
   estado.fixas = [...bridge.fixas_recomendadas];
-  setStepState(1, 'done');
-  setStepState(2, 'done');
-  setStepState(3, 'current');
-  setStepState(4, 'locked');
+  setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
   atualizarGenInfo();
-  
   document.getElementById('step1body').style.display = 'none';
   document.getElementById('step2body').style.display = 'none';
   document.getElementById('step3body').style.display = '';
   document.getElementById('step4body').style.display = 'none';
-  
-  const fixasStr = estado.fixas.map(n => String(n).padStart(2,'0')).join(' - ');
-  fb(`✅ Fixas aplicadas: ${fixasStr}`, 'success');
-  
-  // Rola para o step 3
-  setTimeout(() => {
-    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
+  fb(`✅ Fixas aplicadas: ${estado.fixas.map(n => String(n).padStart(2,'0')).join(' - ')}`, 'success');
+  setTimeout(() => { document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
 }
 
-function fecharBannerBridge() {
-  const banner = document.getElementById('trendBridgeBanner');
-  if (banner) banner.style.display = 'none';
-}
-
-// ==================== FUNÇÕES DO TREND ANALYZER (SIMPLIFICADAS PARA INTEGRAÇÃO) ====================
-// Nota: O módulo Tendências completo da v53 foi mantido acima.
-// Aqui adicionamos as funções de bridge específicas para o Trend Analyzer
+function fecharBannerBridge() { const banner = document.getElementById('trendBridgeBanner'); if (banner) banner.style.display = 'none'; }
 
 function exportarFixasParaBridge() {
-  if (!tendState.fixas9 || tendState.fixas9.length === 0) {
-    fb('Gere as 9 fixas primeiro!', 'warning');
-    return;
-  }
-  
-  // Calcula a projeção de repetições baseada nas fixas
-  const currentNums = tendState.currentNums;
-  const previousNums = tendState.previousNums;
+  if (!tendState.fixas9 || tendState.fixas9.length === 0) { fb('Gere as 9 fixas primeiro!', 'warning'); return; }
+  const currentNums = tendState.currentNums, previousNums = tendState.previousNums;
   const repeatCt = currentNums.filter(n => previousNums.includes(n)).length;
-  
   let momento = 'BAIXA';
   if (repeatCt >= 8) momento = 'ALTA';
   else if (repeatCt >= 6) momento = 'MEDIA';
-  
   const ultimoConcurso = document.getElementById('tendCCAtual').value || null;
   const proximoConcurso = ultimoConcurso ? parseInt(ultimoConcurso) + 1 : null;
-  
   salvarBridge(momento, tendState.fixas9, repeatCt, ultimoConcurso, proximoConcurso, 3, 'tendencia');
-  
   fb(`✅ Fixas exportadas para Bridge! Momento: ${momento} (${repeatCt} repetições)`, 'success');
   fb('Agora vá para o COCKPIT e clique em "Verificar Recomendação" ou "Importar Fixas do Trend"', 'info');
 }
 
 function importarHistoricoDoCockpit() {
   const data = localStorage.getItem('cockpit_export_trend');
-  if (!data) {
-    fb('Nenhum histórico do Cockpit encontrado. Primeiro exporte do Cockpit (Expert Panel > Exportar Histórico para Trend).', 'warning');
-    return;
-  }
-  
+  if (!data) { fb('Nenhum histórico do Cockpit encontrado.', 'warning'); return; }
   try {
     const parsed = JSON.parse(data);
-    if (!parsed.draws || !Array.isArray(parsed.draws)) {
-      throw new Error('Formato inválido');
-    }
-    
-    // Aqui você implementaria a lógica para carregar os draws no Trend Analyzer
-    // Como o Trend Analyzer V4 tem sua própria engine, esta função é um placeholder
-    // Na versão completa, você chamaria engine.setDraws(parsed.draws)
-    
+    if (!parsed.draws || !Array.isArray(parsed.draws)) throw new Error('Formato inválido');
     fb(`✅ ${parsed.draws.length} concursos importados do Cockpit!`, 'success');
-    fb('Agora clique em "Analisar Tendência" para gerar as fixas baseadas no histórico do Cockpit.', 'info');
-    
-    // Opcional: salvar os draws no localStorage para o Trend Analyzer
-    localStorage.setItem('lftrend_v4_import', JSON.stringify({ draws: parsed.draws, source: 'cockpit' }));
-    
-  } catch(e) {
-    fb('Erro ao importar dados do Cockpit.', 'error');
-  }
+    fb('Agora clique em "Analisar Tendência" para gerar as fixas.', 'info');
+    localStorage.setItem('lftrend_v5_import', JSON.stringify({ draws: parsed.draws, source: 'cockpit' }));
+  } catch(e) { fb('Erro ao importar dados do Cockpit.', 'error'); }
 }
 
-// ==================== FUNÇÕES AUXILIARES (mantidas da v53) ====================
+// ==================== FUNÇÕES AUXILIARES ====================
 function formatarDataExib(iso) {
   if (!iso) return '';
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(iso)) return iso;
   const partes = iso.split('-');
-  if (partes.length === 3) {
-    const [y, m, d] = partes;
-    return d && m && y ? `${d}/${m}/${y}` : iso;
-  }
+  if (partes.length === 3) { const [y, m, d] = partes; return d && m && y ? `${d}/${m}/${y}` : iso; }
   return iso;
 }
 
@@ -828,16 +803,14 @@ function converterData(str) {
   return str;
 }
 
-function isDateString(str) {
-  return /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(str) || /^\d{4}-\d{2}-\d{2}$/.test(str);
-}
+function isDateString(str) { return /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(str) || /^\d{4}-\d{2}-\d{2}$/.test(str); }
 
 function parseDezenas(input) {
   const nums = input.replace(/[^0-9]/g, ' ').trim().split(/\s+/).map(Number).filter(n => n >= 1 && n <= 25);
   return [...new Set(nums)].sort((a, b) => a - b);
 }
 
-// ==================== FUNÇÕES DO WIZARD (mantidas da v53 resumidas) ====================
+// ==================== FUNÇÕES DO WIZARD ====================
 function goTab(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -848,13 +821,8 @@ function goTab(id) {
   if (id === 'relatorio') gerarRelatorio();
   if (id === 'caixa') atualizarCaixaUI();
   if (id === 'historico') atualizarHistFullList();
-  if (id === 'tendencias') {
-    tendCheckAutoLoad();
-    verificarRecomendacaoTrend(); // verifica se há recomendação ativa
-  }
-  if (id === 'wizard') {
-    verificarRecomendacaoTrend(); // verifica se há recomendação ativa
-  }
+  if (id === 'tendencias') { tendCheckAutoLoad(); verificarRecomendacaoTrend(); }
+  if (id === 'wizard') verificarRecomendacaoTrend();
 }
 
 function toggleExpert() {
@@ -866,10 +834,7 @@ function toggleExpert() {
   toggle.classList.toggle('on', open);
 }
 
-function toggleStep(n) {
-  const body = document.getElementById('step'+n+'body');
-  if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
-}
+function toggleStep(n) { const body = document.getElementById('step'+n+'body'); if (body) body.style.display = body.style.display === 'none' ? '' : 'none'; }
 
 function setStepState(n, state) {
   const el = document.getElementById('step'+n);
@@ -901,10 +866,7 @@ function avancarStep3() {
       estado.fixas = cc.dezenas.slice(0, 9);
       document.getElementById('ancoraSelectWiz').value = '0';
       selecionarPosicaoViab(0);
-    } else {
-      fb('Selecione uma âncora no Passo 2!', 'warning');
-      return;
-    }
+    } else { fb('Selecione uma âncora no Passo 2!', 'warning'); return; }
   }
   if (!estado.fixas.length) { fb('Selecione uma âncora no Passo 2!', 'warning'); return; }
   setStepState(2,'done');
@@ -933,7 +895,6 @@ function atualizarGenInfo() {
   }
 }
 
-// ==================== FUNÇÕES DE HISTÓRICO E UTILITÁRIOS (resumidas) ====================
 function atualizarContadorPaste() {
   const txt = document.getElementById('ccPasteArea').value.trim();
   const linhas = txt ? txt.split('\n').filter(l => l.trim()) : [];
@@ -975,11 +936,8 @@ function processarColagem() {
   atualizarHistFullList();
   gerarRelatorio();
   populaAncoraSelect();
-  if (ok > 0) {
-    fb(`${ok} concurso${ok>1?'s':''} processado${ok>1?'s':''}!${err>0?' ('+err+' com erro)':''}`, ok>0?'success':'warning');
-  } else {
-    fb(`Nenhum concurso válido encontrado. Verifique o formato: número data dezenas (ex: 3601 30/01/2026 02 03 04...)`, 'error');
-  }
+  if (ok > 0) { fb(`${ok} concurso${ok>1?'s':''} processado${ok>1?'s':''}!${err>0?' ('+err+' com erro)':''}`, ok>0?'success':'warning'); }
+  else { fb(`Nenhum concurso válido encontrado.`, 'error'); }
   if (ok > 0) {
     document.getElementById('ccListWrapper').style.display = 'block';
     document.getElementById('step1badge').textContent = `${estado.historico.length} concurso${estado.historico.length>1?'s':''}`;
@@ -993,27 +951,17 @@ function atualizarCCList() {
   wrapper.style.display = 'block';
   document.getElementById('step1badge').textContent = `${estado.historico.length} concurso${estado.historico.length>1?'s':''}`;
   c.innerHTML = estado.historico.slice(0,8).map((cc,idx) => {
-    const dez = cc.dezenas.map(n => {
-      const isMag = MAGICAS.includes(n);
-      return `<div class="cc-dez${isMag?' mag':''}">${String(n).padStart(2,'0')}</div>`;
-    }).join('');
+    const dez = cc.dezenas.map(n => { const isMag = MAGICAS.includes(n); return `<div class="cc-dez${isMag?' mag':''}">${String(n).padStart(2,'0')}</div>`; }).join('');
     return `<div class="cc-item"><span class="cc-num">CC ${cc.numero}</span><span class="cc-date">${formatarDataExib(cc.data)}</span><div class="cc-dezenas">${dez}</div><div class="cc-actions"><button class="btn-ghost btn-sm" onclick="abrirModalCC(${idx})">✏️</button><button class="btn-ghost btn-sm" style="color:var(--red)" onclick="excluirCC(${idx})">🗑</button></div></div>`;
   }).join('');
-  if (estado.historico.length > 8) {
-    c.innerHTML += `<div style="text-align:center;font-size:.78rem;color:var(--text2);padding:6px">+${estado.historico.length-8} concurso${estado.historico.length-8>1?'s':''} (ver aba Histórico)</div>`;
-  }
+  if (estado.historico.length > 8) { c.innerHTML += `<div style="text-align:center;font-size:.78rem;color:var(--text2);padding:6px">+${estado.historico.length-8} concurso${estado.historico.length-8>1?'s':''} (ver aba Histórico)</div>`; }
 }
 
 function populaAncoraSelect() {
   const sel = document.getElementById('ancoraSelectWiz');
   const val = sel.value;
   sel.innerHTML = '<option value="">— Selecione —</option>';
-  estado.historico.forEach((cc,idx) => {
-    const opt = document.createElement('option');
-    opt.value = idx;
-    opt.textContent = `CC ${cc.numero} · ${formatarDataExib(cc.data)}`;
-    sel.appendChild(opt);
-  });
+  estado.historico.forEach((cc,idx) => { const opt = document.createElement('option'); opt.value = idx; opt.textContent = `CC ${cc.numero} · ${formatarDataExib(cc.data)}`; sel.appendChild(opt); });
   if (val !== '' && !isNaN(parseInt(val))) sel.value = val;
 }
 
@@ -1022,20 +970,17 @@ function onAncoraChange() {
   if (isNaN(idx) || idx < 0 || idx >= estado.historico.length) return;
   estado.ancoraIdx = idx;
   renderViabGrid();
+  renderFixasComparativo();
   selecionarPosicaoViab(estado.posicao);
 }
 
 function executarViabilidade() {
   const hist = estado.historico;
-  if (hist.length < 2) {
-    document.getElementById('viabGrid').innerHTML = '<p style="color:var(--text2);font-size:.82rem">Carregue ao menos 2 concursos consecutivos.</p>';
-    return;
-  }
+  if (hist.length < 2) { document.getElementById('viabGrid').innerHTML = '<p style="color:var(--text2);font-size:.82rem">Carregue ao menos 2 concursos consecutivos.</p>'; return; }
   const ordenado = [...hist].sort((a,b) => parseInt(a.numero)-parseInt(b.numero));
   const pares = [];
   for (let i=0; i<ordenado.length-1; i++) {
-    if (parseInt(ordenado[i+1].numero) - parseInt(ordenado[i].numero) === 1)
-      pares.push({atual:ordenado[i], proximo:ordenado[i+1]});
+    if (parseInt(ordenado[i+1].numero) - parseInt(ordenado[i].numero) === 1) pares.push({atual:ordenado[i], proximo:ordenado[i+1]});
   }
   estado.viabResultados = NOMES_POS.map((nome,pos) => {
     let total=0, count=0;
@@ -1060,6 +1005,7 @@ function executarViabilidade() {
   const melhor = [...estado.viabResultados].sort((a,b)=>b.media-a.media)[0];
   estado.posicao = melhor.pos;
   renderViabGrid();
+  renderFixasComparativo();
   selecionarPosicaoViab(estado.posicao);
   const recNomes = estado.viabResultados.filter(r=>r.rec).map(r=>r.nome).join(', ');
   document.getElementById('step2badge').textContent = recNomes ? `⭐ ${recNomes}` : '';
@@ -1075,11 +1021,53 @@ function renderViabGrid() {
     const isSel = r.pos === estado.posicao;
     return `<div class="viab-card${r.rec?' rec':''}${isSel?' selected':''}" onclick="selecionarPosicaoViab(${r.pos})"><div class="viab-pos">${r.nome} ${r.rec?'⭐':''}</div><div class="viab-score" style="color:${cor}">${r.media.toFixed(1)}</div><div class="viab-bar"><div class="viab-bar-fill" style="width:${pct.toFixed(0)}%;background:${cor}"></div></div><div class="viab-detail">${DESC_POS[r.pos]} · ${r.count} pares</div></div>`;
   }).join('');
+  renderFixasComparativo();
+  atualizarBotoesPosicao();
+}
+
+// NOVAS FUNÇÕES PARA EXPANSÃO DE ÂNCORAS
+function renderFixasComparativo() {
+  const tbody = document.getElementById('fixasComparativoBody');
+  if (!tbody) return;
+  const idx = estado.ancoraIdx;
+  if (idx < 0 || idx >= estado.historico.length) return;
+  const cc = estado.historico[idx];
+  const resultados = estado.viabResultados;
+  if (!resultados.length) return;
+  
+  tbody.innerHTML = NOMES_POS.map((nome, pos) => {
+    const fixas = cc.dezenas.slice(pos, pos+9);
+    if (fixas.length < 9) return '';
+    const fixasStr = fixas.map(n => String(n).padStart(2,'0')).join(' ');
+    const media = resultados[pos]?.media?.toFixed(1) || '--';
+    const isRec = resultados[pos]?.rec || false;
+    const isSelected = (pos === estado.posicao);
+    const highlight = isRec ? '⭐' : '';
+    const selectedClass = isSelected ? 'style="background:rgba(188,140,255,.15);border-left:3px solid var(--purple);"' : '';
+    return `<tr ${selectedClass} style="border-bottom:1px solid var(--border);"><td style="padding:8px;text-align:center;font-weight:${isSelected?'800':'400'};color:${isSelected?'var(--purple)':'var(--text)'}">${nome} ${highlight}</td><td style="padding:8px;text-align:center;">${media}</td><td style="padding:8px;font-family:\'Fira Code\',monospace;font-size:.7rem;">${fixasStr}</td><td style="padding:8px;text-align:center;"><button class="btn-ghost btn-sm" onclick="selecionarPosicaoViab(${pos})" style="padding:4px 12px;">${isSelected ? '✓ Selecionada' : 'Usar'}</button></td></tr>`;
+  }).join('');
+}
+
+function atualizarBotoesPosicao() {
+  document.querySelectorAll('.pos-btn').forEach((btn, idx) => {
+    const pos = parseInt(btn.dataset.pos);
+    if (pos === estado.posicao) {
+      btn.style.background = 'var(--purple)';
+      btn.style.color = 'white';
+      btn.style.borderColor = 'var(--purple)';
+    } else {
+      btn.style.background = 'var(--surface3)';
+      btn.style.color = 'var(--text)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
 }
 
 function selecionarPosicaoViab(pos) {
   estado.posicao = pos;
   renderViabGrid();
+  renderFixasComparativo();
+  atualizarBotoesPosicao();
   const idx = estado.ancoraIdx;
   if (idx < 0 || idx >= estado.historico.length) return;
   const cc = estado.historico[idx];
@@ -1112,10 +1100,7 @@ function gerarWizard() {
   if (!estado.fixas.length) { 
     if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
       estado.fixas = estado.historico[estado.ancoraIdx].dezenas.slice(estado.posicao, estado.posicao+9);
-    } else {
-      fb('Volte ao Passo 2 e selecione uma âncora!','error'); 
-      return;
-    }
+    } else { fb('Volte ao Passo 2 e selecione uma âncora!','error'); return; }
   }
   const qtd = parseInt(document.getElementById('genQtd').value) || 10;
   const filtros = lerFiltrosWiz();
@@ -1306,10 +1291,7 @@ function salvarNoHistorico(numero, data, dezenas, silent) {
   }
 }
 
-function carregarHistorico() {
-  try { const s = localStorage.getItem('lf_cockpit_hist'); if (s) estado.historico = JSON.parse(s); } catch { estado.historico = []; }
-}
-
+function carregarHistorico() { try { const s = localStorage.getItem('lf_cockpit_hist'); if (s) estado.historico = JSON.parse(s); } catch { estado.historico = []; } }
 function persistirHistorico() { localStorage.setItem('lf_cockpit_hist', JSON.stringify(estado.historico)); }
 
 function atualizarHistFullList() {
@@ -1318,62 +1300,10 @@ function atualizarHistFullList() {
   c.innerHTML = estado.historico.map((cc, idx) => `<div class="hi-item"><div class="hi-head"><span class="hi-num">CC ${cc.numero}</span><span class="hi-date">${formatarDataExib(cc.data)}</span></div><div class="hi-tags">${cc.dezenas.map(n => `<div class="hi-tag" style="${MAGICAS.includes(n) ? 'border-color:var(--orange)' : ''}">${String(n).padStart(2, '0')}</div>`).join('')}</div><div class="btn-row" style="margin-top:7px"><button class="btn-ghost btn-sm" onclick="abrirModalCC(${idx})">✏️</button><button class="btn-ghost btn-sm" style="color:var(--red)" onclick="excluirCC(${idx})">🗑</button></div></div>`).join('');
 }
 
-function excluirCC(idx) {
-  const cc = estado.historico[idx];
-  if (!confirm(`Excluir CC ${cc.numero}?`)) return;
-  estado.historico.splice(idx, 1);
-  persistirHistorico();
-  atualizarCCList();
-  atualizarHistFullList();
-  gerarRelatorio();
-  populaAncoraSelect();
-  fb(`CC ${cc.numero} excluído.`, 'warning');
-}
-
-function limparHistorico() {
-  if (!confirm('Limpar todo o histórico?')) return;
-  estado.historico = [];
-  persistirHistorico();
-  atualizarCCList();
-  atualizarHistFullList();
-  gerarRelatorio();
-  populaAncoraSelect();
-  fb('Histórico limpo.', 'warning');
-}
-
-function exportarHistorico() {
-  const a = document.createElement('a');
-  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(estado.historico, null, 2));
-  a.download = `lotofacil_historico_${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  fb('Histórico exportado!', 'success');
-}
-
-function importarHistorico() {
-  const inp = document.createElement('input');
-  inp.type = 'file';
-  inp.accept = '.json';
-  inp.onchange = e => {
-    const f = e.target.files[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = ev => {
-      try {
-        const d = JSON.parse(ev.target.result);
-        if (!Array.isArray(d)) throw 0;
-        estado.historico = d;
-        persistirHistorico();
-        atualizarCCList();
-        atualizarHistFullList();
-        gerarRelatorio();
-        populaAncoraSelect();
-        fb(`${d.length} concurso(s) importado(s)!`, 'success');
-      } catch { fb('Arquivo inválido!', 'error'); }
-    };
-    r.readAsText(f);
-  };
-  inp.click();
-}
+function excluirCC(idx) { const cc = estado.historico[idx]; if (!confirm(`Excluir CC ${cc.numero}?`)) return; estado.historico.splice(idx, 1); persistirHistorico(); atualizarCCList(); atualizarHistFullList(); gerarRelatorio(); populaAncoraSelect(); fb(`CC ${cc.numero} excluído.`, 'warning'); }
+function limparHistorico() { if (!confirm('Limpar todo o histórico?')) return; estado.historico = []; persistirHistorico(); atualizarCCList(); atualizarHistFullList(); gerarRelatorio(); populaAncoraSelect(); fb('Histórico limpo.', 'warning'); }
+function exportarHistorico() { const a = document.createElement('a'); a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(estado.historico, null, 2)); a.download = `lotofacil_historico_${new Date().toISOString().slice(0, 10)}.json`; a.click(); fb('Histórico exportado!', 'success'); }
+function importarHistorico() { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); if (!Array.isArray(d)) throw 0; estado.historico = d; persistirHistorico(); atualizarCCList(); atualizarHistFullList(); gerarRelatorio(); populaAncoraSelect(); fb(`${d.length} concurso(s) importado(s)!`, 'success'); } catch { fb('Arquivo inválido!', 'error'); } }; r.readAsText(f); }; inp.click(); }
 
 function abrirModalCC(idx) {
   const m = document.getElementById('modalCC');
@@ -1392,7 +1322,6 @@ function abrirModalCC(idx) {
   }
   m.classList.add('open');
 }
-
 function fecharModalCC() { document.getElementById('modalCC').classList.remove('open'); }
 document.getElementById('modalCC').addEventListener('click', function(e) { if (e.target === this) fecharModalCC(); });
 
@@ -1405,18 +1334,9 @@ function salvarModalCC() {
   const data = converterData(dataRaw);
   const editIdx = parseInt(document.getElementById('mEditIdx').value);
   const entry = { numero, data, dezenas, stats: calcularStats(dezenas), timestamp: Date.now() };
-  if (editIdx >= 0) {
-    estado.historico[editIdx] = entry;
-    fb(`CC ${numero} atualizado.`, 'info');
-  } else {
-    salvarNoHistorico(numero, data, dezenas);
-  }
-  persistirHistorico();
-  atualizarCCList();
-  atualizarHistFullList();
-  gerarRelatorio();
-  populaAncoraSelect();
-  fecharModalCC();
+  if (editIdx >= 0) { estado.historico[editIdx] = entry; fb(`CC ${numero} atualizado.`, 'info'); }
+  else { salvarNoHistorico(numero, data, dezenas); }
+  persistirHistorico(); atualizarCCList(); atualizarHistFullList(); gerarRelatorio(); populaAncoraSelect(); fecharModalCC();
 }
 
 function exportarMAX() {
@@ -1430,21 +1350,14 @@ function exportarMAX() {
     const s = v.stats || calcularStats(v.jogo);
     txt += `MAX ${String(i + 1).padStart(2, '0')}: ${v.jogo.map(n => String(n).padStart(2, '0')).join(' ')}\n  Fixas: ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}\n  Livres: ${v.livres.map(n => String(n).padStart(2, '0')).join(' ')}\n  Score: ${v.score || calcularScore(s)} | Soma: ${s.soma}(${s.soma_cls}) | P/I: ${s.pares}/${s.impares} | ✨${s.magicas} | 🔵${s.primos}\n\n`;
   });
-  const a = document.createElement('a');
-  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = `lotofacil_cockpit_MAX_${new Date().toISOString().slice(0, 10)}.txt`;
-  a.click();
-  fb('Volantes exportados!', 'success');
+  const a = document.createElement('a'); a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt); a.download = `lotofacil_cockpit_MAX_${new Date().toISOString().slice(0, 10)}.txt`; a.click(); fb('Volantes exportados!', 'success');
 }
 
 function importarVolantesMAX() {
   if (!estado.fixas.length && estado.ancoraIdx === -1) { fb('Defina uma âncora no Passo 2 ou gere fixas por Tendência antes!', 'warning'); return; }
-  const inp = document.createElement('input');
-  inp.type = 'file';
-  inp.accept = '.txt';
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt';
   inp.onchange = e => {
-    const f = e.target.files[0];
-    if (!f) return;
+    const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = ev => {
       const fixasSet = new Set(estado.fixas);
@@ -1475,20 +1388,15 @@ function importarVolantesMAX() {
   inp.click();
 }
 
-function carregarCaixa() {
-  try { const s = localStorage.getItem('lf_cockpit_caixa'); if (s) caixa = JSON.parse(s); } catch { caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 }; }
-}
-
+function carregarCaixa() { try { const s = localStorage.getItem('lf_cockpit_caixa'); if (s) caixa = JSON.parse(s); } catch { caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 }; } }
 function persistirCaixa() { localStorage.setItem('lf_cockpit_caixa', JSON.stringify(caixa)); }
 
 function registrarSessaoCaixa(ccNum, ccData, res, origem) {
   const tC = res.reduce((a, r) => a + r.custo, 0), tP = res.reduce((a, r) => a + r.premio, 0);
   const melhor = Math.max(...res.map(r => r.acertos));
   caixa.sessoes.unshift({ concursoNum: ccNum, concursoData: ccData, timestamp: Date.now(), origem: origem || '🔱 COCKPIT', jogos: res, totalCusto: tC, totalPremio: tP, saldo: tP - tC, melhorPontuacao: melhor });
-  caixa.totalGasto += tC;
-  caixa.totalPremios += tP;
-  persistirCaixa();
-  atualizarCaixaUI();
+  caixa.totalGasto += tC; caixa.totalPremios += tP;
+  persistirCaixa(); atualizarCaixaUI();
 }
 
 function atualizarCaixaUI() {
@@ -1513,24 +1421,8 @@ function atualizarCaixaUI() {
   }).join('');
 }
 
-function excluirSessao(idx) {
-  if (!confirm('Excluir sessão?')) return;
-  const s = caixa.sessoes[idx];
-  caixa.totalGasto -= s.totalCusto;
-  caixa.totalPremios -= s.totalPremio;
-  caixa.sessoes.splice(idx, 1);
-  persistirCaixa();
-  atualizarCaixaUI();
-  fb('Sessão excluída.', 'warning');
-}
-
-function zerarCaixa() {
-  if (!confirm('Zerar toda a caixa?')) return;
-  caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 };
-  persistirCaixa();
-  atualizarCaixaUI();
-  fb('Caixa zerada.', 'warning');
-}
+function excluirSessao(idx) { if (!confirm('Excluir sessão?')) return; const s = caixa.sessoes[idx]; caixa.totalGasto -= s.totalCusto; caixa.totalPremios -= s.totalPremio; caixa.sessoes.splice(idx, 1); persistirCaixa(); atualizarCaixaUI(); fb('Sessão excluída.', 'warning'); }
+function zerarCaixa() { if (!confirm('Zerar toda a caixa?')) return; caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 }; persistirCaixa(); atualizarCaixaUI(); fb('Caixa zerada.', 'warning'); }
 
 function gerarRelatorio() {
   const hist = estado.historico, tabEl = document.getElementById('relatorioTabela'), heuEl = document.getElementById('relatorioHeuristica');
@@ -1553,11 +1445,11 @@ function gerarRelatorio() {
     const mC = s.magicas === magMax ? 'rhi' : s.magicas >= 3 ? 'rmd' : '';
     let tdE = '';
     if (modo === 'completo') { const dez = d.dezenas.map(n => `<span style="color:${MAGICAS.includes(n) ? 'var(--orange)' : 'var(--text2)'};">${String(n).padStart(2, '0')}</span>`).join(' '); tdE = `<td style="font-size:.68rem;font-family:'Fira Code'">${dez}  `; }
-    if (modo === 'financeiro') { const sess = caixa.sessoes.filter(ss => String(ss.concursoNum) === String(d.numero)); const g = sess.reduce((a, ss) => a + ss.totalCusto, 0), ga = sess.reduce((a, ss) => a + ss.totalPremio, 0), sa = ga - g; tdE = `<td>${sess.length || '—'}</td><td>${sess.length ? 'R$ ' + g.toFixed(2) : '—'}</td><td>${sess.length ? 'R$ ' + ga.toFixed(2) : '—'}</td><td class="${sa > 0 ? 'rhi' : sa < 0 ? 'rlo' : ''}">${sess.length ? (sa >= 0 ? '+' : '') + 'R$ ' + sa.toFixed(2) : '—'}</td>`; }
-    return `<tr><td>${d.numero}</td><td style="white-space:nowrap">${formatarDataExib(d.data)}</td><td>${s.pares}</td><td>${s.impares}</td><td>${s.primos}</td><td>${s.moldura}</td><td>${s.miolo}</td><td class="${sC}">${s.soma}</td><td><span class="badge ${s.soma_cls}" style="font-size:.65rem">${s.soma_cls}</span></td><td class="${mC}">${s.magicas}</td>${tdE}</tr>`;
+    if (modo === 'financeiro') { const sess = caixa.sessoes.filter(ss => String(ss.concursoNum) === String(d.numero)); const g = sess.reduce((a, ss) => a + ss.totalCusto, 0), ga = sess.reduce((a, ss) => a + ss.totalPremio, 0), sa = ga - g; tdE = ` <td>${sess.length || '—'} <td>${sess.length ? 'R$ ' + g.toFixed(2) : '—'} <td>${sess.length ? 'R$ ' + ga.toFixed(2) : '—'} <td class="${sa > 0 ? 'rhi' : sa < 0 ? 'rlo' : ''}">${sess.length ? (sa >= 0 ? '+' : '') + 'R$ ' + sa.toFixed(2) : '—'} `; }
+    return `<tr><td>${d.numero}<td style="white-space:nowrap">${formatarDataExib(d.data)}<td>${s.pares}<td>${s.impares}<td>${s.primos}<td>${s.moldura}<td>${s.miolo}<td class="${sC}">${s.soma}<td><span class="badge ${s.soma_cls}" style="font-size:.65rem">${s.soma_cls}</span><td class="${mC}">${s.magicas}${tdE}</tr>`;
   }).join('');
   const n = dados.length, avg = f => (dados.reduce((a, d) => a + d.stats[f], 0) / n).toFixed(1);
-  const tfoot = `<tfoot><tr style="font-style:italic"><td colspan="2" style="color:var(--text2)">Média(${n})</td><td>${avg('pares')}</td><td>${avg('impares')}</td><td>${avg('primos')}</td><td>${avg('moldura')}</td><td>${avg('miolo')}</td><td>${avg('soma')}</td><td>—</td><td>${avg('magicas')}</td></tr></tfoot>`;
+  const tfoot = `<tfoot><tr style="font-style:italic"><td colspan="2" style="color:var(--text2)">Média(${n})<td>${avg('pares')}<td>${avg('impares')}<td>${avg('primos')}<td>${avg('moldura')}<td>${avg('miolo')}<td>${avg('soma')}<td>—<td>${avg('magicas')}</tr></tfoot>`;
   tabEl.innerHTML = `<table class="rel-table">${thead}<tbody>${linhas}</tbody>${tfoot}</table>`;
   if (dados.length >= 2) {
     const freq = {}; for (let i = 1; i <= 25; i++) freq[i] = 0;
@@ -1600,11 +1492,7 @@ function resetTotal() {
   localStorage.removeItem(BRIDGE_KEY);
   estado = { historico: [], volantesMAX: [], ancoraIdx: -1, posicao: 0, fixas: [], viabResultados: [] };
   caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 };
-  atualizarCCList();
-  atualizarHistFullList();
-  atualizarCaixaUI();
-  gerarRelatorio();
-  populaAncoraSelect();
+  atualizarCCList(); atualizarHistFullList(); atualizarCaixaUI(); gerarRelatorio(); populaAncoraSelect();
   resetSessao();
   tendState = { fixas9: [], currentNums: [], previousNums: [] };
   document.getElementById('tendResult').style.display = 'none';
@@ -1663,9 +1551,7 @@ function limparPeneira() {
   fb('Peneira removida.', 'info');
 }
 
-// ==================== MÓDULO TENDÊNCIAS (versão simplificada para bridge) ====================
-// Nota: O módulo completo da v53 foi mantido na estrutura HTML.
-// Aqui mantemos as funções de bridge e as essenciais
+// ==================== MÓDULO TENDÊNCIAS ====================
 let tendState = { fixas9: [], currentNums: [], previousNums: [] };
 
 function tendInitInputs() {
@@ -1691,12 +1577,7 @@ function tendInitInputs() {
   });
 }
 
-function tendValidateInput(inp) {
-  const v = parseInt(inp.value);
-  inp.classList.remove('valid', 'invalid');
-  if (v >= 1 && v <= 25) inp.classList.add('valid');
-  else if (inp.value) inp.classList.add('invalid');
-}
+function tendValidateInput(inp) { const v = parseInt(inp.value); inp.classList.remove('valid', 'invalid'); if (v >= 1 && v <= 25) inp.classList.add('valid'); else if (inp.value) inp.classList.add('invalid'); }
 
 function tendCheckAutoLoad() {
   const bar = document.getElementById('tendAutoloadBar');
@@ -1707,9 +1588,7 @@ function tendCheckAutoLoad() {
     const infoEl = document.getElementById('tendAutoloadInfo');
     if (infoEl) infoEl.innerHTML = `CC <strong>${atual.numero}</strong> e CC <strong>${anterior.numero}</strong>`;
     if (bar) bar.style.display = 'flex';
-  } else {
-    if (bar) bar.style.display = 'none';
-  }
+  } else { if (bar) bar.style.display = 'none'; }
 }
 
 function tendAutoLoad() {
@@ -1726,32 +1605,20 @@ function tendAutoLoad() {
 
 function tendFillInputs(type, nums) {
   const inputs = document.querySelectorAll(`.tend-num-input[data-type="${type}"]`);
-  inputs.forEach((inp, i) => {
-    inp.value = nums[i] !== undefined ? nums[i] : '';
-    tendValidateInput(inp);
-  });
+  inputs.forEach((inp, i) => { inp.value = nums[i] !== undefined ? nums[i] : ''; tendValidateInput(inp); });
 }
 
 function tendGetNumbers(type) {
   const inputs = document.querySelectorAll(`.tend-num-input[data-type="${type}"]`);
   const nums = [];
-  inputs.forEach(inp => {
-    const v = parseInt(inp.value);
-    if (v >= 1 && v <= 25) nums.push(v);
-  });
+  inputs.forEach(inp => { const v = parseInt(inp.value); if (v >= 1 && v <= 25) nums.push(v); });
   return [...new Set(nums)].sort((a, b) => a - b);
 }
 
 function tendValidateSet(nums, errorId) {
   const errEl = document.getElementById(errorId);
-  if (nums.length !== 15) {
-    if (errEl) { errEl.textContent = `⚠️ Necessárias exatamente 15 dezenas (atual: ${nums.length})`; errEl.style.display = 'block'; }
-    return false;
-  }
-  if ([...new Set(nums)].length !== 15) {
-    if (errEl) { errEl.textContent = '⚠️ Não pode haver dezenas repetidas'; errEl.style.display = 'block'; }
-    return false;
-  }
+  if (nums.length !== 15) { if (errEl) { errEl.textContent = `⚠️ Necessárias exatamente 15 dezenas (atual: ${nums.length})`; errEl.style.display = 'block'; } return false; }
+  if ([...new Set(nums)].length !== 15) { if (errEl) { errEl.textContent = '⚠️ Não pode haver dezenas repetidas'; errEl.style.display = 'block'; } return false; }
   if (errEl) errEl.style.display = 'none';
   return true;
 }
@@ -1802,10 +1669,7 @@ function tendSelectBalanced(allScores, currentNums) {
   if (selected.length < 9) {
     const selectedNums = new Set(selected.map(s => s.n));
     const fallback = allScores.filter(s => !selectedNums.has(s.n)).sort((a, b) => b.score - a.score);
-    for (const item of fallback) {
-      if (selected.length >= 9) break;
-      selected.push(item);
-    }
+    for (const item of fallback) { if (selected.length >= 9) break; selected.push(item); }
   }
   return selected.sort((a, b) => a.n - b.n);
 }
@@ -1814,12 +1678,10 @@ function tendAnalyze() {
   const currentNums = tendGetNumbers('atual');
   const previousNums = tendGetNumbers('anterior');
   if (!tendValidateSet(currentNums, 'tendErrorAtual') || !tendValidateSet(previousNums, 'tendErrorAnterior')) return;
-  
   const loading = document.getElementById('tendLoading');
   const result = document.getElementById('tendResult');
   if (loading) loading.style.display = 'block';
   if (result) result.style.display = 'none';
-  
   setTimeout(() => {
     let TEND_HISTORICAL_FREQ = {};
     for (let i = 1; i <= 25; i++) TEND_HISTORICAL_FREQ[i] = 0.42;
@@ -1830,29 +1692,18 @@ function tendAnalyze() {
       const total = estado.historico.length;
       for (let i = 1; i <= 25; i++) TEND_HISTORICAL_FREQ[i] = contagem[i] / total;
     }
-    
     const repeated = currentNums.filter(n => previousNums.includes(n));
     const repeatCt = repeated.length;
-    
     const allScores = [];
     for (let i = 1; i <= 25; i++) {
       const cats = tendGetCategories(i);
-      allScores.push({
-        n: i,
-        score: tendCalcScore(i, currentNums, previousNums, TEND_HISTORICAL_FREQ),
-        cats,
-        inCurrent: currentNums.includes(i),
-        inPrevious: previousNums.includes(i),
-        freq: TEND_HISTORICAL_FREQ[i]
-      });
+      allScores.push({ n: i, score: tendCalcScore(i, currentNums, previousNums, TEND_HISTORICAL_FREQ), cats, inCurrent: currentNums.includes(i), inPrevious: previousNums.includes(i), freq: TEND_HISTORICAL_FREQ[i] });
     }
     allScores.sort((a, b) => b.score - a.score);
-    
     const fixas9 = tendSelectBalanced(allScores, currentNums);
     tendState.fixas9 = fixas9.map(f => f.n);
     tendState.currentNums = currentNums;
     tendState.previousNums = previousNums;
-    
     const even = fixas9.filter(f => f.cats.includes('even')).length;
     const odd = fixas9.filter(f => f.cats.includes('odd')).length;
     const prime = fixas9.filter(f => f.cats.includes('prime')).length;
@@ -1863,7 +1714,6 @@ function tendAnalyze() {
     if (prime >= 3) conf += 5;
     if (magic >= 3) conf += 5;
     conf = Math.min(conf, 100);
-    
     const ballsEl = document.getElementById('tendBalls');
     if (ballsEl) {
       ballsEl.innerHTML = '';
@@ -1879,19 +1729,12 @@ function tendAnalyze() {
         ballsEl.appendChild(ball);
       });
     }
-    
     const statsEl = document.getElementById('tendStats');
-    if (statsEl) {
-      statsEl.innerHTML = `<div class="tend-stat-cell"><div class="tend-stat-val">${repeatCt}</div><div class="tend-stat-lbl">Repetidas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${even}</div><div class="tend-stat-lbl">Pares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${odd}</div><div class="tend-stat-lbl">Ímpares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${prime}</div><div class="tend-stat-lbl">Primas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${magic}</div><div class="tend-stat-lbl">Mágicas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${conf}%</div><div class="tend-stat-lbl">Confiança</div></div>`;
-    }
-    
+    if (statsEl) { statsEl.innerHTML = `<div class="tend-stat-cell"><div class="tend-stat-val">${repeatCt}</div><div class="tend-stat-lbl">Repetidas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${even}</div><div class="tend-stat-lbl">Pares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${odd}</div><div class="tend-stat-lbl">Ímpares</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${prime}</div><div class="tend-stat-lbl">Primas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${magic}</div><div class="tend-stat-lbl">Mágicas</div></div><div class="tend-stat-cell"><div class="tend-stat-val">${conf}%</div><div class="tend-stat-lbl">Confiança</div></div>`; }
     const ccAtual = document.getElementById('tendCCAtual').value;
     const ccAnt = document.getElementById('tendCCAnterior').value;
     const analysisGrid = document.getElementById('tendAnalysisGrid');
-    if (analysisGrid) {
-      analysisGrid.innerHTML = `<div class="tend-analysis-item"><span class="tend-analysis-label">Repetidas CC${ccAnt}→CC${ccAtual}</span><span class="tend-analysis-value">${repeatCt} / 15</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Equilíbrio Par/Ímpar</span><span class="tend-analysis-value">${even}/${odd}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Primas</span><span class="tend-analysis-value">${prime} ${prime >= 3 ? '⭐' : ''}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Mágicas</span><span class="tend-analysis-value">${magic} ${magic >= 3 ? '✨' : ''}</span></div>`;
-    }
-    
+    if (analysisGrid) { analysisGrid.innerHTML = `<div class="tend-analysis-item"><span class="tend-analysis-label">Repetidas CC${ccAnt}→CC${ccAtual}</span><span class="tend-analysis-value">${repeatCt} / 15</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Equilíbrio Par/Ímpar</span><span class="tend-analysis-value">${even}/${odd}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Primas</span><span class="tend-analysis-value">${prime} ${prime >= 3 ? '⭐' : ''}</span></div><div class="tend-analysis-item"><span class="tend-analysis-label">Dezenas Mágicas</span><span class="tend-analysis-value">${magic} ${magic >= 3 ? '✨' : ''}</span></div>`; }
     const tbody = document.getElementById('tendTableBody');
     if (tbody) {
       tbody.innerHTML = '';
@@ -1900,11 +1743,10 @@ function tendAnalyze() {
         const catBadges = f.cats.map(c => `<span class="tend-badge ${c}">${c === 'even' ? 'Par' : c === 'odd' ? 'Ímpar' : c === 'prime' ? 'Prima' : 'Mágica'}</span>`).join('');
         const status = isFixed ? `<span style="color:var(--tend-green);font-weight:800">✓ Fixa</span>` : `<span style="color:var(--text3)">○</span>`;
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong style="font-family:'Fira Code',monospace">${String(f.n).padStart(2, '0')}</strong></td><td><strong style="color:var(--tend-gold)">${Math.round(f.score)}</strong></td><td>${(f.freq * 100).toFixed(1)}%</td><td>${catBadges}</td><td>${status}</td>`;
+        tr.innerHTML = ` <td><strong style="font-family:'Fira Code',monospace">${String(f.n).padStart(2, '0')}</strong> <td><strong style="color:var(--tend-gold)">${Math.round(f.score)}</strong> <td>${(f.freq * 100).toFixed(1)}% <td>${catBadges} <td>${status} `;
         tbody.appendChild(tr);
       });
     }
-    
     if (loading) loading.style.display = 'none';
     if (result) result.style.display = 'block';
     fb(`🎯 9 fixas por tendência geradas! Confiança: ${conf}%`, 'success');
@@ -1930,18 +1772,11 @@ function tendCopy() {
 function tendSendToWizard() {
   if (!tendState.fixas9.length) { fb('Gere as 9 fixas primeiro!', 'warning'); return; }
   estado.fixas = [...tendState.fixas9];
-  setStepState(1, 'done');
-  setStepState(2, 'done');
-  setStepState(3, 'current');
-  setStepState(4, 'locked');
+  setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
   const ccAtual = document.getElementById('tendCCAtual').value;
   const fixasStr = estado.fixas.map(n => String(n).padStart(2, '0')).join(' ');
   document.getElementById('genInfo').innerHTML = `<span style="color:var(--tend-gold)">📈 Âncora por Tendência</span> · CC ${ccAtual || '?'} · Fixas: <strong style="color:var(--purple)">${fixasStr}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
-  if (ccAtual) {
-    const foundIdx = estado.historico.findIndex(h => h.numero === String(ccAtual));
-    if (foundIdx >= 0) estado.ancoraIdx = foundIdx;
-    else estado.ancoraIdx = -1;
-  }
+  if (ccAtual) { const foundIdx = estado.historico.findIndex(h => h.numero === String(ccAtual)); if (foundIdx >= 0) estado.ancoraIdx = foundIdx; else estado.ancoraIdx = -1; }
   goTab('wizard');
   document.getElementById('step1body').style.display = 'none';
   document.getElementById('step2body').style.display = 'none';
@@ -1958,13 +1793,10 @@ function fb(msg, tipo = 'info') {
   d.textContent = msg;
   c.appendChild(d);
   const log = document.getElementById('epFbLog');
-  if (log) {
-    log.innerHTML = `<div style="margin-bottom:3px;color:${tipo === 'success' ? 'var(--green)' : tipo === 'error' ? 'var(--red)' : tipo === 'warning' ? 'var(--orange)' : 'var(--blue)'}">${msg}</div>` + log.innerHTML;
-  }
+  if (log) { log.innerHTML = `<div style="margin-bottom:3px;color:${tipo === 'success' ? 'var(--green)' : tipo === 'error' ? 'var(--red)' : tipo === 'warning' ? 'var(--orange)' : 'var(--blue)'}">${msg}</div>` + log.innerHTML; }
   setTimeout(() => d.remove(), 5000);
 }
 
-// ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', () => {
   carregarHistorico();
   carregarCaixa();
@@ -1976,42 +1808,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const pasteArea = document.getElementById('ccPasteArea');
   if (pasteArea) pasteArea.addEventListener('input', atualizarContadorPaste);
   tendInitInputs();
-  // Verifica se há recomendação ativa da Bridge
   verificarRecomendacaoTrend();
-  fb('LotoFácil COCKPIT 2 · V54 BRIDGE pronto! 🔱🌉', 'success');
+  fb('LotoFácil COCKPIT 2 · V55 BRIDGE pronto! 🔱🌉', 'success');
 });
 
-// ── NAVEGAÇÃO PARA O GUIA ──────────────────────────────────────────
-
-// ── NAVEGAÇÃO PARA O GUIA ──────────────────────────────────────────
 let _guiaWin = null;
-
 function abrirGuia() {
-  if (_guiaWin && !_guiaWin.closed) {
-    _guiaWin.focus();          // já está aberta? só traz para frente
-    return;
-  }
-  _guiaWin = window.open('guia_completo.html', 'guiaCompleto',
-    'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
+  if (_guiaWin && !_guiaWin.closed) { _guiaWin.focus(); return; }
+  _guiaWin = window.open('guia_completo.html', 'guiaCompleto', 'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
 }
-
-// Escuta o pedido de fechamento vindo do guia
-window.addEventListener('message', function(e) {
-  if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) {
-    _guiaWin.close();
-    _guiaWin = null;
-  }
-});
-// ──────────────────────────────────────────────────────────────────
-
+window.addEventListener('message', function(e) { if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) { _guiaWin.close(); _guiaWin = null; } });
 </script>
 
 <div style="text-align:center;padding:18px 16px 28px;font-size:.75rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
- 
-  <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ffa657, #f0883e); color: #0a0c12; padding: 8px 20px; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">
-    📊 Planilha Admin
-</a>
-   
+  <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ffa657, #f0883e); color: #0a0c12; padding: 8px 20px; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">📊 Planilha Admin</a>
   © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> &amp; Cia · Todos os direitos reservados
   <span style="margin:0 8px;color:var(--border)">|</span>
   Suporte: <strong style="color:var(--text2)">61 99948-7649</strong>
