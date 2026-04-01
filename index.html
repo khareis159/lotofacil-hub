@@ -667,9 +667,15 @@ Você pode <strong>clicar em qualquer outra posição</strong> se quiser alterar
             <button class="tend-btn-analyze" onclick="genioxSimular()" style="margin-top:14px">
                 📊 Simular Cenário
             </button>
-            <div id="gxResultadoISA" class="geniox-isa-box" style="display:none"></div>
+ 
+ <!-- ADICIONAR ESTE BOTÃO ABAIXO -->
+    <button class="btn-ghost" onclick="genioxResetLocal()" style="width:100%; margin-top:8px; border-color:var(--red); color:var(--red);">
+        🗑️ Limpar Módulo GênioX
+    </button>
+
+           <div id="gxResultadoISA" class="geniox-isa-box" style="display:none"></div>
         </div>
-        
+      
         <div class="tend-card">
             <div class="tend-card-title">🎰 Gerar Cartelas GênioX</div>
             <div class="input-group" style="margin-bottom:14px">
@@ -687,8 +693,7 @@ Você pode <strong>clicar em qualquer outra posição</strong> se quiser alterar
             </div>
             <div id="gxSaidaCartelas" class="geniox-grid"></div>
         </div>
-    </div>
-    
+    </div>  
     <div class="tend-synergy-bar" id="gxSynergyBar" style="display:none">
         <div class="tend-synergy-bar-left">
             <strong>🔗 Usar no Wizard</strong>
@@ -1728,17 +1733,45 @@ const linhas = [['CC', 'Data', 'Pares', 'Ímpares', 'Primos', 'Moldura', 'Miolo'
 estado.historico.forEach(d => { const s = d.stats; linhas.push([d.numero, formatarDataExib(d.data), s.pares, s.impares, s.primos, s.moldura, s.miolo, s.soma, s.soma_cls, s.magicas]); });
 const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(linhas.map(r => r.join(',')).join('\n')); a.download = `lotofacil_relatorio_${new Date().toISOString().slice(0, 10)}.csv`; a.click(); fb('CSV exportado!', 'success');
 }
+
 function resetSessao() {
-if (!confirm('Resetar sessão?')) return;
-estado.volantesMAX = [];
-document.getElementById('genGrid').innerHTML = '';
-document.getElementById('genSummary').style.display = 'none';
-document.getElementById('genActions').style.display = 'none';
-document.getElementById('confResultados').innerHTML = '';
-['step1', 'step2', 'step3', 'step4'].forEach((s, i) => setStepState(i + 1, i === 0 ? 'current' : 'locked'));
-document.getElementById('step1body').style.display = '';
-fb('Sessão resetada. Histórico e Caixa preservados.', 'info');
+    if (!confirm('Resetar sessão?')) return;
+    
+    // Limpeza do COCKPIT
+    estado.volantesMAX = [];
+    document.getElementById('genGrid').innerHTML = '';
+    document.getElementById('genSummary').style.display = 'none';
+    document.getElementById('genActions').style.display = 'none';
+    document.getElementById('confResultados').innerHTML = '';
+    
+    // <-- NOVO: Limpeza do Módulo GênioX Integrado
+    if (typeof genioxState !== 'undefined') {
+        genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+    }
+    // Limpar inputs e visuais do GênioX
+    const gxInputs = ['gxBanca', 'gxQtdCartelas', 'gxCusto', 'gxCiclos'];
+    gxInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = el.defaultValue || '';
+    });
+    const gxOutputs = ['gxSaidaCartelas', 'gxResultadoISA', 'gxStats', 'gxDiagnostico'];
+    gxOutputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    const gxResult = document.getElementById('gxResultado');
+    if (gxResult) gxResult.style.display = 'none';
+    const gxSynergy = document.getElementById('gxSynergyBar');
+    if (gxSynergy) gxSynergy.style.display = 'none';
+    // <-- FIM NOVO
+
+    // Resetar passos do Wizard
+    ['step1', 'step2', 'step3', 'step4'].forEach((s, i) => setStepState(i + 1, i === 0 ? 'current' : 'locked'));
+    document.getElementById('step1body').style.display = '';
+    
+    fb('Sessão resetada. Histórico e Caixa preservados.', 'info');
 }
+
 function resetTotal() {
 if (!confirm('☢️ RESET TOTAL — apaga TUDO incluindo histórico e caixa. Irreversível?')) return;
 if (!confirm('Confirmação final. Certeza?')) return;
@@ -2054,6 +2087,28 @@ if (_guiaWin && !_guiaWin.closed) { _guiaWin.focus(); return; }
 _guiaWin = window.open('guia_completo.html', 'guiaCompleto', 'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
 }
 window.addEventListener('message', function(e) { if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) { _guiaWin.close(); _guiaWin = null; } });
+
+function genioxResetLocal() {
+    if (!confirm('Limpar apenas os dados do módulo GênioX? (O histórico do COCKPIT será mantido)')) return;
+    
+    // Resetar estado interno
+    genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+    
+    // Resetar Inputs para valores padrão
+    document.getElementById('gxBanca').value = '500';
+    document.getElementById('gxQtdCartelas').value = '30';
+    document.getElementById('gxCusto').value = '3.5';
+    document.getElementById('gxCiclos').value = '10';
+    
+    // Limpar Saídas Visuais
+    document.getElementById('gxSaidaCartelas').innerHTML = '';
+    document.getElementById('gxResultadoISA').style.display = 'none';
+    document.getElementById('gxResultadoISA').innerHTML = '';
+    document.getElementById('gxSynergyBar').style.display = 'none';
+    
+    fb('Módulo GênioX limpo.', 'info');
+}
+
 </script>
 <div style="text-align:center;padding:18px 16px 28px;font-size:.75rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
 <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ffa657, #f0883e); color: #0a0c12; padding: 8px 20px; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">📊 Planilha Admin</a>
