@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔱 LotoFácil COCKPIT 2 · V55 · Bridge Trend + GênioX Multi-Âncora</title>
+<title>🔱 LotoFácil COCKPIT 2 · V55 · Bridge Trend + GênioX</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ══ TOKENS ══ */
@@ -426,57 +426,57 @@ border-color: var(--purple);
 }
 /* ══ MÓDULO GÊNIOX INTEGRADO ══ */
 .geniox-panel {
-background: var(--surface);
-border: 1px solid var(--border);
-border-radius: var(--r);
-padding: 16px;
-margin-bottom: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px;
+    margin-bottom: 16px;
 }
 .geniox-title {
-font-family: 'Oswald', sans-serif;
-font-size: 1rem;
-color: var(--tend-gold);
-margin-bottom: 14px;
-display: flex;
-align-items: center;
-gap: 8px;
-border-bottom: 1px solid var(--border);
-padding-bottom: 10px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    color: var(--tend-gold);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
 }
 .geniox-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-gap: 12px;
-margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
 }
 .geniox-card {
-background: var(--surface2);
-border: 1px solid var(--border);
-border-radius: var(--r-sm);
-padding: 12px;
-font-family: 'Fira Code', monospace;
-font-size: 0.75rem;
-line-height: 1.8;
-transition: all 0.2s;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    line-height: 1.8;
+    transition: all 0.2s;
 }
 .geniox-card:hover {
-border-color: var(--purple);
-transform: translateY(-2px);
+    border-color: var(--purple);
+    transform: translateY(-2px);
 }
 .geniox-stats {
-display: flex;
-gap: 8px;
-margin-top: 8px;
-font-size: 0.65rem;
-color: var(--text2);
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 0.65rem;
+    color: var(--text2);
 }
 .geniox-isa-box {
-background: rgba(251, 191, 36, 0.08);
-border: 1px solid rgba(251, 191, 36, 0.2);
-border-radius: var(--r-sm);
-padding: 12px;
-margin-top: 12px;
-font-size: 0.85rem;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: var(--r-sm);
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 0.85rem;
 }
 /* ══ RESPONSIVO ══ */
 @media(max-width:640px){
@@ -622,81 +622,85 @@ Você pode <strong>clicar em qualquer outra posição</strong> se quiser alterar
 </div>
 </div>
 </div>
-<div class="step locked" id="step3"><div class="step-header" onclick="toggleStep(3)"><div class="step-num">3</div><div><div class="step-title">🔱 Gerar Volantes MAX</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px" id="step3Subtitulo">9 fixas garantidas + 6 livres filtradas pelo motor inteligente</div></div><div class="step-subtitle" id="step3badge"></div></div><div class="step-body" id="step3body"><div class="gen-center"><div class="gen-qty-wrap"><span class="gen-qty-label">Quantidade de volantes:</span><input type="number" class="gen-qty-input" id="genQtd" value="10" min="1" max="999"></div><div class="gen-info" id="genInfo">Escolha a quantidade e clique em Gerar.<br>O motor inteligente gera internamente <strong>300×</strong> e entrega os melhores por Score Geral.</div><div style="width:100%"><div class="adv-toggle" id="advToggle" onclick="toggleAdv()"><span>⚙️ Filtros avançados</span><span id="advArrow">▼</span></div><div class="adv-body" id="advBody"><div class="filter-row"><div><label>Qualidade da Soma</label><select id="genSoma"><option value="otimo">⭐ Apenas Ótima (181–220)</option><option value="bom" selected>✅ Boa ou melhor (161–240)</option><option value="any">🎯 Qualquer</option></select></div><div><label>Paridade</label><select id="genParidade"><option value="any">Qualquer</option><option value="78" selected>7 ou 8 pares</option><option value="balanced">6–9 pares</option><option value="67">6P/9I</option><option value="76">7P/8I</option></select></div><div><label>Mínimo de Mágicas</label><select id="genMagicas"><option value="any">Qualquer</option><option value="3" selected>≥ 3</option><option value="4">≥ 4</option><option value="5">≥ 5</option></select></div><div><label>Miolo</label><select id="genMoldura"><option value="any">Qualquer</option><option value="balanced" selected>≤ 4 (balanceado)</option><option value="strict">≤ 3 (estrito)</option></select></div></div></div></div><button class="btn-max" onclick="gerarWizard()">🔱 GERAR VOLANTES MAX</button></div><div id="genSummary" style="display:none" class="summary-bar"></div><div id="genGrid" class="max-grid"></div><div id="genActions" style="display:none" class="btn-row"><button class="btn-success" onclick="avancarStep4()">▶ Conferir Resultado →</button><button class="btn-ghost" onclick="limparGeracao()">↺ Gerar de novo</button></div><div class="peneira-wrap" id="peneiraWrap" style="display:none"><div class="peneira-title">🔮 Peneira de Mágicas<span style="font-size:.7rem;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:400;letter-spacing:0"> — filtra volantes baseado nos dois padrões históricos (94.1% de confiança)</span></div><div class="peneira-controles"><div class="peneira-ctrl"><label>Qtd de Mágicas no jogo</label><select id="peneiraQtd" onchange="aplicarPeneira()"><option value="any">Qualquer quantidade</option><option value="4-7" selected>✅ 4 a 7 mágicas (normal — 94%)</option><option value="5-7">⭐ 5 a 7 mágicas (mais provável)</option><option value="4-6">4 a 6 mágicas</option></select></div><div class="peneira-ctrl"><label>Casa da 1ª mágica</label><select id="peneiraCasa" onchange="aplicarPeneira()"><option value="any">Qualquer casa</option><option value="3-4" selected>✅ 3ª ou 4ª casa (normal — 79%)</option><option value="3">3ª casa somente (41%)</option><option value="2-4">2ª a 4ª casa (91%)</option></select></div><div class="peneira-ctrl" style="justify-content:flex-end;padding-top:18px"><button class="btn-ghost btn-sm" onclick="limparPeneira()" style="border-color:rgba(255,166,87,.3);color:var(--orange)">↺ Remover Filtros</button></div></div><div class="peneira-result" id="peneiraResult">Ajuste os filtros acima para ativar a peneira.</div></div></div></div>
+<div class="step locked" id="step3"><div class="step-header" onclick="toggleStep(3)"><div class="step-num">3</div><div><div class="step-title">🔱 Gerar Volantes MAX</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">9 fixas garantidas + 6 livres filtradas pelo motor inteligente</div></div><div class="step-subtitle" id="step3badge"></div></div><div class="step-body" id="step3body"><div class="gen-center"><div class="gen-qty-wrap"><span class="gen-qty-label">Quantidade de volantes:</span><input type="number" class="gen-qty-input" id="genQtd" value="10" min="1" max="999"></div><div class="gen-info" id="genInfo">Escolha a quantidade e clique em Gerar.<br>O motor inteligente gera internamente <strong>300×</strong> e entrega os melhores por Score Geral.</div><div style="width:100%"><div class="adv-toggle" id="advToggle" onclick="toggleAdv()"><span>⚙️ Filtros avançados</span><span id="advArrow">▼</span></div><div class="adv-body" id="advBody"><div class="filter-row"><div><label>Qualidade da Soma</label><select id="genSoma"><option value="otimo">⭐ Apenas Ótima (181–220)</option><option value="bom" selected>✅ Boa ou melhor (161–240)</option><option value="any">🎯 Qualquer</option></select></div><div><label>Paridade</label><select id="genParidade"><option value="any">Qualquer</option><option value="78" selected>7 ou 8 pares</option><option value="balanced">6–9 pares</option><option value="67">6P/9I</option><option value="76">7P/8I</option></select></div><div><label>Mínimo de Mágicas</label><select id="genMagicas"><option value="any">Qualquer</option><option value="3" selected>≥ 3</option><option value="4">≥ 4</option><option value="5">≥ 5</option></select></div><div><label>Miolo</label><select id="genMoldura"><option value="any">Qualquer</option><option value="balanced" selected>≤ 4 (balanceado)</option><option value="strict">≤ 3 (estrito)</option></select></div></div></div></div><button class="btn-max" onclick="gerarWizard()">🔱 GERAR VOLANTES MAX</button></div><div id="genSummary" style="display:none" class="summary-bar"></div><div id="genGrid" class="max-grid"></div><div id="genActions" style="display:none" class="btn-row"><button class="btn-success" onclick="avancarStep4()">▶ Conferir Resultado →</button><button class="btn-ghost" onclick="limparGeracao()">↺ Gerar de novo</button></div><div class="peneira-wrap" id="peneiraWrap" style="display:none"><div class="peneira-title">🔮 Peneira de Mágicas<span style="font-size:.7rem;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:400;letter-spacing:0"> — filtra volantes baseado nos dois padrões históricos (94.1% de confiança)</span></div><div class="peneira-controles"><div class="peneira-ctrl"><label>Qtd de Mágicas no jogo</label><select id="peneiraQtd" onchange="aplicarPeneira()"><option value="any">Qualquer quantidade</option><option value="4-7" selected>✅ 4 a 7 mágicas (normal — 94%)</option><option value="5-7">⭐ 5 a 7 mágicas (mais provável)</option><option value="4-6">4 a 6 mágicas</option></select></div><div class="peneira-ctrl"><label>Casa da 1ª mágica</label><select id="peneiraCasa" onchange="aplicarPeneira()"><option value="any">Qualquer casa</option><option value="3-4" selected>✅ 3ª ou 4ª casa (normal — 79%)</option><option value="3">3ª casa somente (41%)</option><option value="2-4">2ª a 4ª casa (91%)</option></select></div><div class="peneira-ctrl" style="justify-content:flex-end;padding-top:18px"><button class="btn-ghost btn-sm" onclick="limparPeneira()" style="border-color:rgba(255,166,87,.3);color:var(--orange)">↺ Remover Filtros</button></div></div><div class="peneira-result" id="peneiraResult">Ajuste os filtros acima para ativar a peneira.</div></div></div></div>
 <div class="step locked" id="step4"><div class="step-header" onclick="toggleStep(4)"><div class="step-num">4</div><div><div class="step-title">✅ Conferir Resultado</div><div style="font-size:.76rem;color:var(--text2);margin-top:2px">Cole as dezenas sorteadas e veja o resultado de todos os volantes</div></div><div class="step-subtitle" id="step4badge"></div></div><div class="step-body" id="step4body"><div class="input-group"><label>15 dezenas do resultado oficial (espaço ou vírgula)</label><input type="text" class="conf-input" id="confResultado" placeholder="Ex: 01 04 06 07 09 10 11 13 14 15 16 18 19 22 24"></div><div class="btn-row" style="margin-bottom:14px"><button class="btn-primary" onclick="conferirWizard()">🔍 Conferir Todos os Volantes</button><button class="btn-ghost" onclick="document.getElementById('confResultado').value='';document.getElementById('confResultados').innerHTML=''">↺ Limpar</button></div><div id="confResultados"></div></div></div>
 </div>
 
 <!-- ████████████████ TAB: GÊNIOX MODULE ████████████████ -->
 <div class="section" id="tab-geniox">
-<div class="tend-header">
-<div class="tend-header-left">
-<h2>🧠 GÊNIoX • Simulação Inteligente</h2>
-<p>Modelos determinísticos + Gestão de Capital integrada ao COCKPIT</p>
-</div>
-<div style="font-size:.75rem;color:var(--text2);text-align:right;">
-<div style="color:var(--tend-gold);font-weight:800;font-size:.85rem;">MÓDULO INTEGRADO</div>
-<div>Compartilha lógica com COCKPIT V55</div>
-</div>
-</div>
-<div class="tend-optional-banner">
-<span style="font-size:1.1rem">ℹ️</span>
-<div><strong>GênioX + COCKPIT</strong> — Use os modelos GênioX para gerar fixas 
-ou simule cenários de investimento com dados do histórico COCKPIT. <strong>Limite: 10 volantes por modelo.</strong></div>
-</div>
-<div class="tend-inputs-grid">
-<div class="tend-card">
-<div class="tend-card-title">💰 Gestão de Capital</div>
-<div class="input-group" style="margin-bottom:14px">
-<label>Banca Inicial (R$)</label>
-<input type="number" id="gxBanca" class="tend-cc-input" value="500" min="10">
-</div>
-<div class="input-group" style="margin-bottom:14px">
-<label>Cartelas por Concurso</label>
-<input type="number" id="gxQtdCartelas" class="tend-cc-input" value="30" min="1" max="100">
-</div>
-<div class="input-group" style="margin-bottom:14px">
-<label>Custo por Cartela (R$)</label>
-<input type="number" id="gxCusto" class="tend-cc-input" value="3.5" min="0.1" step="0.1">
-</div>
-<div class="input-group">
-<label>Concursos Simulados</label>
-<input type="number" id="gxCiclos" class="tend-cc-input" value="10" min="1" max="100">
-</div>
-<button class="tend-btn-analyze" onclick="genioxSimular()" style="margin-top:14px">
-📊 Simular Cenário
-</button>
-<!-- ADICIONAR ESTE BOTÃO ABAIXO -->
-<button class="btn-ghost" onclick="genioxResetLocal()" style="width:100%; margin-top:8px; border-color:var(--red); color:var(--red);">
-🗑️ Limpar Módulo GênioX
-</button>
-<div id="gxResultadoISA" class="geniox-isa-box" style="display:none"></div>
-</div>
-<div class="tend-card">
-<div class="tend-card-title">🎰 Gerar Cartelas GênioX</div>
-<div class="input-group" style="margin-bottom:14px">
-<label>Modelo</label>
-<!-- DEPOIS: -->
+    <div class="tend-header">
+        <div class="tend-header-left">
+            <h2>🧠 GÊNIoX • Simulação Inteligente</h2>
+            <p>Modelos determinísticos + Gestão de Capital integrada ao COCKPIT</p>
+        </div>
+        <div style="font-size:.75rem;color:var(--text2);text-align:right;">
+            <div style="color:var(--tend-gold);font-weight:800;font-size:.85rem;">MÓDULO INTEGRADO</div>
+            <div>Compartilha lógica com COCKPIT V55</div>
+        </div>
+    </div>
+    
+    <div class="tend-optional-banner">
+        <span style="font-size:1.1rem">ℹ️</span>
+        <div><strong>GênioX + COCKPIT</strong> — Use os modelos GênioX para gerar fixas 
+        ou simule cenários de investimento com dados do histórico COCKPIT. <strong>Limite: 10 volantes por modelo.</strong></div>
+    </div>
+    
+    <div class="tend-inputs-grid">
+        <div class="tend-card">
+            <div class="tend-card-title">💰 Gestão de Capital</div>
+            <div class="input-group" style="margin-bottom:14px">
+                <label>Banca Inicial (R$)</label>
+                <input type="number" id="gxBanca" class="tend-cc-input" value="500" min="10">
+            </div>
+            <div class="input-group" style="margin-bottom:14px">
+                <label>Cartelas por Concurso</label>
+                <input type="number" id="gxQtdCartelas" class="tend-cc-input" value="30" min="1" max="100">
+            </div>
+            <div class="input-group" style="margin-bottom:14px">
+                <label>Custo por Cartela (R$)</label>
+                <input type="number" id="gxCusto" class="tend-cc-input" value="3.5" min="0.1" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Concursos Simulados</label>
+                <input type="number" id="gxCiclos" class="tend-cc-input" value="10" min="1" max="100">
+            </div>
+            <button class="tend-btn-analyze" onclick="genioxSimular()" style="margin-top:14px">
+                📊 Simular Cenário
+            </button>
+ 
+ <!-- ADICIONAR ESTE BOTÃO ABAIXO -->
+    <button class="btn-ghost" onclick="genioxResetLocal()" style="width:100%; margin-top:8px; border-color:var(--red); color:var(--red);">
+        🗑️ Limpar Módulo GênioX
+    </button>
+
+           <div id="gxResultadoISA" class="geniox-isa-box" style="display:none"></div>
+        </div>
+      
+        <div class="tend-card">
+            <div class="tend-card-title">🎰 Gerar Cartelas GênioX</div>
+            <div class="input-group" style="margin-bottom:14px">
+                <label>Modelo</label>
+               <!-- DEPOIS: -->
 <select id="gxModelo" style="width:100%;padding:10px;background:var(--surface3);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);">
-<option value="A">Modelo A (10 fixas)</option>
-<option value="B">Modelo B (11 fixas) ⭐</option>
-<option value="C">Modelo C (12 fixas) 🔥</option>
-<option value="D">Modelo D (13 fixas) 💎</option>
+    <option value="A">Modelo A (10 fixas)</option>
+    <option value="B">Modelo B (11 fixas) ⭐</option>
+    <option value="C">Modelo C (12 fixas) 🔥</option>
 </select>
-</div>
-<div class="btn-row" style="margin-bottom:14px">
-<button class="btn-ghost" onclick="genioxGerarCartelas()">Gerar Cartelas</button>
-<button class="btn-ghost" onclick="genioxEnviarFixasCockpit()">Enviar Fixas →</button>
-</div>
-<div id="gxSaidaCartelas" class="geniox-grid"></div>
-</div>
-</div>
-<div class="tend-synergy-bar" id="gxSynergyBar" style="display:none">
-<div class="tend-synergy-bar-left">
-<strong>🔗 Usar no Wizard</strong>
-<small>Aplicar cartelas geradas como volantes MAX</small>
-</div>
-<button class="btn-synergy" onclick="genioxEnviarCockpit()">🔱 Enviar para COCKPIT →</button>
-</div>
+            </div>
+            <div class="btn-row" style="margin-bottom:14px">
+                <button class="btn-ghost" onclick="genioxGerarCartelas()">Gerar Cartelas</button>
+                <button class="btn-ghost" onclick="genioxEnviarFixasCockpit()">Enviar Fixas →</button>
+            </div>
+            <div id="gxSaidaCartelas" class="geniox-grid"></div>
+        </div>
+    </div>  
+    <div class="tend-synergy-bar" id="gxSynergyBar" style="display:none">
+        <div class="tend-synergy-bar-left">
+            <strong>🔗 Usar no Wizard</strong>
+            <small>Aplicar cartelas geradas como volantes MAX</small>
+        </div>
+        <button class="btn-synergy" onclick="genioxEnviarCockpit()">🔱 Enviar para COCKPIT →</button>
+    </div>
 </div>
 
 <!-- ████████████████ TAB: TENDÊNCIAS (mantido) ████████████████ -->
@@ -714,7 +718,7 @@ ou simule cenários de investimento com dados do histórico COCKPIT. <strong>Lim
 <div class="tend-legend"><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"></div><span>Normal</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"></div><span>Mágica</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#10b981,#059669)"></div><span>Prima</span></div><div class="tend-legend-item"><div class="tend-legend-dot" style="background:linear-gradient(135deg,#06b6d4,#0891b2)"></div><span>Par comum</span></div></div>
 <div class="tend-stats-grid" id="tendStats"></div>
 <div class="tend-analysis"><div class="tend-analysis-title">📊 Análise Detalhada</div><div class="tend-analysis-grid" id="tendAnalysisGrid"></div></div>
-<div style="margin-top:12px"><div style="font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);letter-spacing:.5px;margin-bottom:10px;">📜 Top Dezenas por Score</div><div style="overflow-x:auto"><table class="tend-table" id="tendTable"><thead><th>Dezena</th><th>Score</th><th>Freq. Hist.</th><th>Categorias</th><th>Status</th> </thead><tbody id="tendTableBody"></tbody> </table></div></div>
+<div style="margin-top:12px"><div style="font-family:'Oswald',sans-serif;font-size:.9rem;color:var(--tend-gold);letter-spacing:.5px;margin-bottom:10px;">📜 Top Dezenas por Score</div><div style="overflow-x:auto"><table class="tend-table" id="tendTable"><thead> transduction<th>Dezena</th><th>Score</th><th>Freq. Hist.</th><th>Categorias</th><th>Status</th> </thead><tbody id="tendTableBody"></tbody> </table></div></div>
 <div class="tend-synergy-bar" id="tendSynergyBar"><div class="tend-synergy-bar-left"><strong>🔗 Usar no Wizard principal</strong><small>Envia as 9 fixas de tendência como âncora alternativa para o Passo 3 — Gerar Volantes MAX</small></div><button class="btn-synergy" onclick="tendSendToWizard()">🔱 Enviar para o Wizard →</button></div>
 <button class="btn-ghost" style="width:100%;margin-top:10px" onclick="tendCopy()">📋 Copiar 9 Fixas</button>
 <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);"><button class="btn-info" style="width:100%;" onclick="exportarFixasParaBridge()">🌉 EXPORTAR FIXAS PARA BRIDGE (COCKPIT)</button></div>
@@ -733,7 +737,7 @@ ou simule cenários de investimento com dados do histórico COCKPIT. <strong>Lim
 <div class="fb-container" id="fbContainer"></div>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
-V55 - COCKPIT + TREND BRIDGE + GÊNIoX MULTI-ÂNCORA (9-13 FIXAS)
+V55 - COCKPIT + TREND BRIDGE + GÊNIOX MODULE
 ═══════════════════════════════════════════════════════════════════════════ */
 // ==================== CONSTANTES GLOBAIS ====================
 const PRIMOS = [2,3,5,7,11,13,17,19,23];
@@ -752,210 +756,225 @@ volantesMAX: [],
 ancoraIdx: -1,
 posicao: 0,
 fixas: [],
-qtdFixas: 9,  // NOVO: Quantidade variável de fixas (9-13)
 viabResultados: []
 };
 let caixa = {sessoes:[], totalGasto:0, totalPremios:0};
-// ==================== GÊNIoX MODULE LOGIC ====================
+
+// ==================== GÊNIOX MODULE LOGIC ====================
 const GENIOX_MODELOS = {
-A: [1, 3, 5, 7, 9, 11, 13, 15, 19, 21],           // 10 fixas
-B: [1, 3, 5, 11, 13, 15, 17, 19, 21, 23, 25],     // 11 fixas
-C: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],   // 12 fixas
-D: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25] // 13 fixas ⭐ NOVO
+    A: [1, 3, 5, 7, 9, 11, 13, 15, 19, 21],
+    B: [1, 3, 5, 11, 13, 15, 17, 19, 21, 23, 25],
+    C: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]  // 12 fixas
 };
 const GENIOX_UNIVERSO = Array.from({ length: 25 }, (_, i) => i + 1);
 const GENIOX_PREMIOS = { 11: 6, 12: 12, 13: 30, 14: 1500, 15: 1500000 };
 let genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+
 function genioxSeq4(a) {
-for (let i = 0; i < a.length - 3; i++) {
-if (a[i + 3] === a[i] + 3 && a[i + 1] === a[i] + 1 && a[i + 2] === a[i] + 2) return true;
-}
-return false;
+    for (let i = 0; i < a.length - 3; i++) {
+        if (a[i + 3] === a[i] + 3 && a[i + 1] === a[i] + 1 && a[i + 2] === a[i] + 2) return true;
+    }
+    return false;
 }
 function genioxPares(a) { return a.filter(n => n % 2 === 0); }
 function genioxLinhas(a) {
-const l = [0, 0, 0, 0, 0];
-a.forEach(n => l[Math.floor((n - 1) / 5)]++);
-return l.filter(x => x >= 4).length;
+    const l = [0, 0, 0, 0, 0];
+    a.forEach(n => l[Math.floor((n - 1) / 5)]++);
+    return l.filter(x => x >= 4).length;
 }
 function genioxScore(c) {
-let s = 0;
-if (genioxSeq4(c)) s += 5;
-if (genioxLinhas(c) >= 2) s += 3;
-if (genioxPares(c).length === 6) s += 2;
-return s;
+    let s = 0;
+    if (genioxSeq4(c)) s += 5;
+    if (genioxLinhas(c) >= 2) s += 3;
+    if (genioxPares(c).length === 6) s += 2;
+    return s;
 }
-// ATUALIZADO: Suporte para 2, 3, 4, 5 números livres
-function genioxGerarModelo(m) {
-const base = GENIOX_MODELOS[m];
-const resto = GENIOX_UNIVERSO.filter(n => !base.includes(n));
-const out = [];
-const qtdLivres = 15 - base.length;  // Calcula automaticamente
 
-if (qtdLivres === 2) {
-// Modelo D: 13 fixas + 2 livres
-for (let i = 0; i < resto.length; i++) {
-for (let j = i + 1; j < resto.length; j++) {
-const c = [...base, resto[i], resto[j]].sort((a, b) => a - b);
-if (genioxSeq4(c)) { out.push(c); }
+ // DEPOIS (ajustado para 12 fixas + 3 livres):
+function genioxGerarModelo(m) {
+    const base = GENIOX_MODELOS[m];
+    const resto = GENIOX_UNIVERSO.filter(n => !base.includes(n));
+    const out = [];
+    
+   // Se o modelo tem 12 fixas, só precisamos de 3 números livres
+    const qtdLivres = 15 - base.length;  // Calcula automaticamente: 15 - 12 = 3
+    
+    if (qtdLivres === 3) {
+        // Loop para 3 números livres
+        for (let i = 0; i < resto.length; i++) {
+            for (let j = i + 1; j < resto.length; j++) {
+                for (let k = j + 1; k < resto.length; k++) {
+                    const c = [...base, resto[i], resto[j], resto[k]].sort((a, b) => a - b);
+                    if (genioxSeq4(c)) { out.push(c); }
+                }
+            }
+        }
+    } else if (qtdLivres === 5) {
+        // Loop original para 5 números livres (Modelos A e B)
+        for (let i = 0; i < resto.length; i++) {
+            for (let j = i + 1; j < resto.length; j++) {
+                for (let k = j + 1; k < resto.length; k++) {
+                    for (let l = k + 1; l < resto.length; l++) {
+                        for (let x = l + 1; x < resto.length; x++) {
+                            const c = [...base, resto[i], resto[j], resto[k], resto[l], resto[x]].sort((a, b) => a - b);
+                            if (genioxSeq4(c)) { out.push(c); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    out.sort((a, b) => genioxScore(b) - genioxScore(a));
+    return out.slice(0, 10);  // Limite de 10 volantes
 }
-}
-} else if (qtdLivres === 3) {
-// Modelo C: 12 fixas + 3 livres
-for (let i = 0; i < resto.length; i++) {
-for (let j = i + 1; j < resto.length; j++) {
-for (let k = j + 1; k < resto.length; k++) {
-const c = [...base, resto[i], resto[j], resto[k]].sort((a, b) => a - b);
-if (genioxSeq4(c)) { out.push(c); }
-}
-}
-}
-} else if (qtdLivres === 5) {
-// Modelos A e B: 10-11 fixas + 4-5 livres
-for (let i = 0; i < resto.length; i++) {
-for (let j = i + 1; j < resto.length; j++) {
-for (let k = j + 1; k < resto.length; k++) {
-for (let l = k + 1; l < resto.length; l++) {
-for (let x = l + 1; x < resto.length; x++) {
-const c = [...base, resto[i], resto[j], resto[k], resto[l], resto[x]].sort((a, b) => a - b);
-if (genioxSeq4(c)) { out.push(c); }
-}
-}
-}
-}
-}
-}
-out.sort((a, b) => genioxScore(b) - genioxScore(a));
-return out.slice(0, 10);  // Limite de 10 volantes
-}
+
 function genioxSimular() {
-const banca = +document.getElementById('gxBanca').value;
-const qtd = +document.getElementById('gxQtdCartelas').value;
-const custo = +document.getElementById('gxCusto').value;
-const ciclos = +document.getElementById('gxCiclos').value;
-if (banca <= 0 || qtd <= 0 || custo <= 0 || ciclos <= 0) {
-fb('Todos os valores devem ser maiores que zero!', 'error');
-return;
-}
-const gasto = qtd * custo * ciclos;
-const retornoMedio = (qtd * 0.28 * GENIOX_PREMIOS[11] + qtd * 0.03 * GENIOX_PREMIOS[12]) * ciclos;
-const isa = gasto / (retornoMedio || 1);
-let zona = 'Zona estável', cls = 'ok', cor = 'var(--green)';
-if (isa > 1.2 && isa <= 1.8) { zona = 'Zona de atenção'; cls = 'warn'; cor = 'var(--orange)'; }
-if (isa > 1.8) { zona = 'Stress alto'; cls = 'danger'; cor = 'var(--red)'; }
-const risco = gasto > banca ? '⚠️ Banca insuficiente!' : '✅ Banca adequada';
-const lucroEst = retornoMedio - gasto;
-document.getElementById('gxResultadoISA').style.display = 'block';
-document.getElementById('gxResultadoISA').innerHTML = `
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-<div>Gasto Total: <strong>R$ ${gasto.toFixed(2)}</strong></div>
-<div>Retorno Est.: <strong>R$ ${retornoMedio.toFixed(2)}</strong></div>
-<div>ISA: <strong style="color:${cor}">${isa.toFixed(2)}</strong></div>
-<div>Status: <strong style="color:${cor}">${zona}</strong></div>
-</div>
-<div style="border-top:1px solid var(--border);padding-top:8px">
-<div>Risco: ${risco}</div>
-<div>Lucro Est.: <strong style="color:${lucroEst>=0?'var(--green)':'var(--red)'}">R$ ${lucroEst.toFixed(2)}</strong></div>
-</div>
-`;
-fb(`✅ Simulação concluída! ISA: ${isa.toFixed(2)}`, 'success');
+    const banca = +document.getElementById('gxBanca').value;
+    const qtd = +document.getElementById('gxQtdCartelas').value;
+    const custo = +document.getElementById('gxCusto').value;
+    const ciclos = +document.getElementById('gxCiclos').value;
+    
+    if (banca <= 0 || qtd <= 0 || custo <= 0 || ciclos <= 0) {
+        fb('Todos os valores devem ser maiores que zero!', 'error');
+        return;
+    }
+    
+    const gasto = qtd * custo * ciclos;
+    const retornoMedio = (qtd * 0.28 * GENIOX_PREMIOS[11] + qtd * 0.03 * GENIOX_PREMIOS[12]) * ciclos;
+    const isa = gasto / (retornoMedio || 1);
+    
+    let zona = 'Zona estável', cls = 'ok', cor = 'var(--green)';
+    if (isa > 1.2 && isa <= 1.8) { zona = 'Zona de atenção'; cls = 'warn'; cor = 'var(--orange)'; }
+    if (isa > 1.8) { zona = 'Stress alto'; cls = 'danger'; cor = 'var(--red)'; }
+    
+    const risco = gasto > banca ? '⚠️ Banca insuficiente!' : '✅ Banca adequada';
+    const lucroEst = retornoMedio - gasto;
+    
+    document.getElementById('gxResultadoISA').style.display = 'block';
+    document.getElementById('gxResultadoISA').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+            <div>Gasto Total: <strong>R$ ${gasto.toFixed(2)}</strong></div>
+            <div>Retorno Est.: <strong>R$ ${retornoMedio.toFixed(2)}</strong></div>
+            <div>ISA: <strong style="color:${cor}">${isa.toFixed(2)}</strong></div>
+            <div>Status: <strong style="color:${cor}">${zona}</strong></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px">
+            <div>Risco: ${risco}</div>
+            <div>Lucro Est.: <strong style="color:${lucroEst>=0?'var(--green)':'var(--red)'}">R$ ${lucroEst.toFixed(2)}</strong></div>
+        </div>
+    `;
+    fb(`✅ Simulação concluída! ISA: ${isa.toFixed(2)}`, 'success');
 }
 function genioxGerarCartelas() {
-const modelo = document.getElementById('gxModelo').value;
-genioxState.modeloSelecionado = modelo;
-const cartelas = genioxGerarModelo(modelo);
-genioxState.cartelas[modelo] = cartelas;
-let html = '';
-cartelas.forEach((c, idx) => {
-const stats = calcularStats(c);
-html += `
-<div class="geniox-card">
-<div style="color:var(--text2);font-size:.65rem;margin-bottom:4px">Modelo ${modelo} • #${idx + 1}</div>
-<div style="color:var(--text);line-height:1.6">${c.map(n => String(n).padStart(2,'0')).join(' ')}</div>
-<div class="geniox-stats">
-<span>∑${stats.soma}</span>
-<span>${stats.pares}P/${stats.impares}I</span>
-<span>✨${stats.magicas}</span>
-</div>
-</div>
-`;
-});
-document.getElementById('gxSaidaCartelas').innerHTML = html;
-document.getElementById('gxSynergyBar').style.display = 'flex';
-fb(`✅ ${cartelas.length} cartelas geradas (Modelo ${modelo})`, 'success');
+    const modelo = document.getElementById('gxModelo').value;
+    genioxState.modeloSelecionado = modelo;
+    
+    const cartelas = genioxGerarModelo(modelo);
+    genioxState.cartelas[modelo] = cartelas;
+    
+    let html = '';
+    cartelas.forEach((c, idx) => {
+        const stats = calcularStats(c);
+        html += `
+            <div class="geniox-card">
+                <div style="color:var(--text2);font-size:.65rem;margin-bottom:4px">Modelo ${modelo} • #${idx + 1}</div>
+                <div style="color:var(--text);line-height:1.6">${c.map(n => String(n).padStart(2,'0')).join(' ')}</div>
+                <div class="geniox-stats">
+                    <span>∑${stats.soma}</span>
+                    <span>${stats.pares}P/${stats.impares}I</span>
+                    <span>✨${stats.magicas}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('gxSaidaCartelas').innerHTML = html;
+    document.getElementById('gxSynergyBar').style.display = 'flex';
+    fb(`✅ ${cartelas.length} cartelas geradas (Modelo ${modelo})`, 'success');
 }
-function genioxEnviarFixasCockpit() {
-const modelo = genioxState.modeloSelecionado;
-if (!genioxState.cartelas[modelo] || genioxState.cartelas[modelo].length === 0) {
-fb('Gere cartelas primeiro!', 'warning');
-return;
-}
-// Configurar quantidade de fixas baseada no modelo
-const qtdFixasMap = { 'A': 10, 'B': 11, 'C': 12, 'D': 13 };
-estado.qtdFixas = qtdFixasMap[modelo] || 9;
 
-// Para Modelos C e D, envia todas as fixas diretamente
-if (modelo === 'C' || modelo === 'D') {
-const baseFixas = GENIOX_MODELOS[modelo];
-estado.fixas = baseFixas;
-setStepState(1, 'done');
-setStepState(2, 'done');
-setStepState(3, 'current');
-setStepState(4, 'locked');
-goTab('wizard');
-document.getElementById('step1body').style.display = 'none';
-document.getElementById('step2body').style.display = 'none';
-document.getElementById('step3body').style.display = '';
-document.getElementById('step4body').style.display = 'none';
-atualizarGenInfo();
-fb(`✅ ${estado.qtdFixas} fixas do Modelo ${modelo} enviadas para o Wizard!`, 'success');
-return;
+function genioxEnviarFixasCockpit() {
+    const modelo = genioxState.modeloSelecionado;
+    if (!genioxState.cartelas[modelo] || genioxState.cartelas[modelo].length === 0) {
+        fb('Gere cartelas primeiro!', 'warning');
+        return;
+    }
+    
+    // Para Modelo C com 12 fixas, envia as 12 diretamente 
+    if (modelo === 'C') {
+        const baseFixas = GENIOX_MODELOS.C;  // Pega as 12 fixas do modelo
+        estado.fixas = baseFixas;
+        
+        // Ajusta o COCKPIT para aceitar 12 fixas
+        setStepState(1, 'done');
+        setStepState(2, 'done');
+        setStepState(3, 'current');
+        setStepState(4, 'locked');
+        
+        goTab('wizard');
+        document.getElementById('step1body').style.display = 'none';
+        document.getElementById('step2body').style.display = 'none';
+        document.getElementById('step3body').style.display = '';
+        document.getElementById('step4body').style.display = 'none';
+        
+        atualizarGenInfo();
+        fb(`✅ 12 fixas do Modelo C enviadas para o Wizard!`, 'success');
+        return;
+    }
+    
+    // Para Modelos A e B, mantém a lógica original (9 fixas)
+    const todasDezenas = genioxState.cartelas[modelo].flat();
+    const frequencia = {};
+    todasDezenas.forEach(n => frequencia[n] = (frequencia[n] || 0) + 1);
+    const fixas = Object.entries(frequencia)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 9)
+        .map(([n]) => parseInt(n))
+        .sort((a, b) => a - b);
+    
+    estado.fixas = fixas;
+    setStepState(1, 'done');
+    setStepState(2, 'done');
+    setStepState(3, 'current');
+    setStepState(4, 'locked');
+    
+    goTab('wizard');
+    document.getElementById('step1body').style.display = 'none';
+    document.getElementById('step2body').style.display = 'none';
+    document.getElementById('step3body').style.display = '';
+    document.getElementById('step4body').style.display = 'none';
+    
+    atualizarGenInfo();
+    fb(`✅ 9 fixas do GênioX enviadas para o Wizard!`, 'success');
 }
-// Para Modelos A e B, mantém a lógica original (9 fixas)
-const todasDezenas = genioxState.cartelas[modelo].flat();
-const frequencia = {};
-todasDezenas.forEach(n => frequencia[n] = (frequencia[n] || 0) + 1);
-const fixas = Object.entries(frequencia)
-.sort((a, b) => b[1] - a[1])
-.slice(0, 9)
-.map(([n]) => parseInt(n))
-.sort((a, b) => a - b);
-estado.fixas = fixas;
-estado.qtdFixas = 9;
-setStepState(1, 'done');
-setStepState(2, 'done');
-setStepState(3, 'current');
-setStepState(4, 'locked');
-goTab('wizard');
-document.getElementById('step1body').style.display = 'none';
-document.getElementById('step2body').style.display = 'none';
-document.getElementById('step3body').style.display = '';
-document.getElementById('step4body').style.display = 'none';
-atualizarGenInfo();
-fb(`✅ 9 fixas do GênioX enviadas para o Wizard!`, 'success');
-}
+
 function genioxEnviarCockpit() {
-const modelo = genioxState.modeloSelecionado;
-if (!genioxState.cartelas[modelo] || genioxState.cartelas[modelo].length === 0) {
-fb('Gere cartelas primeiro!', 'warning');
-return;
+    const modelo = genioxState.modeloSelecionado;
+    if (!genioxState.cartelas[modelo] || genioxState.cartelas[modelo].length === 0) {
+        fb('Gere cartelas primeiro!', 'warning');
+        return;
+    }
+    
+    const volantesMAX = genioxState.cartelas[modelo].map(jogo => {
+        const stats = calcularStats(jogo);
+        const fixasSet = new Set(estado.fixas);
+        return {
+            jogo,
+            livres: jogo.filter(n => !fixasSet.has(n)),
+            stats,
+            score: calcularScore(stats)
+        };
+    });
+    
+    estado.volantesMAX = volantesMAX;
+    renderizarMaxGrid(volantesMAX);
+    
+    goTab('wizard');
+    document.getElementById('step3').scrollIntoView({ behavior: 'smooth' });
+    fb(`✅ ${volantesMAX.length} volantes enviados para o COCKPIT!`, 'success');
 }
-const volantesMAX = genioxState.cartelas[modelo].map(jogo => {
-const stats = calcularStats(jogo);
-const fixasSet = new Set(estado.fixas);
-return {
-jogo,
-livres: jogo.filter(n => !fixasSet.has(n)),
-stats,
-score: calcularScore(stats)
-};
-});
-estado.volantesMAX = volantesMAX;
-renderizarMaxGrid(volantesMAX);
-goTab('wizard');
-document.getElementById('step3').scrollIntoView({ behavior: 'smooth' });
-fb(`✅ ${volantesMAX.length} volantes enviados para o COCKPIT!`, 'success');
-}
+
 // ==================== FUNÇÕES BRIDGE ====================
 function salvarBridge(momento, fixas, projecao, ultimoConcurso, proximoConcurso, periodo, heuristica) {
 const bridge = {
@@ -992,7 +1011,6 @@ const diffHoras = (Date.now() - bridge.timestamp) / (1000 * 60 * 60);
 if (diffHoras > 24) { fb(`⚠️ Recomendação expirada (${Math.round(diffHoras)}h).`, 'warning'); return; }
 if (!bridge.fixas_recomendadas || bridge.fixas_recomendadas.length !== 9) { fb('Fixas inválidas na Bridge.', 'error'); return; }
 estado.fixas = [...bridge.fixas_recomendadas];
-estado.qtdFixas = 9;  // Bridge sempre usa 9 fixas
 setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
 atualizarGenInfo();
 goTab('wizard');
@@ -1030,7 +1048,6 @@ function aplicarFixasBridge() {
 const bridge = lerBridge();
 if (!bridge || !bridge.fixas_recomendadas) { fb('Nenhuma recomendação ativa.', 'warning'); return; }
 estado.fixas = [...bridge.fixas_recomendadas];
-estado.qtdFixas = 9;
 setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
 atualizarGenInfo();
 document.getElementById('step1body').style.display = 'none';
@@ -1129,13 +1146,11 @@ if (!estado.fixas.length) {
 if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
 const cc = estado.historico[estado.ancoraIdx];
 estado.fixas = cc.dezenas.slice(estado.posicao, estado.posicao+9);
-estado.qtdFixas = 9;  // Padrão COCKPIT
 } else if (estado.historico.length) {
 estado.ancoraIdx = 0;
 estado.posicao = 0;
 const cc = estado.historico[0];
 estado.fixas = cc.dezenas.slice(0, 9);
-estado.qtdFixas = 9;
 document.getElementById('ancoraSelectWiz').value = '0';
 selecionarPosicaoViab(0);
 } else { fb('Selecione uma âncora no Passo 2!', 'warning'); return; }
@@ -1156,16 +1171,13 @@ document.getElementById('step4body').style.display = '';
 }
 function atualizarGenInfo() {
 const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
-const qtdLivres = 15 - estado.qtdFixas;
 if (cc) {
-document.getElementById('genInfo').innerHTML = `Âncora: <strong>CC ${cc.numero}</strong> · ${NOMES_POS[estado.posicao]} posição · Fixas: <strong style="color:var(--purple)">${estado.qtdFixas}</strong> (${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}) · Livres: <strong>${qtdLivres}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+document.getElementById('genInfo').innerHTML = `Âncora: <strong>CC ${cc.numero}</strong> · ${NOMES_POS[estado.posicao]} posição · Fixas: <strong style="color:var(--purple)">${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
 } else {
 const bridge = lerBridge();
 const origem = bridge ? ` (recomendação Trend - ${bridge.projecao_repeticao} repetições)` : '';
-document.getElementById('genInfo').innerHTML = `Âncora por Tendência${origem} · Fixas: <strong style="color:var(--purple)">${estado.qtdFixas}</strong> (${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}) · Livres: <strong>${qtdLivres}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+document.getElementById('genInfo').innerHTML = `Âncora por Tendência${origem} · Fixas: <strong style="color:var(--purple)">${estado.fixas.map(n=>String(n).padStart(2,'0')).join(' ')}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
 }
-// Atualizar subtítulo do Passo 3
-document.getElementById('step3Subtitulo').textContent = `${estado.qtdFixas} fixas garantidas + ${qtdLivres} livres filtradas pelo motor inteligente`;
 }
 function atualizarContadorPaste() {
 const txt = document.getElementById('ccPasteArea').value.trim();
@@ -1334,7 +1346,6 @@ const idx = estado.ancoraIdx;
 if (idx < 0 || idx >= estado.historico.length) return;
 const cc = estado.historico[idx];
 estado.fixas = cc.dezenas.slice(pos, pos+9);
-estado.qtdFixas = 9;  // Padrão COCKPIT
 const infoEl = document.getElementById('ancoraInfo');
 infoEl.style.display = 'block';
 document.getElementById('ancoraInfoLabel').textContent = `🔒 ${NOMES_POS[pos]} Posição — 9 Dezenas Fixadas (CC ${cc.numero})`;
@@ -1360,7 +1371,6 @@ function gerarWizard() {
 if (!estado.fixas.length) {
 if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
 estado.fixas = estado.historico[estado.ancoraIdx].dezenas.slice(estado.posicao, estado.posicao+9);
-estado.qtdFixas = 9;
 } else { fb('Volte ao Passo 2 e selecione uma âncora!','error'); return; }
 }
 const qtd = parseInt(document.getElementById('genQtd').value) || 10;
@@ -1369,14 +1379,12 @@ const disponiveis = [];
 for (let i = 1; i <= 25; i++) if (!estado.fixas.includes(i)) disponiveis.push(i);
 const pool = [];
 let tentativas = 0;
-const qtdLivres = 15 - estado.qtdFixas;  // NOVO: Calcula dinamicamente
 const POOL_BASE = Math.max(qtd * 20, 300);
 while (pool.length < qtd && tentativas < 50) {
 const novos = [];
 for (let t = 0; t < POOL_BASE; t++) {
 const sh = [...disponiveis].sort(() => Math.random() - 0.5);
-const livres = sh.slice(0, qtdLivres);  // NOVO: Usa qtdLivres variável
-if (livres.length !== qtdLivres) continue;
+const livres = sh.slice(0, 6);
 const jogo = [...estado.fixas, ...livres].sort((a,b) => a - b);
 if (passaFiltros(jogo, filtros)) {
 const s = calcularStats(jogo);
@@ -1487,16 +1495,16 @@ if(hit&&isF) cls='hit-fx';
 if(hit&&!isF) cls='hit-lv';
 return`<div class="conf-tag ${cls}">${String(n).padStart(2,'00')}</div>`;
 }).join('');
-html+=`<div class="conf-result"><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="conf-pts" style="color:${cor}">${acertos}</div><div><div style="font-size:.74rem;color:var(--text2)">acertos · 🔒${acF}/${estado.qtdFixas} · ◈${acL}/${15-estado.qtdFixas}</div>${premio>0?`<div style="color:var(--green);font-weight:700;font-size:.85rem">R$ ${premio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`:''}</div><div style="margin-left:auto;font-size:.72rem;color:var(--text2)">MAX ${idx+1}</div></div><div class="conf-tags">${tags}</div></div>`;
+html+=`<div class="conf-result"><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="conf-pts" style="color:${cor}">${acertos}</div><div><div style="font-size:.74rem;color:var(--text2)">acertos · 🔒${acF}/9 · ◈${acL}/6</div>${premio>0?`<div style="color:var(--green);font-weight:700;font-size:.85rem">R$ ${premio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`:''}</div><div style="margin-left:auto;font-size:.72rem;color:var(--text2)">MAX ${idx+1}</div></div><div class="conf-tags">${tags}</div></div>`;
 });
 const ben=totalPremio-totalCusto;
 const cc=estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
-html=`<div class="conf-resumo"><div class="stats-grid" style="margin-bottom:10px"><div class="stat-cell"><div class="lbl">Volantes</div><div class="val">${estado.volantesMAX.length}</div></div><div class="stat-cell"><div class="lbl">Melhor</div><div class="val" style="color:var(--accent)">${melhor} pts</div></div><div class="stat-cell"><div class="lbl">Prêmio</div><div class="val" style="color:var(--green)">R$ ${totalPremio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div><div class="stat-cell"><div class="lbl">Custo</div><div class="val">R$ ${totalCusto.toFixed(2)}</div></div><div class="stat-cell"><div class="lbl">Resultado</div><div class="val"><span class="badge ${ben>=0?'otimo':'ruim'}">R$ ${ben.toFixed(2)}</span></div></div></div><div class="fixas-hit"><div style="font-size:.72rem;color:var(--purple);font-weight:700;margin-bottom:6px">📌 Desempenho das ${estado.qtdFixas} Fixas</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">${estado.fixas.map(n=>`<div class="conf-tag${resultado.includes(n)?' hit-fx':''}">${String(n).padStart(2,'0')}</div>`).join('')}</div><div style="font-size:.8rem;color:var(--text2)"><strong style="color:var(--purple)">${aprovFixas}</strong>/${estado.qtdFixas} fixas acertadas.${aprovFixas>=Math.ceil(estado.qtdFixas*0.7)?'<span style="color:var(--green)">✅ Âncora excelente!</span>':aprovFixas>=Math.ceil(estado.qtdFixas*0.5)?'<span style="color:var(--orange)">⚡ Aproveitamento médio.</span>':'<span style="color:var(--red)">⚠️ Considere trocar a âncora.</span>'}</div></div></div>`+html;
+html=`<div class="conf-resumo"><div class="stats-grid" style="margin-bottom:10px"><div class="stat-cell"><div class="lbl">Volantes</div><div class="val">${estado.volantesMAX.length}</div></div><div class="stat-cell"><div class="lbl">Melhor</div><div class="val" style="color:var(--accent)">${melhor} pts</div></div><div class="stat-cell"><div class="lbl">Prêmio</div><div class="val" style="color:var(--green)">R$ ${totalPremio.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div><div class="stat-cell"><div class="lbl">Custo</div><div class="val">R$ ${totalCusto.toFixed(2)}</div></div><div class="stat-cell"><div class="lbl">Resultado</div><div class="val"><span class="badge ${ben>=0?'otimo':'ruim'}">R$ ${ben.toFixed(2)}</span></div></div></div><div class="fixas-hit"><div style="font-size:.72rem;color:var(--purple);font-weight:700;margin-bottom:6px">📌 Desempenho das 9 Fixas</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">${estado.fixas.map(n=>`<div class="conf-tag${resultado.includes(n)?' hit-fx':''}">${String(n).padStart(2,'0')}</div>`).join('')}</div><div style="font-size:.8rem;color:var(--text2)"><strong style="color:var(--purple)">${aprovFixas}</strong>/9 fixas acertadas.${aprovFixas>=7?'<span style="color:var(--green)">✅ Âncora excelente!</span>':aprovFixas>=5?'<span style="color:var(--orange)">⚡ Aproveitamento médio.</span>':'<span style="color:var(--red)">⚠️ Considere trocar a âncora.</span>'}</div></div></div>`+html;
 document.getElementById('confResultados').innerHTML=html;
 document.getElementById('step4badge').textContent=`Melhor: ${melhor} pts`;
 registrarSessaoCaixa(cc?.numero||'Tendência', cc?.data||'', resSessao, `🔱 COCKPIT MAX (${cc ? 'CC ' + cc.numero : 'Tendência'})`);
-if(melhor>=11) fb(`🏆 ${melhor} pontos! Fixas: ${aprovFixas}/${estado.qtdFixas}`,'success');
-else fb(`Conferido — ${aprovFixas}/${estado.qtdFixas} fixas acertadas. Melhor: ${melhor} pts.`,'info');
+if(melhor>=11) fb(`🏆 ${melhor} pontos! Fixas: ${aprovFixas}/9`,'success');
+else fb(`Conferido — ${aprovFixas}/9 fixas acertadas. Melhor: ${melhor} pts.`,'info');
 }
 function calcularStats(nums) {
 const pares=nums.filter(n=>n%2===0).length, impares=nums.length-pares;
@@ -1599,7 +1607,7 @@ Posição: ${NOMES_POS[estado.posicao]} (${DESC_POS[estado.posicao]})
 `; }
 else { txt += `Âncora: Tendência (módulo independente)
 `; }
-txt += `Fixas (${estado.qtdFixas}): ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}
+txt += `Fixas: ${estado.fixas.map(n => String(n).padStart(2, '0')).join(' ')}
 Total: ${estado.volantesMAX.length} · Custo: R$ ${(estado.volantesMAX.length * 3.5).toFixed(2)}
 ${'─'.repeat(50)}
 `;
@@ -1725,48 +1733,52 @@ const linhas = [['CC', 'Data', 'Pares', 'Ímpares', 'Primos', 'Moldura', 'Miolo'
 estado.historico.forEach(d => { const s = d.stats; linhas.push([d.numero, formatarDataExib(d.data), s.pares, s.impares, s.primos, s.moldura, s.miolo, s.soma, s.soma_cls, s.magicas]); });
 const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(linhas.map(r => r.join(',')).join('\n')); a.download = `lotofacil_relatorio_${new Date().toISOString().slice(0, 10)}.csv`; a.click(); fb('CSV exportado!', 'success');
 }
+
 function resetSessao() {
-if (!confirm('Resetar sessão?')) return;
-// Limpeza do COCKPIT
-estado.volantesMAX = [];
-document.getElementById('genGrid').innerHTML = '';
-document.getElementById('genSummary').style.display = 'none';
-document.getElementById('genActions').style.display = 'none';
-document.getElementById('confResultados').innerHTML = '';
-// Resetar quantidade de fixas para padrão
-estado.qtdFixas = 9;
-// <-- NOVO: Limpeza do Módulo GênioX Integrado
-if (typeof genioxState !== 'undefined') {
-genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+    if (!confirm('Resetar sessão?')) return;
+    
+    // Limpeza do COCKPIT
+    estado.volantesMAX = [];
+    document.getElementById('genGrid').innerHTML = '';
+    document.getElementById('genSummary').style.display = 'none';
+    document.getElementById('genActions').style.display = 'none';
+    document.getElementById('confResultados').innerHTML = '';
+    
+    // <-- NOVO: Limpeza do Módulo GênioX Integrado
+    if (typeof genioxState !== 'undefined') {
+        genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+    }
+    // Limpar inputs e visuais do GênioX
+    const gxInputs = ['gxBanca', 'gxQtdCartelas', 'gxCusto', 'gxCiclos'];
+    gxInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = el.defaultValue || '';
+    });
+    const gxOutputs = ['gxSaidaCartelas', 'gxResultadoISA', 'gxStats', 'gxDiagnostico'];
+    gxOutputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    const gxResult = document.getElementById('gxResultado');
+    if (gxResult) gxResult.style.display = 'none';
+    const gxSynergy = document.getElementById('gxSynergyBar');
+    if (gxSynergy) gxSynergy.style.display = 'none';
+    // <-- FIM NOVO
+
+    // Resetar passos do Wizard
+    ['step1', 'step2', 'step3', 'step4'].forEach((s, i) => setStepState(i + 1, i === 0 ? 'current' : 'locked'));
+    document.getElementById('step1body').style.display = '';
+    
+    fb('Sessão resetada. Histórico e Caixa preservados.', 'info');
 }
-// Limpar inputs e visuais do GênioX
-const gxInputs = ['gxBanca', 'gxQtdCartelas', 'gxCusto', 'gxCiclos'];
-gxInputs.forEach(id => {
-const el = document.getElementById(id);
-if (el) el.value = el.defaultValue || '';
-});
-const gxOutputs = ['gxSaidaCartelas', 'gxResultadoISA', 'gxStats', 'gxDiagnostico'];
-gxOutputs.forEach(id => {
-const el = document.getElementById(id);
-if (el) el.innerHTML = '';
-});
-const gxResult = document.getElementById('gxResultado');
-if (gxResult) gxResult.style.display = 'none';
-const gxSynergy = document.getElementById('gxSynergyBar');
-if (gxSynergy) gxSynergy.style.display = 'none';
-// <-- FIM NOVO
-// Resetar passos do Wizard
-['step1', 'step2', 'step3', 'step4'].forEach((s, i) => setStepState(i + 1, i === 0 ? 'current' : 'locked'));
-document.getElementById('step1body').style.display = '';
-fb('Sessão resetada. Histórico e Caixa preservados.', 'info');
-}
+
 function resetTotal() {
 if (!confirm('☢️ RESET TOTAL — apaga TUDO incluindo histórico e caixa. Irreversível?')) return;
 if (!confirm('Confirmação final. Certeza?')) return;
 localStorage.removeItem('lf_cockpit_hist');
 localStorage.removeItem('lf_cockpit_caixa');
 localStorage.removeItem(BRIDGE_KEY);
-estado = { historico: [], volantesMAX: [], ancoraIdx: -1, posicao: 0, fixas: [], qtdFixas: 9, viabResultados: [] };
+estado = { historico: [], volantesMAX: [], ancoraIdx: -1, posicao: 0, fixas: [], viabResultados: [] };
 caixa = { sessoes: [], totalGasto: 0, totalPremios: 0 };
 atualizarCCList(); atualizarHistFullList(); atualizarCaixaUI(); gerarRelatorio(); populaAncoraSelect();
 resetSessao();
@@ -2032,11 +2044,10 @@ navigator.clipboard.writeText(txt).then(() => fb('✅ Copiado!', 'success'));
 function tendSendToWizard() {
 if (!tendState.fixas9.length) { fb('Gere as 9 fixas primeiro!', 'warning'); return; }
 estado.fixas = [...tendState.fixas9];
-estado.qtdFixas = 9;  // Trend sempre usa 9 fixas
 setStepState(1, 'done'); setStepState(2, 'done'); setStepState(3, 'current'); setStepState(4, 'locked');
 const ccAtual = document.getElementById('tendCCAtual').value;
 const fixasStr = estado.fixas.map(n => String(n).padStart(2, '0')).join(' ');
-document.getElementById('genInfo').innerHTML = `<span style="color:var(--tend-gold)">📈 Âncora por Tendência</span> · CC ${ccAtual || '?'} · Fixas: <strong style="color:var(--purple)">${estado.qtdFixas}</strong> (${fixasStr}) · Livres: <strong>${15-estado.qtdFixas}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
+document.getElementById('genInfo').innerHTML = `<span style="color:var(--tend-gold)">📈 Âncora por Tendência</span> · CC ${ccAtual || '?'} · Fixas: <strong style="color:var(--purple)">${fixasStr}</strong><br>O motor gera internamente 300× e entrega os melhores por <strong>Score Geral</strong>.`;
 if (ccAtual) { const foundIdx = estado.historico.findIndex(h => h.numero === String(ccAtual)); if (foundIdx >= 0) estado.ancoraIdx = foundIdx; else estado.ancoraIdx = -1; }
 goTab('wizard');
 document.getElementById('step1body').style.display = 'none';
@@ -2068,7 +2079,7 @@ const pasteArea = document.getElementById('ccPasteArea');
 if (pasteArea) pasteArea.addEventListener('input', atualizarContadorPaste);
 tendInitInputs();
 verificarRecomendacaoTrend();
-fb('LotoFácil COCKPIT 2 · V55 BRIDGE + GênioX Multi-Âncora pronto! 🔱🌉🧠', 'success');
+fb('LotoFácil COCKPIT 2 · V55 BRIDGE + GênioX pronto! 🔱🌉🧠', 'success');
 });
 let _guiaWin = null;
 function abrirGuia() {
@@ -2076,22 +2087,28 @@ if (_guiaWin && !_guiaWin.closed) { _guiaWin.focus(); return; }
 _guiaWin = window.open('guia_completo.html', 'guiaCompleto', 'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
 }
 window.addEventListener('message', function(e) { if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) { _guiaWin.close(); _guiaWin = null; } });
+
 function genioxResetLocal() {
-if (!confirm('Limpar apenas os dados do módulo GênioX? (O histórico do COCKPIT será mantido)')) return;
-// Resetar estado interno
-genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
-// Resetar Inputs para valores padrão
-document.getElementById('gxBanca').value = '500';
-document.getElementById('gxQtdCartelas').value = '30';
-document.getElementById('gxCusto').value = '3.5';
-document.getElementById('gxCiclos').value = '10';
-// Limpar Saídas Visuais
-document.getElementById('gxSaidaCartelas').innerHTML = '';
-document.getElementById('gxResultadoISA').style.display = 'none';
-document.getElementById('gxResultadoISA').innerHTML = '';
-document.getElementById('gxSynergyBar').style.display = 'none';
-fb('Módulo GênioX limpo.', 'info');
+    if (!confirm('Limpar apenas os dados do módulo GênioX? (O histórico do COCKPIT será mantido)')) return;
+    
+    // Resetar estado interno
+    genioxState = { cartelas: {}, simulacao: null, modeloSelecionado: 'B' };
+    
+    // Resetar Inputs para valores padrão
+    document.getElementById('gxBanca').value = '500';
+    document.getElementById('gxQtdCartelas').value = '30';
+    document.getElementById('gxCusto').value = '3.5';
+    document.getElementById('gxCiclos').value = '10';
+    
+    // Limpar Saídas Visuais
+    document.getElementById('gxSaidaCartelas').innerHTML = '';
+    document.getElementById('gxResultadoISA').style.display = 'none';
+    document.getElementById('gxResultadoISA').innerHTML = '';
+    document.getElementById('gxSynergyBar').style.display = 'none';
+    
+    fb('Módulo GênioX limpo.', 'info');
 }
+
 </script>
 <div style="text-align:center;padding:18px 16px 28px;font-size:.75rem;color:var(--text3);border-top:1px solid var(--border);margin-top:24px;line-height:2;">
 <a href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ffa657, #f0883e); color: #0a0c12; padding: 8px 20px; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">📊 Planilha Admin</a>
