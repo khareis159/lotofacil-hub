@@ -1393,63 +1393,159 @@ function lerFiltrosWiz() {
 const minMagicasVal = document.getElementById('genMagicas').value;
 return { somaFiltro: document.getElementById('genSoma').value, paridade: document.getElementById('genParidade').value, minMagicas: minMagicasVal === 'any' ? 'any' : parseInt(minMagicasVal), minPrimos: 0, moldura: document.getElementById('genMoldura').value };
 }
+
 function gerarWizard() {
-if (!estado.fixas.length) {
-if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
-estado.fixas = estado.historico[estado.ancoraIdx].dezenas.slice(estado.posicao, estado.posicao+9);
-} else { fb('Volte ao Passo 2 e selecione uma âncora!','error'); return; }
+    // Verificar se tem fixas definidas
+    if (!estado.fixas.length) {
+        if (estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx]) {
+            const cc = estado.historico[estado.ancoraIdx];
+            estado.fixas = cc.dezenas.slice(estado.posicao, estado.posicao+9);
+        } else if (estado.historico.length) {
+            estado.ancoraIdx = 0;
+            estado.posicao = 0;
+            const cc = estado.historico[0];
+            estado.fixas = cc.dezenas.slice(0, 9);
+            document.getElementById('ancoraSelectWiz').value = '0';
+            selecionarPosicaoViab(0);
+        } else { 
+            fb('Volte ao Passo 2 e selecione uma âncora!', 'error'); 
+            return; 
+        }
+    }
+    
+    const qtd = parseInt(document.getElementById('genQtd').value) || 10;
+    const filtros = lerFiltrosWiz();
+    
+    // ============================================================
+    // CORREÇÃO: Calcular quantos números livres são necessários
+    // ============================================================
+    const qtdFixas = estado.fixas.length;
+    const qtdLivresNecessarios = 15 - qtdFixas;
+    
+    // Validação de segurança
+    if (qtdLivresNecessarios < 0) {
+        fb(`❌ Erro: ${qtdFixas} fixas excedem o limite de 15 dezenas! Máximo permitido é 14 fixas.`, 'error');
+        return;
+    }
+    
+    if (qtdLivresNecessarios === 0) {
+        fb(`ℹ️ Com ${qtdFixas} fixas, você tem exatamente 15 dezenas. Gerando volante único...`, 'info');
+    }
+    
+    // Listar números disponíveis (que não são fixas)
+    const disponiveis = [];
+    for (let i = 1; i <= 25; i++) {
+        if (!estado.fixas.includes(i)) disponiveis.push(i);
+    }
+    
+    // Verificar se há números suficientes
+    if (disponiveis.length < qtdLivresNecessarios) {
+        fb(`❌ Erro: Faltam números livres! Disponíveis: ${disponiveis.length}, Necessários: ${qtdLivresNecessarios}`, 'error');
+        return;
+    }
+    
+    // Se for exatamente 15 fixas (qtdLivresNecessarios === 0), gerar volante único
+    if (qtdLivresNecessarios === 0) {
+        const jogo = [...estado.fixas].sort((a,b) => a - b);
+        const s = calcularStats(jogo);
+        const volante = { 
+            jogo, 
+            livres: [], 
+            score: calcularScore(s), 
+            stats: s 
+        };
+        estado.volantesMAX = [volante];
+        renderizarMaxGrid(estado.volantesMAX);
+        
+        const sum = document.getElementById('genSummary');
+        sum.style.display = 'flex';
+        sum.innerHTML = `<strong>1</strong> volante gerado (${qtdFixas} fixas) <span class="sb-badge">💰 R$ 3,50</span> <span class="sb-badge">📊 ∑ ${s.soma}</span> <span class="sb-badge">✨ ${s.magicas} mágicas</span>`;
+        
+        document.getElementById('genActions').style.display = 'flex';
+        document.getElementById('step3badge').textContent = `1 volante`;
+        document.getElementById('peneiraWrap').style.display = 'block';
+        document.getElementById('peneiraQtd').value = '4-7';
+        document.getElementById('peneiraCasa').value = '3-4';
+        aplicarPeneira();
+        fb(`🔱 Volante gerado com ${qtdFixas} fixas!`, 'success');
+        return;
+    }
+    
+    // ============================================================
+    // Geração normal com o número correto de livres
+    // ============================================================
+    const pool = [];
+    let tentativas = 0;
+    const POOL_BASE = Math.max(qtd * 20, 300);
+    
+    while (pool.length < qtd && tentativas < 50) {
+        const novos = [];
+        for (let t = 0; t < POOL_BASE; t++) {
+            const sh = [...disponiveis].sort(() => Math.random() - 0.5);
+            // CORREÇÃO: Pega APENAS a quantidade necessária de números livres
+            const livres = sh.slice(0, qtdLivresNecessarios);
+            const jogo = [...estado.fixas, ...livres].sort((a,b) => a - b);
+            
+            // Verificar se o volante tem exatamente 15 dezenas
+            if (jogo.length !== 15) continue;
+            
+            if (passaFiltros(jogo, filtros)) {
+                const s = calcularStats(jogo);
+                novos.push({ jogo, livres: livres.sort((a,b) => a - b), score: calcularScore(s), stats: s });
+            }
+        }
+        pool.push(...novos);
+        tentativas++;
+    }
+    
+    // Remover duplicatas e ordenar por score
+    const uniq = [];
+    const seen = new Set();
+    pool.sort((a,b) => b.score - a.score).forEach(v => {
+        const key = v.jogo.join('-');
+        if (!seen.has(key)) {
+            seen.add(key);
+            uniq.push(v);
+        }
+    });
+    
+    const final = uniq.slice(0, qtd);
+    
+    if (!final.length) {
+        fb('⚠️ Filtros muito restritivos. Relaxe os filtros avançados ou tente outra âncora.', 'error');
+        return;
+    }
+    
+    estado.volantesMAX = final;
+    renderizarMaxGrid(final);
+    
+    // Estatísticas
+    const gerados = final.length;
+    const medS = Math.round(final.reduce((a,v) => a + v.stats.soma, 0) / gerados);
+    const medM = (final.reduce((a,v) => a + v.stats.magicas, 0) / gerados).toFixed(1);
+    const medSc = Math.round(final.reduce((a,v) => a + v.score, 0) / gerados);
+    const totalCusto = gerados * 3.5;
+    
+    const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
+    const sum = document.getElementById('genSummary');
+    sum.style.display = 'flex';
+    
+    if (cc) {
+        sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 CC ${cc.numero} · ${qtdFixas} fixas</span> <span class="sb-badge">💰 R$ ${totalCusto.toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
+    } else {
+        sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 Âncora por Tendência · ${qtdFixas} fixas</span> <span class="sb-badge">💰 R$ ${totalCusto.toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
+    }
+    
+    document.getElementById('genActions').style.display = 'flex';
+    document.getElementById('step3badge').textContent = `${gerados} volantes`;
+    document.getElementById('peneiraWrap').style.display = 'block';
+    document.getElementById('peneiraQtd').value = '4-7';
+    document.getElementById('peneiraCasa').value = '3-4';
+    aplicarPeneira();
+    
+    fb(`🔱 ${gerados} volante${gerados>1?'s':''} gerado${gerados>1?'s':''} com ${qtdFixas} fixas + ${qtdLivresNecessarios} livres!`, 'success');
 }
-const qtd = parseInt(document.getElementById('genQtd').value) || 10;
-const filtros = lerFiltrosWiz();
-const disponiveis = [];
-for (let i = 1; i <= 25; i++) if (!estado.fixas.includes(i)) disponiveis.push(i);
-const pool = [];
-let tentativas = 0;
-const POOL_BASE = Math.max(qtd * 20, 300);
-while (pool.length < qtd && tentativas < 50) {
-const novos = [];
-for (let t = 0; t < POOL_BASE; t++) {
-const sh = [...disponiveis].sort(() => Math.random() - 0.5);
-const livres = sh.slice(0, 6);
-const jogo = [...estado.fixas, ...livres].sort((a,b) => a - b);
-if (passaFiltros(jogo, filtros)) {
-const s = calcularStats(jogo);
-novos.push({ jogo, livres: livres.sort((a,b) => a - b), score: calcularScore(s), stats: s });
-}
-}
-pool.push(...novos);
-tentativas++;
-}
-const uniq = [];
-const seen = new Set();
-pool.sort((a,b) => b.score - a.score).forEach(v => {
-const key = v.jogo.join('-');
-if (!seen.has(key)) { seen.add(key); uniq.push(v); }
-});
-const final = uniq.slice(0, qtd);
-if (!final.length) { fb('Filtros muito restritivos. Relaxe os filtros avançados.','error'); return; }
-estado.volantesMAX = final;
-renderizarMaxGrid(final);
-const gerados = final.length;
-const medS = Math.round(final.reduce((a,v) => a + v.stats.soma, 0) / gerados);
-const medM = (final.reduce((a,v) => a + v.stats.magicas, 0) / gerados).toFixed(1);
-const medSc = Math.round(final.reduce((a,v) => a + v.score, 0) / gerados);
-const cc = estado.ancoraIdx !== -1 && estado.historico[estado.ancoraIdx] ? estado.historico[estado.ancoraIdx] : null;
-const sum = document.getElementById('genSummary');
-sum.style.display = 'flex';
-if (cc) {
-sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 CC ${cc.numero} · ${NOMES_POS[estado.posicao]}</span> <span class="sb-badge">💰 R$ ${(gerados*3.5).toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
-} else {
-sum.innerHTML = `<strong>${gerados}</strong> volante${gerados>1?'s':''} MAX <span class="sb-badge">🔒 Âncora por Tendência</span> <span class="sb-badge">💰 R$ ${(gerados*3.5).toFixed(2)}</span> <span class="sb-badge">📊 ∑ médio: ${medS}</span> <span class="sb-badge">✨ mágicas: ${medM}</span> <span class="sb-badge">🏆 score médio: ${medSc}/100</span>`;
-}
-document.getElementById('genActions').style.display = 'flex';
-document.getElementById('step3badge').textContent = `${gerados} volantes`;
-document.getElementById('peneiraWrap').style.display = 'block';
-document.getElementById('peneiraQtd').value = '4-7';
-document.getElementById('peneiraCasa').value = '3-4';
-aplicarPeneira();
-fb(`🔱 ${gerados} volante${gerados>1?'s':''} gerado${gerados>1?'s':''}!`, 'success');
-}
+
 function limparGeracao() {
 estado.volantesMAX = [];
 document.getElementById('genGrid').innerHTML = '';
