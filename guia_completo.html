@@ -14,11 +14,12 @@
             --surface-card: #0f1419;
             --surface-card-header: linear-gradient(135deg, #1e262f, #161c24);
             --border: #2a3441;
-            --nav-bg: rgba(22, 28, 36, 0.6);
+            --nav-bg: rgba(22, 28, 36, 0.75);
             --table-th: #1e262f;
             --bridge-visual-bg: linear-gradient(135deg, #1a1f2e, #0f1420);
             --bridge-node-bg: #1e262f;
             --tip-card-bg: linear-gradient(135deg, #1a1f2a, #0f141c);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         [data-theme="light"] {
@@ -29,11 +30,12 @@
             --surface-card: #ffffff;
             --surface-card-header: linear-gradient(135deg, #f1f5f9, #e2e8f0);
             --border: #dde3ec;
-            --nav-bg: rgba(226, 232, 240, 0.8);
+            --nav-bg: rgba(226, 232, 240, 0.85);
             --table-th: #e2e8f0;
             --bridge-visual-bg: linear-gradient(135deg, #f1f5f9, #e2e8f0);
             --bridge-node-bg: #ffffff;
             --tip-card-bg: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            --shadow: 0 4px 16px rgba(15, 30, 46, 0.08);
         }
 
         * {
@@ -64,7 +66,7 @@
             padding: 24px 32px;
             margin-bottom: 28px;
             border: 1px solid rgba(188, 140, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
         }
 
         .guide-header h1 {
@@ -100,7 +102,7 @@
             font-size: 0.9rem;
         }
 
-        /* Alternador de Tema no Guia */
+        /* Alternador de Tema */
         .theme-switch {
             display: inline-flex;
             align-items: center;
@@ -117,17 +119,24 @@
             transition: all 0.2s;
         }
 
-        /* Navegação rápida */
+        /* Navegação Rápida Estilo Sticky (Fixo no Topo) */
         .quick-nav {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 28px;
             background: var(--nav-bg);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 12px 20px;
             border-radius: 60px;
             justify-content: center;
+            position: sticky;
+            top: 15px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .quick-nav a {
@@ -158,7 +167,7 @@
 
         .flow-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
             border-color: rgba(188, 140, 255, 0.3);
         }
 
@@ -195,6 +204,12 @@
         .flow-body {
             padding: 20px 24px;
         }
+
+        /* Grids Responsivos Declarados */
+        .g2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .g5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 
         /* Tabela de passos */
         .step-table {
@@ -386,6 +401,9 @@
 
         /* Responsividade */
         @media (max-width: 900px) {
+            .g2, .g3, .g4, .g5 {
+                grid-template-columns: 1fr;
+            }
             .step-table th, .step-table td {
                 display: block;
                 width: 100%;
@@ -409,6 +427,10 @@
             .guide-header h1 {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            .quick-nav {
+                border-radius: 20px;
+                padding: 10px;
             }
         }
 
@@ -464,7 +486,7 @@
         </div>
     </div>
 
-    <!-- Navegação Rápida -->
+    <!-- Navegação Rápida Fixo (Sticky) -->
     <div class="quick-nav">
         <a href="#fluxo-jogo">🎯 Fluxo de Jogo</a>
         <a href="#fluxo-bridge">Bridge de Sinais</a>
