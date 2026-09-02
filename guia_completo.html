@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>📚 Guia Completo - HiperSys LF NEXUS v3 | LotoFácil Unified</title>
     <style>
+        /* ══ TOKENS E VARIÁVEIS DE TEMA (CLARO/ESCURO) ══ */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0a0f1a 0%, #0f1725 100%);
+            --text: #e8f0f8;
+            --text-muted: #7a8fa6;
+            --surface-header: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+            --surface-card: #0f1419;
+            --surface-card-header: linear-gradient(135deg, #1e262f, #161c24);
+            --border: #2a3441;
+            --nav-bg: rgba(22, 28, 36, 0.6);
+            --table-th: #1e262f;
+            --bridge-visual-bg: linear-gradient(135deg, #1a1f2e, #0f1420);
+            --bridge-node-bg: #1e262f;
+            --tip-card-bg: linear-gradient(135deg, #1a1f2a, #0f141c);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f4f6f9 0%, #eef0f5 100%);
+            --text: #0f1e2e;
+            --text-muted: #5c6f84;
+            --surface-header: linear-gradient(135deg, #e1e8f0 0%, #cbd5e1 100%);
+            --surface-card: #ffffff;
+            --surface-card-header: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            --border: #dde3ec;
+            --nav-bg: rgba(226, 232, 240, 0.8);
+            --table-th: #e2e8f0;
+            --bridge-visual-bg: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            --bridge-node-bg: #ffffff;
+            --tip-card-bg: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,10 +44,11 @@
 
         body {
             font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0a0f1a 0%, #0f1725 100%);
-            color: #e8f0f8;
+            background: var(--bg-gradient);
+            color: var(--text);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* Container principal */
@@ -27,7 +59,7 @@
 
         /* Header */
         .guide-header {
-            background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+            background: var(--surface-header);
             border-radius: 24px;
             padding: 24px 32px;
             margin-bottom: 28px;
@@ -63,9 +95,26 @@
         }
 
         .sub {
-            color: #7a8fa6;
+            color: var(--text-muted);
             margin-top: 12px;
             font-size: 0.9rem;
+        }
+
+        /* Alternador de Tema no Guia */
+        .theme-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bridge-node-bg);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text);
+            transition: all 0.2s;
         }
 
         /* Navegação rápida */
@@ -74,7 +123,7 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 28px;
-            background: rgba(22, 28, 36, 0.6);
+            background: var(--nav-bg);
             backdrop-filter: blur(8px);
             padding: 12px 20px;
             border-radius: 60px;
@@ -99,10 +148,10 @@
 
         /* Cards de fluxo */
         .flow-card {
-            background: #0f1419;
+            background: var(--surface-card);
             border-radius: 20px;
             margin-bottom: 28px;
-            border: 1px solid #2a3441;
+            border: 1px solid var(--border);
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
         }
@@ -114,7 +163,7 @@
         }
 
         .flow-header {
-            background: linear-gradient(135deg, #1e262f, #161c24);
+            background: var(--surface-card-header);
             padding: 18px 24px;
             border-bottom: 2px solid #bc8cff;
             display: flex;
@@ -135,7 +184,7 @@
         }
 
         .flow-badge {
-            background: #2a3441;
+            background: var(--border);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.7rem;
@@ -157,14 +206,14 @@
         .step-table th {
             text-align: left;
             padding: 12px 8px;
-            background: #1e262f;
+            background: var(--table-th);
             color: #fbbf24;
             font-weight: 600;
         }
 
         .step-table td {
             padding: 12px 8px;
-            border-bottom: 1px solid #2a3441;
+            border-bottom: 1px solid var(--border);
             vertical-align: top;
         }
 
@@ -178,17 +227,17 @@
         .step-action {
             width: 30%;
             font-weight: 600;
-            color: #e8f0f8;
+            color: var(--text);
         }
 
         .step-feedback {
             width: 35%;
-            color: #7a8fa6;
+            color: var(--text-muted);
         }
 
         .step-what {
             width: 30%;
-            color: #9aaebf;
+            color: var(--text-muted);
             font-size: 0.8rem;
         }
 
@@ -201,7 +250,7 @@
         }
 
         .feedback-item {
-            background: #161c24;
+            background: var(--surface-card-header);
             border-radius: 12px;
             padding: 12px 16px;
             border-left: 4px solid;
@@ -220,7 +269,7 @@
 
         /* Bridge visualization */
         .bridge-visual {
-            background: linear-gradient(135deg, #1a1f2e, #0f1420);
+            background: var(--bridge-visual-bg);
             border-radius: 20px;
             padding: 20px;
             margin: 20px 0;
@@ -237,7 +286,7 @@
         }
 
         .bridge-node {
-            background: #1e262f;
+            background: var(--bridge-node-bg);
             border-radius: 16px;
             padding: 16px 24px;
             min-width: 180px;
@@ -259,10 +308,10 @@
         }
 
         .tip-card {
-            background: linear-gradient(135deg, #1a1f2a, #0f141c);
+            background: var(--tip-card-bg);
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid #2a3441;
+            border: 1px solid var(--border);
         }
 
         .tip-title {
@@ -277,7 +326,7 @@
 
         .tip-content {
             font-size: 0.85rem;
-            color: #9aaebf;
+            color: var(--text-muted);
             line-height: 1.6;
         }
 
@@ -316,23 +365,23 @@
         }
 
         .btn-secondary {
-            background: #1e262f;
-            color: #e8f0f8;
-            border: 1px solid #2a3441;
+            background: var(--bridge-node-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #2a3441;
+            background: var(--border);
         }
 
         /* Footer */
         .footer {
             text-align: center;
             padding: 24px;
-            border-top: 1px solid #2a3441;
+            border-top: 1px solid var(--border);
             margin-top: 32px;
             font-size: 0.75rem;
-            color: #5f7f9a;
+            color: var(--text-muted);
         }
 
         /* Responsividade */
@@ -344,7 +393,7 @@
             .step-table tr {
                 display: block;
                 margin-bottom: 16px;
-                border-bottom: 1px solid #2a3441;
+                border-bottom: 1px solid var(--border);
                 padding-bottom: 12px;
             }
             .step-number, .step-action, .step-feedback, .step-what {
@@ -395,15 +444,23 @@
 <div class="guide-container">
     <!-- Header -->
     <div class="guide-header">
-        <h1>
-            <span>📚 Guia de Engenharia · HiperSys LF NEXUS v3</span>
-            <span style="display: flex; gap: 8px;">
-                <span class="badge-v55">🧠 NEXUS v3 UNIFIED</span>
-                <span class="badge-bridge">🌉 Bridge Unificada</span>
-            </span>
-        </h1>
-        <div class="sub">
-            Fusão arquitetônica total: NEXUS v2 + COCKPIT V55 · Recomendação Tática via IA-Offline · Motores Multi-Algoritmo
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h1>
+                    <span>📚 Guia de Engenharia · HiperSys LF NEXUS v3</span>
+                    <span style="display: flex; gap: 8px;">
+                        <span class="badge-v55">🧠 NEXUS v3 UNIFIED</span>
+                        <span class="badge-bridge">🌉 Bridge Unificada</span>
+                    </span>
+                </h1>
+                <div class="sub">
+                    Fusão arquitetônica total: NEXUS v2 + COCKPIT V55 · Recomendação Tática via IA-Offline · Motores Multi-Algoritmo
+                </div>
+            </div>
+            <!-- Botão do Alternador de Temas -->
+            <div class="theme-switch" onclick="toggleTheme()" id="themeBtn">
+                ☀️ Modo Claro
+            </div>
         </div>
     </div>
 
@@ -449,20 +506,20 @@
             <span class="flow-badge">6 Sinais Analíticos</span>
         </div>
         <div class="flow-body">
-            <div style="font-size:0.9rem; color:#e8f0f8; line-height:1.6; margin-bottom:14px">
+            <div style="font-size:0.9rem; line-height:1.6; margin-bottom:14px">
                 A aba **Bridge** coleta os sinais de todos os módulos ativos para decidir se o momento atual é propício para investimentos ou se o Stop-Loss deve ser acionado.
             </div>
             <div class="bridge-visual">
                 <div class="bridge-flow">
-                    <div class="bridge-node">Sinal 1: Trend Analyzer<br><span style="font-size:0.75rem;color:var(--magic-color)">Momento de Entrada</span></div>
-                    <div class="bridge-node">Sinal 2: Ciclo de Volatilidade<br><span style="font-size:0.75rem;color:var(--magic-color)">Estável vs. Brusco</span></div>
-                    <div class="bridge-node">Sinal 3: Score ISA Médio<br><span style="font-size:0.75rem;color:var(--magic-color)">Qualidade do Lote</span></div>
+                    <div class="bridge-node">Sinal 1: Trend Analyzer<br><span style="font-size:0.75rem;color:var(--text-muted)">Momento de Entrada</span></div>
+                    <div class="bridge-node">Sinal 2: Ciclo de Volatilidade<br><span style="font-size:0.75rem;color:var(--text-muted)">Estável vs. Brusco</span></div>
+                    <div class="bridge-node">Sinal 3: Score ISA Médio<br><span style="font-size:0.75rem;color:var(--text-muted)">Qualidade do Lote</span></div>
                 </div>
                 <div class="bridge-arrow">▼</div>
                 <div class="bridge-flow">
-                    <div class="bridge-node">Sinal 4: Risco de Banca<br><span style="font-size:0.75rem;color:var(--magic-color)">Orçamento Otimizado</span></div>
-                    <div class="bridge-node">Sinal 5: Streak sem Prêmio<br><span style="font-size:0.75rem;color:var(--magic-color)">Controle de Perdas</span></div>
-                    <div class="bridge-node">Sinal 6: Filtro Peneira<br><span style="font-size:0.75rem;color:var(--magic-color)">Taxa de Aprovação</span></div>
+                    <div class="bridge-node">Sinal 4: Risco de Banca<br><span style="font-size:0.75rem;color:var(--text-muted)">Orçamento Otimizado</span></div>
+                    <div class="bridge-node">Sinal 5: Streak sem Prêmio<br><span style="font-size:0.75rem;color:var(--text-muted)">Controle de Perdas</span></div>
+                    <div class="bridge-node">Sinal 6: Filtro Peneira<br><span style="font-size:0.75rem;color:var(--text-muted)">Taxa de Aprovação</span></div>
                 </div>
             </div>
             <div class="tips-grid">
@@ -600,7 +657,7 @@
                     <div class="tip-content">Utilize preferencialmente combinações com 4 a 7 mágicas que possuam a primeira mágica posicionada na 3ª ou 4ª casa (79% de probabilidade estatística histórica).</div>
                 </div>
                 <div class="tip-card">
-                    <div class="tip-title">⚖️ Equilíbrio Financeiro</div>
+                    <div class="tip-title">🎄 Equilíbrio Financeiro</div>
                     <div class="tip-content">Antes de enviar as dezenas para o Bolão Hub, verifique se a banca possui saldo suficiente para cobrir as cotas do lote gerado para blindar seu capital operacional.</div>
                 </div>
                 <div class="tip-card">
@@ -628,6 +685,19 @@
 </div>
 
 <script>
+    // Função do Alternador de Temas
+    function toggleTheme() {
+        const body = document.documentElement;
+        const btn = document.getElementById('themeBtn');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.removeAttribute('data-theme');
+            btn.innerHTML = '☀️ Modo Claro';
+        } else {
+            body.setAttribute('data-theme', 'light');
+            btn.innerHTML = '🌙 Modo Escuro';
+        }
+    }
+
     console.log('📚 Guia de Engenharia HiperSys LF NEXUS v3 carregado com sucesso!');
 </script>
 </body>
