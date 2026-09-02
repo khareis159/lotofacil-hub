@@ -1,57 +1,29 @@
 # lotofacil-hub
-🔱 LotoFácil Bolão Hub — Cockpit V54 + Hub Transparente
-# 🔱 LotoFácil Bolão Hub · V54 BRIDGE
+🔱 LotoFácil Bolão Hub — HiperSys LF NEXUS v3 + Hub Transparente
 
-Rede transparente de bolões da LotoFácil integrada ao Cockpit V54.
+# 🔱 LotoFácil Bolão Hub · HiperSys LF NEXUS v3
+
+Rede transparente de bolões da LotoFácil integrada ao HiperSys LF NEXUS v3.
 
 ## Sistemas
-- **Cockpit V54** — Gerador inteligente de volantes com Detector de Tendências
-- **Guia Completo** — Documentação e fluxos do sistema
-- **Bolão Hub** — Hub organizador: inscrição, pagamento, resultados, premiação
+- **HiperSys LF NEXUS v3** — Motor unificado (NEXUS v2 + COCKPIT V55) com recomendação tática IA-Offline, simulação GênioX e 17 módulos de engenharia.
+- **Guia Completo** — Documentação e fluxos detalhados do sistema unificado.
+- **Bolão Hub** — Hub organizador: inscrição de cotas, validação de pagamentos Pix, conferência, resultados e premiação sem intermediários.
+- **Planilha Admin** — Calculadora de viabilidade financeira e precificação de cotas para o administrador.
 
 ## Princípios
-- ✅ Sem lucro para o organizador
-- 📋 Comprovantes de apostas públicos
-- 💰 Cada participante paga exatamente o valor da cota
-- 🔱 Cockpit V54 integrado via JSON
+- ✅ Sem lucro ou taxa para o organizador
+- 📋 Comprovantes de apostas e bilhetes oficiais totalmente públicos
+- 💰 Cada participante paga exatamente o valor proporcional da cota do bilhete (R$ 3,50 por volante)
+- 🔱 NEXUS v3 integrado via JSON de Estado ou formato plano (.txt)
 
 ## Acesso
-- [🎯 Cockpit V54](https://SEU-USUARIO.github.io/lotofacil-hub/)
-- [📚 Guia Completo](https://SEU-USUARIO.github.io/lotofacil-hub/guia_completo.html)
-- [🌐 Bolão Hub](https://SEU-USUARIO.github.io/lotofacil-hub/bolao_hub.html)
+- [🎯 HiperSys LF NEXUS v3](https://khareis159.github.io/lotofacil-hub/)
+- [📚 Guia Completo](https://khareis159.github.io/lotofacil-hub/guia_completo.html)
+- [🌐 Bolão Hub](https://khareis159.github.io/lotofacil-hub/bolao_hub.html)
+- [📊 Planilha Admin](https://khareis159.github.io/lotofacil-hub/planilha_admin.html)
 
 ## Suporte
 📱 WhatsApp: 61 99948-7649
 
 © 2026 Carlos Alberto Reis
-```
-
-- Clique em **Commit changes** → **Commit directly to the main branch** → **Commit changes**
-
----
-
-## 📤 PARTE 4 — Subir os 3 arquivos HTML
-
-**Passo 4 — Upload dos arquivos**
-- Na página principal do repositório, clique em **Add file** → **Upload files**
-- Arraste os 3 arquivos de uma vez:
-  - `index.html`
-  - `guia_completo.html`
-  - `bolao_hub.html`
-- Em **Commit changes** escreva: `Adiciona Cockpit V54, Guia e Bolão Hub`
-- Clique em **Commit changes**
-
----
-
-## 🌐 PARTE 5 — Ativar GitHub Pages
-
-**Passo 5 — Configurar Pages**
-- No repositório, clique em **Settings** (aba superior)
-- No menu lateral esquerdo, clique em **Pages**
-- Em **Branch**, selecione **main** e pasta **/ (root)**
-- Clique em **Save**
-- Aguarde 2–3 minutos
-
-**Seu site estará em:**
-```
-https://SEU-USUARIO.github.io/lotofacil-hub/
