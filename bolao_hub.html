@@ -11,7 +11,7 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-           signOut, onAuthStateChanged, updateProfile }
+           signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
   import { getFirestore, collection, doc, setDoc, getDoc, getDocs,
            addDoc, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc }
@@ -20,7 +20,7 @@
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
   // ══════════════════════════════════════════════
-  // 🔧 CONFIGURAÇÃO FIREBASE — BLINDADA
+  // 🔧 CONFIGURAÇÃO FIREBASE — PRESERVADA
   // ══════════════════════════════════════════════
 
   const firebaseConfig = {
@@ -38,7 +38,7 @@
   // Chave Pix do organizador
   const PIX_CHAVE = "61999487649";
   
-  // Valor atual do volante da Lotofácil (CEF 2026)
+  // Valor do volante da Lotofácil (CEF 2026)
   const VALOR_VOLANTE = 3.50;
 
   const app   = initializeApp(firebaseConfig);
@@ -82,6 +82,20 @@
   window.fazerLogout = async () => {
     if(unsubBoloes) unsubBoloes();
     await signOut(auth);
+  };
+
+  window.recuperarSenha = async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) {
+      showMsg('loginMsg', '⚠️ Digite seu e-mail no campo correspondente antes de prosseguir.', 'warning');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showMsg('loginMsg', '📩 Link de redefinição de senha encaminhado para o seu e-mail.', 'success');
+    } catch(e) {
+      showMsg('loginMsg', '❌ Erro ao enviar link: ' + traduzErroAuth(e.code), 'error');
+    }
   };
 
   function traduzErroAuth(code) {
@@ -1316,10 +1330,11 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
   <div class="topnav-right">
     👤 <span id="navNome"></span>
     <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-    <a id="btnVoltarCockpit" href="https://khareis159.github.io/lotofacil-hub/index.html" target="_blank" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #fbbf24; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem; margin-left: 8px;">
-      <i class="fas fa-chart-line"></i> ⚙️ COCKPIT
+    <!-- Links de retorno do ecossistema sincronizados -->
+    <a id="btnVoltarCockpit" href="index.html" target="_self" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #fbbf24; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem; margin-left: 8px;">
+      <i class="fas fa-chart-line"></i> 🧠 HiperSys LF NEXUS v3
     </a>
-    <a id="btnPlanilhaAdmin" href="https://khareis159.github.io/lotofacil-hub/planilha_admin.html" target="_blank" class="btn btn-secondary" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
+    <a id="btnPlanilhaAdmin" href="planilha_admin.html" target="_self" class="btn btn-secondary" style="display: none; align-items: center; gap: 6px; background: #1e262f; border: 1px solid #2a3441; color: #ffa657; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.8rem;">
       <i class="fas fa-chart-line"></i> 📊 Planilha Admin
     </a>
   </div>
@@ -1350,7 +1365,13 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
         <input type="password" id="loginSenha" placeholder="••••••">
       </div>
       <div id="loginMsg" class="form-msg"></div>
-      <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="fazerLogin()">Entrar</button>
+      
+      <!-- Redefinição de senha integrada -->
+      <div style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
+        <a href="javascript:void(0)" onclick="recuperarSenha()" style="color: var(--purple); font-size: 0.8rem; text-decoration: none;">Esqueci minha senha</a>
+      </div>
+
+      <button class="btn btn-primary btn-full" onclick="fazerLogin()">Entrar</button>
     </div>
 
     <!-- Cadastro -->
@@ -1398,7 +1419,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
         <span class="pub-badge">✅ Sem lucro para o organizador</span>
         <span class="pub-badge">📋 Comprovantes auditáveis</span>
         <span class="pub-badge">💰 Valor exato do bilhete</span>
-        <span class="pub-badge">🔱 Cockpit V54 integrado</span>
+        <span class="pub-badge">🧠 Engine NEXUS v3 integrado</span>
         <span class="pub-badge">🎫 Volante R$ 3,50 (Caixa)</span>
       </div>
     </div>
@@ -1516,7 +1537,7 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
       </div>
     </div>
 
-    <!-- 📜 Histórico de Bolões (NOVO) -->
+    <!-- 📜 Histórico de Bolões -->
     <div class="admin-card" style="margin-top:20px">
       <div class="admin-card-title">📜 HISTÓRICO DE BOLÕES</div>
       <div id="adminHistoricoList">
@@ -1574,18 +1595,17 @@ textarea{resize:vertical;min-height:80px;font-family:'Fira Code',monospace;font-
 <div class="modal-overlay" id="modalUpload" style="display:none" onclick="if(event.target===this)fecharModal('modalUpload')">
   <div class="modal-box">
     <div class="modal-header">
-      <div class="modal-title">📤 Upload de Volantes (Cockpit V54)</div>
+      <div class="modal-title">📤 Upload de Volantes (NEXUS v3)</div>
       <button class="modal-close" onclick="fecharModal('modalUpload')">✕</button>
     </div>
     <input type="hidden" id="uploadBolaoId">
     <div style="font-size:.82rem;color:var(--text2);margin-bottom:14px;line-height:1.6;">
-      Importe o JSON exportado pelo <strong>Cockpit V54</strong>.<br>
-      Formato esperado: <code style="color:var(--accent)">[ {"dezenas":[1,2,3,...15]}, ... ]</code>
-      <br><br>
-      <strong>Valor do volante na Caixa: R$ 3,50</strong>
+      Importe o JSON de Estado ou TXT exportado pelo <strong>HiperSys LF NEXUS v3</strong>.<br>
+      Formatos suportados: Backups de Estado Completo (`nexus_v3`) ou Lotes Clássicos.<br><br>
+      <strong>Custo unitário por volante: R$ 3,50</strong>
     </div>
     <div class="form-group">
-      <label>Arquivo JSON do Cockpit</label>
+      <label>Arquivo JSON / TXT do NEXUS</label>
       <input type="file" id="uploadFile" accept=".json,.txt">
     </div>
     <div style="text-align:center;color:var(--text3);font-size:.8rem;margin:10px 0">— ou cole o JSON diretamente —</div>
@@ -1711,11 +1731,10 @@ document.addEventListener('DOMContentLoaded', () => {
   © 2026 <strong style="color:var(--text2)">Carlos Alberto Reis</strong> · Suporte:
   <a href="https://wa.me/5561999487649" target="_blank" style="color:#25d366;text-decoration:none">💚 61 99948-7649</a>
  <br>
-  <span style="font-size:.65rem;">🎫 Valor do volante Lotofácil: R$ 3,50 (atualizado 2026)</span>
+  <span style="font-size:.65rem;">🎫 Custo unitário do volante: R$ 3,50 (atualizado 2026)</span>
   <br>
   <a href="https://bolao-hub.blogspot.com/" target="_blank" style="color:var(--blue);text-decoration:none;">← Voltar para a Capa no Blogger</a>
 </div>
 
-  
 </body>
 </html>
