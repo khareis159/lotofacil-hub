@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>📊 Planilha Admin · Bolão Hub | LotoFácil</title>
+    <title>📊 Planilha Admin · Bolão Hub | HiperSys LF NEXUS v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -51,6 +51,7 @@
             border-radius: 40px;
             font-size: 0.8rem;
             font-weight: 700;
+            color: white;
         }
 
         .sub {
@@ -298,20 +299,20 @@
     <div class="header">
         <h1>
             <span>📊 Planilha Admin · Bolão Hub</span>
-            <span class="badge">🔱 LotoFácil R$ 3,50</span>
+            <span class="badge">🧠 NEXUS v3</span>
         </h1>
         <div class="sub">
-            Planeje seus bolões com precisão · Calcule cotas e participantes · Valide arrecadação
+            Planeje seus bolões com precisão · Calcule cotas e participantes · Valide arrecadação para o Motor Unificado
         </div>
     </div>
 
     <!-- Navegação Rápida -->
     <div class="nav-buttons">
-        <a href="https://khareis159.github.io/lotofacil-hub/bolao_hub.html" target="_blank" class="btn btn-primary">
-            <i class="fas fa-users"></i> 🔱 Ir para Bolão Hub
+        <a href="bolao_hub.html" target="_self" class="btn btn-primary">
+            <i class="fas fa-users"></i> 🌐 Ir para Bolão Hub
         </a>
-        <a href="https://khareis159.github.io/lotofacil-hub/index.html" target="_blank" class="btn btn-secondary">
-            <i class="fas fa-chart-line"></i> ⚙️ Ir para COCKPIT V54
+        <a href="index.html" target="_self" class="btn btn-secondary">
+            <i class="fas fa-chart-line"></i> 🧠 Ir para HiperSys LF NEXUS v3
         </a>
         <button class="btn btn-secondary" onclick="window.print()">
             <i class="fas fa-print"></i> Imprimir Planilha
@@ -334,15 +335,15 @@
             </div>
         </div>
         <div class="input-group">
-            <label>🎯 Sugestão Rápida</label>
+            <label>🎯 Sugestão Rápida de Lotes</label>
             <select id="preset" onchange="aplicarPreset()">
                 <option value="">-- Selecione um modelo --</option>
-                <option value="pop">🟡 Pop · 10 volantes · Cota R$ 5,00</option>
-                <option value="lite">🔵 Lite · 20 volantes · Cota R$ 10,00</option>
-                <option value="top">🟣 Top · 40 volantes · Cota R$ 20,00</option>
-                <option value="especial">⭐ Especial · 60 volantes · Cota R$ 30,00</option>
-                <option value="semanal">📅 Semanal · 100 volantes · Cota R$ 50,00</option>
-                <option value="personalizado">🎲 Personalizado · 30 volantes · Cota R$ 15,00</option>
+                <option value="pop">🟡 Pop (CPI) · 10 volantes · Cota R$ 5,00</option>
+                <option value="lite">🔵 Lite (Tríades) · 20 volantes · Cota R$ 10,00</option>
+                <option value="top">🟣 Top (Neural) · 40 volantes · Cota R$ 20,00</option>
+                <option value="especial">⭐ Especial (Híbrido) · 60 volantes · Cota R$ 30,00</option>
+                <option value="semanal">📅 Semanal (MAX) · 100 volantes · Cota R$ 50,00</option>
+                <option value="personalizado">🎲 Personalizado (GênioX) · 30 volantes · Cota R$ 15,00</option>
             </select>
         </div>
 
@@ -366,7 +367,7 @@
     <!-- Tabela de Referência -->
     <div class="card">
         <div class="card-title">
-            <i class="fas fa-table"></i> Tabela de Referência · Bolões Prontos
+            <i class="fas fa-table"></i> Tabela de Referência · Modelos de Bolão (NEXUS)
         </div>
         <div class="table-responsive">
             <table id="tabelaReferencia">
@@ -415,14 +416,14 @@
             </div>
         </div>
         <div style="margin-top: 20px; padding: 16px; background: rgba(255,166,87,0.08); border-radius: 12px; border-left: 3px solid #ffa657;">
-            <i class="fas fa-lightbulb"></i> <strong>Dica:</strong> O valor do volante é <strong>R$ 3,50</strong> (atualizado 2026). Para fechar o bolão, a arrecadação deve ser <strong>igual ou superior</strong> ao custo total dos volantes.
+            <i class="fas fa-lightbulb"></i> <strong>Aviso de Engenharia:</strong> O custo atual estipulado por aposta na Caixa Econômica Federal é de <strong>R$ 3,50</strong>. Garanta que o montante acumulado seja igual ou superior ao custo absoluto das apostas do lote para certificar a viabilidade do bolão antes do upload do JSON.
         </div>
     </div>
 
     <div class="footer">
-        © 2026 LotoFácil Bolão Hub · Planilha Administrativa<br>
-        Valor do volante: R$ 3,50 · Sistema de gestão transparente<br>
-        Suporte: <a href="https://wa.me/5561999487649" target="_blank" style="color: #25d366;">💚 61 99948-7649</a>
+        © 2026 LotoFácil Bolão Hub · HiperSys LF NEXUS v3 · Planilha Administrativa<br>
+        Custo unitário por volante: R$ 3,50 · Sistema de gestão sem fins lucrativos<br>
+        Suporte Técnico: <a href="https://wa.me/5561999487649" target="_blank" style="color: #25d366; text-decoration: none;">💚 61 99948-7649</a>
     </div>
 </div>
 
@@ -437,7 +438,6 @@
         let participantesNecessarios = valorCota > 0 ? Math.ceil(custoTotal / valorCota) : 0;
         let arrecadacao = participantesNecessarios * valorCota;
         let diferenca = arrecadacao - custoTotal;
-        let status = diferenca >= 0 ? 'success' : 'danger';
         let statusText = diferenca >= 0 ? '✅ Coberto' : '⚠️ Faltando';
         let statusColor = diferenca >= 0 ? '#3fb950' : '#f85149';
 
@@ -469,7 +469,6 @@
         let volantes = parseInt(document.getElementById('volantes').value) || 0;
         let custoTotal = volantes * VALOR_VOLANTE;
         
-        // Sugerir valores de cota ideais (divisores exatos)
         let sugestoes = [];
         for (let participantes = 1; participantes <= 20; participantes++) {
             let valorIdeal = custoTotal / participantes;
@@ -512,7 +511,7 @@
         let participantesNecessarios = Math.ceil(custoTotal / valorCota);
         let arrecadacao = participantesNecessarios * valorCota;
         
-        let msg = `📊 VALIDAÇÃO DO BOLÃO\n\n`;
+        let msg = `📊 VALIDAÇÃO DO BOLÃO (NEXUS ENGINE)\n\n`;
         msg += `Volantes: ${volantes}\n`;
         msg += `Custo total: R$ ${custoTotal.toFixed(2).replace('.', ',')}\n`;
         msg += `Valor da cota: R$ ${valorCota.toFixed(2).replace('.', ',')}\n`;
@@ -520,13 +519,13 @@
         msg += `Arrecadação prevista: R$ ${arrecadacao.toFixed(2).replace('.', ',')}\n\n`;
         
         if (arrecadacao >= custoTotal) {
-            msg += `✅ BOLÃO VIÁVEL! A arrecadação cobre o custo dos volantes.\n`;
-            msg += `💰 Sobra: R$ ${(arrecadacao - custoTotal).toFixed(2).replace('.', ',')} (pode ser usado para volantes extras ou reserva)`;
+            msg += `✅ BOLÃO VIÁVEL! A arrecadação cobre o custo total dos bilhetes.\n`;
+            msg += `💰 Margem de segurança: R$ ${(arrecadacao - custoTotal).toFixed(2).replace('.', ',')} (para rateios ou volantes extras).`;
         } else {
-            msg += `❌ BOLÃO NÃO VIÁVEL! Faltam R$ ${(custoTotal - arrecadacao).toFixed(2).replace('.', ',')} para cobrir os volantes.\n`;
+            msg += `❌ BOLÃO INVIÁVEL! Faltam R$ ${(custoTotal - arrecadacao).toFixed(2).replace('.', ',')} para cobrir as apostas.\n`;
             msg += `Sugestões:\n`;
-            msg += `• Aumente o valor da cota para R$ ${(custoTotal / Math.ceil(participantesNecessarios)).toFixed(2).replace('.', ',')}\n`;
-            msg += `• Ou reduza o número de volantes para ${Math.floor(arrecadacao / VALOR_VOLANTE)}`;
+            msg += `• Reajuste a cota para R$ ${(custoTotal / Math.ceil(participantesNecessarios)).toFixed(2).replace('.', ',')}\n`;
+            msg += `• Ou reconfigure o motor de geração para ${Math.floor(arrecadacao / VALOR_VOLANTE)} volantes.`;
         }
         
         alert(msg);
@@ -568,14 +567,14 @@
 
     function carregarTabelaReferencia() {
         const modelos = [
-            { nome: '🟡 Pop', volantes: 10, cota: 5.00, participantes: 7 },
-            { nome: '🔵 Lite', volantes: 20, cota: 10.00, participantes: 7 },
-            { nome: '🟣 Top', volantes: 40, cota: 20.00, participantes: 7 },
-            { nome: '⭐ Especial', volantes: 60, cota: 30.00, participantes: 7 },
-            { nome: '📅 Semanal', volantes: 100, cota: 50.00, participantes: 7 },
-            { nome: '🎲 Alternativo', volantes: 30, cota: 15.00, participantes: 7 },
-            { nome: '🎯 Econômico', volantes: 14, cota: 7.00, participantes: 7 },
-            { nome: '🏆 Premium', volantes: 80, cota: 40.00, participantes: 7 }
+            { nome: '🟡 Pop (CPI)', volantes: 10, cota: 5.00, participantes: 7 },
+            { nome: '🔵 Lite (Tríades)', volantes: 20, cota: 10.00, participantes: 7 },
+            { nome: '🟣 Top (Neural)', volantes: 40, cota: 20.00, participantes: 7 },
+            { nome: '⭐ Especial (Híbrido)', volantes: 60, cota: 30.00, participantes: 7 },
+            { nome: '📅 Semanal (MAX)', volantes: 100, cota: 50.00, participantes: 7 },
+            { nome: '🎲 Alternativo (GênioX)', volantes: 30, cota: 15.00, participantes: 7 },
+            { nome: '🎯 Econômico (CPI Lite)', volantes: 14, cota: 7.00, participantes: 7 },
+            { nome: '🏆 Premium (NEXUS Max)', volantes: 80, cota: 40.00, participantes: 7 }
         ];
         
         let html = '';
