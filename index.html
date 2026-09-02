@@ -364,8 +364,9 @@ tr:hover td{background:#f8f9fb}
   <button class="tnav-btn" onclick="showTab('conferir')" id="tab-conferir">✅ Conferir</button>
   <button class="tnav-btn" onclick="showTab('perf')" id="tab-perf">📊 Performance</button>
   <button class="tnav-btn" onclick="showTab('caixa')" id="tab-caixa">💰 Caixa</button>
-  <!-- Botão de Integração com o Guia de Engenharia -->
   <button class="tnav-btn" onclick="abrirGuia()">📖 Guia</button>
+  <!-- Novo Botão para a Aula Prática -->
+  <button class="tnav-btn" onclick="abrirAula()">🏫 Aula</button>
 </div>
 
 <div class="wrap">
@@ -3102,7 +3103,12 @@ function abrirGuia() {
   _guiaWin = window.open('guia_completo.html', 'guiaCompleto', 'width=1100,height=820,left=100,top=60,resizable=yes,scrollbars=yes');
 }
 window.addEventListener('message', function(e) { if (e.data === 'fecharGuia' && _guiaWin && !_guiaWin.closed) { _guiaWin.close(); _guiaWin = null; } });
-
+// ── INTEGRAÇÃO DA AULA PRÁTICA ────────────────────────────
+let _aulaWin = null;
+function abrirAula() {
+  if (_aulaWin && !_aulaWin.closed) { _aulaWin.focus(); return; }
+  _aulaWin = window.open('aula_nexus.html', 'aulaNexus', 'width=1100,height=820,left=120,top=80,resizable=yes,scrollbars=yes');
+}
 window.addEventListener('DOMContentLoaded',init);
 </script> 
    
