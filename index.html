@@ -367,6 +367,8 @@ tr:hover td{background:#f8f9fb}
   <button class="tnav-btn" onclick="abrirGuia()">📖 Guia</button>
   <!-- Novo Botão para a Aula Prática -->
   <button class="tnav-btn" onclick="abrirAula()">🏫 Aula</button>
+   <!-- Novo Botão para o Conversor Prático -->
+  <button class="tnav-btn" onclick="abrirConversor()">🔄 Conversor</button>
 </div>
 
 <div class="wrap">
@@ -3109,9 +3111,13 @@ function abrirAula() {
   if (_aulaWin && !_aulaWin.closed) { _aulaWin.focus(); return; }
   _aulaWin = window.open('aula_nexus.html', 'aulaNexus', 'width=1100,height=820,left=120,top=80,resizable=yes,scrollbars=yes');
 }
+// ── INTEGRAÇÃO DO CONVERSOR PRÁTICO ───────────────────────
+let _conversorWin = null;
+function abrirConversor() {
+  if (_conversorWin && !_conversorWin.closed) { _conversorWin.focus(); return; }
+  _conversorWin = window.open('gni-conversor.html', 'conversorNexus', 'width=1100,height=820,left=120,top=80,resizable=yes,scrollbars=yes');
+}
 window.addEventListener('DOMContentLoaded',init);
-</script> 
-   
 </script>
 </body>
 </html>
