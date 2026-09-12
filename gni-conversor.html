@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor Lotofácil</title>
+    <style>
+        :root {
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --ball-bg: #9333ea;
+            --ball-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --ball-bg: #a855f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .btn-theme {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg);
+            color: var(--text);
+            resize: vertical;
+            font-size: 0.875rem;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-secondary:hover { background-color: var(--bg); }
+
+        .output-text {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .balls-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .ball {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--ball-bg);
+            color: var(--ball-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .meta-info {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Conversor Lotofácil</h1>
+        <button class="btn-theme" id="themeToggle" onclick="toggleTheme()">🌙 Escuro</button>
+    </header>
+
+    <!-- Entrada -->
+    <div class="card">
+        <label for="inputData">Cole o texto bruto do site da Caixa:</label>
+        <textarea id="inputData" placeholder="Ex: Concurso 3757 (09/08/2026)... 010203040608111215172021222324"></textarea>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="convertData()">⚡ Converter</button>
+            <button class="btn btn-secondary" onclick="clearAll()">🗑️ Limpar</button>
+        </div>
+    </div>
+
+    <!-- Saída Formatada -->
+    <div class="card hidden" id="outputCard">
+        <label>Resultado Formatado:</label>
+        <div class="output-text" id="outputText"></div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="copyResult()">📋 Copiar Resultado</button>
+        </div>
+
+        <!-- Exibição Visual dos Números -->
+        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+            <div class="meta-info" id="metaInfo"></div>
+            <div class="balls-container" id="ballsContainer"></div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Copiado para a área de transferência!</div>
+
+<script>
+    // Alternar Tema Claro / Escuro
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('themeToggle');
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.removeAttribute('data-theme');
+            btn.textContent = '🌙 Escuro';
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            btn.textContent = '☀️ Claro';
+        }
+    }
+
+    // Processamento do Texto
+    function convertData() {
+        const rawText = document.getElementById('inputData').value;
+        if (!rawText.trim()) return;
+
+        // 1. Extrai Concurso e Data: "3757 (09/08/2026)"
+        const matchConcursoData = rawText.match(/Concurso\s+(\d+)\s*\(([^)]+)\)/i);
+        
+        // 2. Extrai a sequência final de 30 dígitos (15 pares de números de 2 dígitos)
+        const matchNumeros = rawText.match(/(\d{30})\s*$/);
+
+        if (!matchConcursoData || !matchNumeros) {
+            alert('Não foi possível identificar o formato do texto inserido. Verifique o conteúdo colado.');
+            return;
+        }
+
+        const concursoNum = matchConcursoData[1];
+        const dataStr = matchConcursoData[2];
+        const blocoNumeros = matchNumeros[1];
+
+        // Quebra a string de 30 dígitos em um array de números formatados com 2 dígitos cada
+        const numerosArray = blocoNumeros.match(/.{1,2}/g);
+
+        // Gera a string final no formato: 3757 (09/08/2026), 01, 02, 03...
+        const formattedResult = `${concursoNum} (${dataStr}), ${numerosArray.join(', ')}`;
+
+        // Renderiza Resultados na Tela
+        document.getElementById('outputText').textContent = formattedResult;
+        document.getElementById('metaInfo').textContent = `Concurso ${concursoNum} • ${dataStr}`;
+        
+        // Gera os cards visuais das dezenas
+        const ballsContainer = document.getElementById('ballsContainer');
+        ballsContainer.innerHTML = '';
+        numerosArray.forEach(num => {
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            ball.textContent = num;
+            ballsContainer.appendChild(ball);
+        });
+
+        document.getElementById('outputCard').classList.remove('hidden');
+    }
+
+    // Copiar para a Área de Transferência
+    function copyResult() {
+        const text = document.getElementById('outputText').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        });
+    }
+
+    // Exibir Notificação Toast
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Limpar os campos
+    function clearAll() {
+        document.getElementById('inputData').value = '';
+        document.getElementById('outputText').textContent = '';
+        document.getElementById('ballsContainer').innerHTML = '';
+        document.getElementById('outputCard').classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
